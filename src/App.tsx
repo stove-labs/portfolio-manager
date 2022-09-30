@@ -1,14 +1,18 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import log from 'loglevel';
-import { Hello } from './components/Hello/Hello';
+import { Provider } from 'react-redux';
+import { Counter } from './features/Counter/containers/Counter/Counter';
 import { theme } from './theme';
+import { store } from './store/store';
 
 log.setDefaultLevel('DEBUG');
 
-export const App = () => {
+export const App: React.FC = () => {
   return (
-    <ChakraProvider theme={theme}>
-      <Hello name={'World'} />;
-    </ChakraProvider>
+    <Provider store={store}>
+      <ChakraProvider theme={theme}>
+        <Counter />
+      </ChakraProvider>
+    </Provider>
   );
 };
