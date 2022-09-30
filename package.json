@@ -7,12 +7,8 @@
     "dev": "parcel serve index.html",
     "build": "parcel build index.html",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
-  },
-  "husky": {
-    "hooks": {
-      "pre=commit": "lint-staged"
-    }
+    "build-storybook": "build-storybook",
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -72,6 +68,7 @@
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-storybook": "^0.6.4",
     "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-swc": "^0.2.1",
