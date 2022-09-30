@@ -1,6 +1,7 @@
 import constate from 'constate';
 import React, { Reducer, useCallback, useReducer } from 'react';
 import combineReducers from 'react-combine-reducers';
+import logger from 'use-reducer-logger';
 import { useCounterEffects } from '../features/Counter/store/useCounterEffects';
 import {
   CounterAction,
@@ -8,17 +9,26 @@ import {
   CounterState,
   initialCounterState,
 } from '../features/Counter/store/useCounterStore';
+import { useWalletEffects } from '../features/Wallet/store/useWalletEffects';
+import {
+  initialWalletState,
+  WalletAction,
+  walletReducer,
+  WalletState,
+} from '../features/Wallet/store/useWalletStore';
 
 export interface State {
   counter: CounterState;
+  wallet: WalletState;
 }
 
-export type Action = CounterAction;
+export type Action = CounterAction | WalletAction;
 
 export type AppReducer = Reducer<State, Action>;
 
 const [reducer, initialState] = combineReducers<AppReducer>({
   counter: [counterReducer, initialCounterState],
+  wallet: [walletReducer, initialWalletState],
 });
 
 export type Effect = (
@@ -45,8 +55,8 @@ export const useCombineEffects = (effects: EffectHook[]): RunEffects => {
 };
 
 export const useStore = (): [State, React.Dispatch<Action>] => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const runEffects = useCombineEffects([useCounterEffects]);
+  const [state, dispatch] = useReducer(logger(reducer), initialState);
+  const runEffects = useCombineEffects([useCounterEffects, useWalletEffects]);
   const dispatchWithEffects: React.Dispatch<Action> = useCallback(
     (action) => {
       dispatch(action);

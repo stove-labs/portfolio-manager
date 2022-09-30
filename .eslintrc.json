@@ -30,6 +30,8 @@
         ]
       }
     ],
+    "@typescript-eslint/strict-boolean-expressions": 0,
+    "@typescript-eslint/no-dynamic-delete": 0,
     "react/prop-types": "off",
     "react/jsx-sort-props": [
       "warn",
