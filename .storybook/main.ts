@@ -24,15 +24,6 @@ module.exports = {
     },
   },
   webpackFinal: async (config) => {
-    // config.module.rules.push({
-    //   test: /\.(m?js)$/,
-    //   type: 'javascript/auto',
-    //   // include: /node_modules/,
-    //   resolve: {
-    //     fullySpecified: false,
-    //   },
-    // });
-
     config.module.rules.push({
       test: /\.(m?js)$/,
       include: /node_modules/,
