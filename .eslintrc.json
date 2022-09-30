@@ -4,11 +4,11 @@
     "es2021": true
   },
   "extends": [
-    "plugin:react/recommended",
     "standard-with-typescript",
-    "plugin:react/jsx-runtime",
     "prettier",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react/recommended"
   ],
   "overrides": [],
   "parserOptions": {
