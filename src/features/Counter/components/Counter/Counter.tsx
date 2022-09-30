@@ -20,7 +20,7 @@ export const Counter: React.FC<CounterProps> = ({
       <Flex gap={'4'}>
         <Button onClick={() => onIncrement(1)}>Increment</Button>
         <Button onClick={() => onDecrement()}>Decrement</Button>
-        <Button onClick={() => onIncrement(3)}>Increment by 3</Button>
+        <Button onClick={() => onIncrement(2)}>Increment by 2</Button>
       </Flex>
     </Flex>
   );
