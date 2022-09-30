@@ -71,6 +71,7 @@
     "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-storybook": "^0.6.4",
+    "husky": "^8.0.1",
     "prettier": "^2.7.1",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-swc": "^0.2.1",
