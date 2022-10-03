@@ -4,7 +4,8 @@ import log from 'loglevel';
 import { theme } from './theme';
 import { DependencyProvider } from './providers/DependencyProvider';
 import { StoreProvider } from './store/useStore';
-import { Wallet } from './features/Wallet/containers/Wallet';
+import { WidgetRenderer } from './features/widgets/containers/WidgetRenderer/WidgetRenderer';
+import { DispatchUniqueProvider } from './features/widgets/providers/DispatchUniqueProvider';
 
 log.setDefaultLevel('DEBUG');
 
@@ -13,7 +14,9 @@ export const App: React.FC = () => {
     <DependencyProvider>
       <StoreProvider>
         <ChakraProvider theme={theme}>
-          <Wallet />
+          <DispatchUniqueProvider>
+            <WidgetRenderer />
+          </DispatchUniqueProvider>
         </ChakraProvider>
       </StoreProvider>
     </DependencyProvider>

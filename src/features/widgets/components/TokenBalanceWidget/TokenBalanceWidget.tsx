@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
+import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
 
 export interface Token {
   fullName: string;
@@ -32,6 +33,14 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
   historicalBalance,
   isLoading,
 }) => {
+  const { addToDispatchQueue } = useDispatchUniqueContext();
+  useEffect(() => {
+    console.log('TokenBalanceWidget');
+    addToDispatchQueue({
+      type: 'INCREMENT_BY',
+      payload: { amount: 1 },
+    });
+  }, [addToDispatchQueue]);
   // const balancePercentageChange = useMemo(() => {
   //   return '70%';
   // }, [balance, historicalBalance]);
