@@ -1,7 +1,6 @@
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Box } from '@chakra-ui/react';
-import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { TokenBalanceWidget } from './TokenBalanceWidget';
 
 const token = {
@@ -34,13 +33,7 @@ export default {
 
 const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => (
   <Box width={'1280px'}>
-    <WidgetWrapper
-      size={'sm'}
-      title={'Token balance'}
-      onTitleSubmit={console.log}
-    >
-      <TokenBalanceWidget {...args} />
-    </WidgetWrapper>
+    <TokenBalanceWidget {...args} />
   </Box>
 );
 

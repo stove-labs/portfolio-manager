@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { abbreviateNumber } from 'js-abbreviation-number';
+import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 
 export interface Token {
   fullName: string;
@@ -36,52 +37,66 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
   // }, [balance, historicalBalance]);
 
   return (
-    <Flex>
+    <WidgetWrapper
+      size={'sm'}
+      title={'kUSD balance (24h)'}
+      onTitleSubmit={console.log}
+    >
       <Flex>
-        <Flex flexDirection={'column'}>
-          {/* Balance */}
-          <Flex alignItems={'baseline'} gap={'1'}>
-            <Text
-              color={useColorModeValue('gray.700', 'gray.700')}
-              fontSize={'2xl'}
-              fontWeight={'extrabold'}
+        <Flex>
+          <Flex flexDirection={'column'}>
+            {/* Balance */}
+            <Flex alignItems={'baseline'} gap={'1'}>
+              <Text
+                color={useColorModeValue('gray.700', 'gray.700')}
+                fontSize={'2xl'}
+                fontWeight={'semibold'}
+                lineHeight={'24px'}
+                paddingTop={'0'}
+              >
+                {abbreviateNumber(Number(balance.amount), 2)}
+              </Text>
+              <Text
+                fontSize={'sm'}
+                fontWeight={'medium'}
+                opacity={'0.8'}
+                position={'relative'}
+                top={'-0.5px'}
+              >
+                {balance.token.ticker}
+              </Text>
+            </Flex>
+            <Flex
+              alignItems={'center'}
+              position={'relative'}
+              textAlign={'center'}
+              top={'-3px'}
             >
-              {abbreviateNumber(Number(balance.amount), 2)}
-            </Text>
-            <Text fontSize={'sm'} position={'relative'} top={'-0.5px'}>
-              {balance.token.ticker}
-            </Text>
+              <Text
+                flexDirection={'row'}
+                fontSize={'xx-small'}
+                fontWeight={'normal'}
+                opacity={'.5'}
+                paddingTop={'0.5'}
+              >
+                <Flex gap={'0.5'}>
+                  <Box>
+                    {abbreviateNumber(Number(balance.usdBalance.amount), 2)}
+                  </Box>
+                  <Box>$</Box>
+                </Flex>
+              </Text>
+            </Flex>
           </Flex>
-          <Flex
-            alignItems={'center'}
-            justifyContent={'center'}
-            position={'relative'}
-            textAlign={'center'}
-            top={'-3px'}
-          >
-            <Text
-              flexDirection={'row'}
-              fontSize={'xs'}
-              fontWeight={'nomral'}
-              opacity={'.8'}
-            >
-              <Flex gap={'0.5'}>
-                <Box>
-                  {abbreviateNumber(Number(balance.usdBalance.amount), 2)}
-                </Box>
-                <Box>$</Box>
-              </Flex>
-            </Text>
-          </Flex>
-        </Flex>
 
-        {/* <Stat>
+          {/* <Stat>
           <StatHelpText>
             <StatArrow type={'increase'} />
             {balancePercentageChange}
           </StatHelpText>
         </Stat> */}
+        </Flex>
       </Flex>
-    </Flex>
+    </WidgetWrapper>
   );
 };

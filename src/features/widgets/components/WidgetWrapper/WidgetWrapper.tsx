@@ -4,6 +4,7 @@ import {
   EditablePreview,
   Flex,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import React, { PropsWithChildren, useMemo } from 'react';
 
@@ -28,8 +29,8 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
     switch (size) {
       case 'sm':
         return {
-          width: '15%',
-          minHeight: '140px',
+          width: '25%',
+          minHeight: '',
         };
       case 'md':
         return {
@@ -46,33 +47,29 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
 
   return (
     <Flex
-      borderRadius={'md'}
+      borderRadius={'lg'}
       direction={'column'}
+      letterSpacing={'0px'}
       minHeight={styles.minHeight}
       padding={'2'}
-      paddingBottom={'0'}
-      shadow={'base'}
+      paddingBottom={'2'}
+      paddingTop={'2'}
+      shadow={'xs'}
       width={styles.width}
     >
       <Text
-        // color={useColorModeValue('blackAlpha.600', 'whiteAlpha.600')}
+        color={useColorModeValue('gray.600', 'gray.600')}
         fontSize={'xs'}
-        fontWeight={'semibold'}
-        opacity={'.8'}
+        fontWeight={'normal'}
+        opacity={'.6'}
+        padding={'0'}
       >
         <Editable defaultValue={title} onSubmit={onTitleSubmit}>
-          <EditablePreview />
+          <EditablePreview padding={0} />
           <EditableInput />
         </Editable>
       </Text>
-      <Flex
-        alignItems={'center'}
-        flex={'1'}
-        height={'100%'}
-        justifyContent={'center'}
-        paddingBottom={'3'}
-        paddingTop={'0'}
-      >
+      <Flex flex={'1'} height={'100%'} paddingBottom={'0'} paddingTop={'1'}>
         {children}
       </Flex>
     </Flex>
