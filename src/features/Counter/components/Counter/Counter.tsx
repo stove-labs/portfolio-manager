@@ -1,14 +1,17 @@
+import React from 'react';
 import { Button, Flex, Heading, Text } from '@chakra-ui/react';
 
 export interface CounterProps {
   count: number;
   onIncrement: (amount: number) => void;
+  onIncrementAsync: (amount: number) => void;
   onDecrement: () => void;
 }
 
 export const Counter: React.FC<CounterProps> = ({
   count,
   onIncrement,
+  onIncrementAsync,
   onDecrement,
 }) => {
   return (
@@ -19,8 +22,10 @@ export const Counter: React.FC<CounterProps> = ({
       </Flex>
       <Flex gap={'4'}>
         <Button onClick={() => onIncrement(1)}>Increment</Button>
-        <Button onClick={() => onDecrement()}>Decrement</Button>
+        <Button onClick={() => onIncrementAsync(1)}>Increment Async</Button>
         <Button onClick={() => onIncrement(2)}>Increment by 2</Button>
+
+        <Button onClick={() => onDecrement()}>Decrement</Button>
       </Flex>
     </Flex>
   );

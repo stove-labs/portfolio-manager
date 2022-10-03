@@ -4,11 +4,11 @@
     "es2021": true
   },
   "extends": [
-    "plugin:react/recommended",
     "standard-with-typescript",
-    "plugin:react/jsx-runtime",
     "prettier",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react/recommended"
   ],
   "overrides": [],
   "parserOptions": {
@@ -30,6 +30,8 @@
         ]
       }
     ],
+    "@typescript-eslint/strict-boolean-expressions": 0,
+    "@typescript-eslint/no-dynamic-delete": 0,
     "react/prop-types": "off",
     "react/jsx-sort-props": [
       "warn",
