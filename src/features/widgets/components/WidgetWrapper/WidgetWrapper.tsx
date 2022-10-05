@@ -37,7 +37,7 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
           '.settings-icon': {
             opacity: '.7',
             ':hover': {
-              color: useColorModeValue('gray.900', 'gray.900'),
+              color: useColorModeValue('gray.500', 'gray.900'),
               opacity: '1',
             },
           },
@@ -62,6 +62,7 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
           cursor={'pointer'}
           transition={'ease'}
           transitionDuration={'fast'}
+          onMouseDown={(e) => e.stopPropagation()}
         >
           <FontAwesomeIcon icon={faGear} size={'xs'} />
         </Flex>

@@ -11,7 +11,7 @@ const token = {
 
 const args = {
   balance: {
-    amount: '5368',
+    amount: '0.005',
     token,
     fiatBalance: {
       amount: '100000',

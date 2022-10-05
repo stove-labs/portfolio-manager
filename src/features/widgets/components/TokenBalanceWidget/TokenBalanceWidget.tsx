@@ -126,14 +126,10 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
       title={'kUSD balance (24h)'}
       onTitleSubmit={console.log}
     >
-      <Flex
-        direction={'column'}
-        minHeight={'117px'}
-        pl={'2'}
-        pr={'2'}
-        width={'100%'}
-      >
+      <Flex direction={'column'} minHeight={'117px'} width={'100%'}>
+        {/* content */}
         <Flex flex={'1'}>
+          {/* token logo */}
           <Flex flexDirection={'column'} justifyContent={'center'} pr={'3'}>
             <SkeletonCircle isLoaded={!isLoading} size={'50px'}>
               <img
@@ -148,8 +144,9 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
             </SkeletonCircle>
           </Flex>
 
+          {/* talances */}
           <Flex flex={'1'} flexDirection={'column'} justifyContent={'center'}>
-            {/* Token amount */}
+            {/* token balance */}
             <Skeleton isLoaded={!isLoading}>
               <Flex>
                 <Text
@@ -160,6 +157,7 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
                 >
                   {abbreviateNumber(Number(balance.amount), 2)}
                 </Text>
+                {/* ticker */}
                 <Text
                   color={useColorModeValue('gray.400', 'gray.400')}
                   lineHeight={'26px'}
@@ -172,7 +170,7 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
               </Flex>
             </Skeleton>
 
-            {/* Fiat price */}
+            {/* fiat balance */}
             <Skeleton isLoaded={!isLoading} mt={isLoading ? '1' : '0'}>
               <Flex>
                 <Text
@@ -187,6 +185,7 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
             </Skeleton>
           </Flex>
         </Flex>
+        {/* footer */}
         <Flex flexDirection={'column'}>
           <Skeleton
             isLoaded={!isLoading}
