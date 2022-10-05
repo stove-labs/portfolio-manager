@@ -6,13 +6,13 @@ export const WidgetsLayout: React.FC = () => {
   const [state, dispatch] = useStoreContext();
 
   useEffect(() => {
-    window.localStorage.setItem('STATE_LAYOUT', JSON.stringify(state.layout));
-  }, [state.layout]);
+    window.localStorage.setItem('STATE_LAYOUT', JSON.stringify(state.settings));
+  }, [state.settings]);
 
   return (
     <WidgetsLayoutComponent
-      layout={state.layout.layout}
-      widgets={state.layout.widgets}
+      layout={state.settings.layout}
+      widgets={state.settings.widgets}
       onLayoutChange={(layout) =>
         dispatch({ type: 'UPDATE_LAYOUT', payload: { layout } })
       }

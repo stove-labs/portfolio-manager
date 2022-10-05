@@ -2,18 +2,18 @@ import { Reducer, useReducer } from 'react';
 import produce from 'immer';
 import { Layout } from 'react-grid-layout';
 import { find, isEmpty, without } from 'lodash';
-import { Widgets } from '../components/WidgetsLayout/WidgetsLayout';
+import { WidgetSettings } from '../components/WidgetsLayout/WidgetsLayout';
 
 export interface WidgetsLayoutState {
   layout: Layout[];
-  widgets: Widgets[];
+  widgets: WidgetSettings[];
 }
 
 export type WidgetsLayoutAction =
-  | { type: 'SET_LAYOUT'; payload: { layout: Layout[]; widgets: Widgets[] } }
+  | { type: 'SET_LAYOUT'; payload: { layout: Layout[]; widgets: WidgetSettings[] } }
   | { type: 'UPDATE_LAYOUT'; payload: { layout: Layout[] } }
-  | { type: 'ADD_WIDGET'; payload: { widget: Widgets } }
-  | { type: 'REMOVE_WIDGET'; payload: { widget: Widgets } };
+  | { type: 'ADD_WIDGET'; payload: { widget: WidgetSettings } }
+  | { type: 'REMOVE_WIDGET'; payload: { widget: WidgetSettings } };
 
 const data = JSON.parse(
   window.localStorage.getItem('STATE_LAYOUT') ?? '{}'
@@ -112,7 +112,7 @@ export const widgetsLayoutReducer: Reducer<
         draft.widgets = without(
           state.widgets,
           find(state.widgets, action.payload.widget)
-        ) as Widgets[];
+        ) as WidgetSettings[];
       });
 
     default:

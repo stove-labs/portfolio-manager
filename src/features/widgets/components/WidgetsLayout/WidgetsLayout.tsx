@@ -11,14 +11,14 @@ const ReactGridLayout = WidthProvider(RGL);
 export type WidgetProps = TokenBalanceWidgetProps;
 export type WidgetName = 'TokenBalanceWidget';
 
-export interface Widgets {
+export interface WidgetSettings {
   name: WidgetName;
   settings: WidgetProps;
 }
 
 export interface WidgetsLayoutProps {
   layout: Layout[];
-  widgets: Widgets[];
+  widgets: WidgetSettings[];
   isDraggable?: boolean;
   onLayoutChange: (layout: Layout[]) => void;
 }
@@ -29,7 +29,7 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
   onLayoutChange,
   isDraggable = true,
 }) => {
-  const renderWidget = (widget: Widgets): ReactNode => {
+  const renderWidget = (widget: WidgetSettings): ReactNode => {
     switch (widget.name) {
       case 'TokenBalanceWidget': {
         return <TokenBalanceWidget {...widget.settings} />;
