@@ -28,10 +28,17 @@ const layout = [
   },
   {
     x: 0,
-    y: 5,
-    w: 8,
-    h: 10,
+    y: 4,
+    w: 6,
+    h: 8,
     i: '3',
+  },
+  {
+    x: 0,
+    y: 12,
+    w: 9,
+    h: 12,
+    i: '4',
   },
 ];
 
@@ -40,6 +47,10 @@ export default {
   component: WidgetsLayout,
   args: {
     widgets: [
+      {
+        name: 'TokenBalanceWidget',
+        settings: TokenBalanceWidgetDefault.args,
+      },
       {
         name: 'TokenBalanceWidget',
         settings: TokenBalanceWidgetDefault.args,

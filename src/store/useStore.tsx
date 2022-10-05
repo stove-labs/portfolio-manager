@@ -26,7 +26,7 @@ import {
 export interface State {
   counter: CounterState;
   wallet: WalletState;
-  layout: WidgetsLayoutState;
+  settings: WidgetsLayoutState;
 }
 
 export type Action = CounterAction | WalletAction | WidgetsLayoutAction;
@@ -36,7 +36,7 @@ export type AppReducer = Reducer<State, Action>;
 const [reducer, initialState] = combineReducers<AppReducer>({
   counter: [counterReducer, initialCounterState],
   wallet: [walletReducer, initialWalletState],
-  layout: [widgetsLayoutReducer, initialWidgetsLayoutState],
+  settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
 });
 
 export type Effect = (
