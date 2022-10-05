@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Flex } from '@chakra-ui/react';
-import { Default as TokenBalanceWidgetDefault } from '../TokenBalanceWidget/TokenBalanceWidget.stories';
+import TokenBalanceWidgetDefault from '../TokenBalanceWidget/TokenBalanceWidget.stories';
 import { WidgetsLayout } from './WidgetsLayout';
 
 const layout = [

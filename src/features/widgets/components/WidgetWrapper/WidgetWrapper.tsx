@@ -1,5 +1,7 @@
-import { Flex, useColorModeValue } from '@chakra-ui/react';
-import React, { PropsWithChildren, useMemo } from 'react';
+import { Flex, useColorModeValue, Heading } from '@chakra-ui/react';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { PropsWithChildren } from 'react';
 
 export interface WidgetWrapperProps {
   title: string;
@@ -15,56 +17,56 @@ export interface WrapperStyle {
 export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
   children,
   size,
+  title,
 }) => {
-  const styles = useMemo<WrapperStyle>(() => {
-    switch (size) {
-      case 'sm':
-        return {
-          width: '25%',
-          minHeight: '90px',
-        };
-      case 'md':
-        return {
-          width: '50%',
-          minHeight: '90px',
-        };
-      case 'lg':
-        return {
-          width: '75%',
-          minHeight: '90px',
-        };
-    }
-  }, [size]);
-
   return (
     <Flex
-      backdropFilter={'blur(120px)'}
-      // background={useColorModeValue(
-      //   'linear-gradient(135deg, rgba(217, 219, 231, 0.19) 35%, rgba(38, 61, 155, 0.455) 80%)',
-      //   'linear-gradient(135deg, rgba(3, 7, 24, 0.49) 35%, rgba(36, 44, 84, 0.49) 80%)'
-      // )}
-      // background={useColorModeValue(
-      //   'linear-gradient(135deg, RGBA(255, 255, 255, 0.92) 35%, #FFFFF0 80%, #FFFAF0, #FEFCBF)',
-      //   'linear-gradient(135deg, RGBA(0, 0, 0, 0.36) 35%, #5F370E 80%, #652B19, #744210, #7B341E)'
-      // )}
-      background={useColorModeValue(
-        'transparent',
-        '#171923'
-      )}
-      backgroundClip={'border-box'}
-      bgGradient={useColorModeValue(
-        'transparent',
-        'linear-gradient(90deg, #171923 0%, #1a365d 47%, #2A4365 100%)'
-      )}
-      borderRadius={'lg'}
-      direction={'column'}
-      letterSpacing={'0px'}
-      minHeight={styles.minHeight}
-      minWidth={styles.width}
-      padding={'3'}
-      shadow={'xs'}
+      background={useColorModeValue('white', 'white')}
+      borderRadius={'md'}
+      cursor={'grab'}
+      flex={'1'}
+      flexDirection={'column'}
+      p={'3'}
+      pb={'2'}
+      shadow={'sm'}
+      sx={{
+        '.settings-icon': {
+          opacity: '0',
+        },
+        ':hover': {
+          '.settings-icon': {
+            opacity: '.7',
+            ':hover': {
+              color: useColorModeValue('gray.900', 'gray.900'),
+              opacity: '1',
+            },
+          },
+        },
+      }}
     >
-      <Flex flex={'1'} height={'100%'} paddingBottom={'0'} paddingTop={'1'}>
+      <Flex
+        justifyContent={'space-between'}
+        color={useColorModeValue('gray.400', 'gray.400')}
+        // opacity={'0.4'}
+      >
+        <Heading
+          fontSize={'0.65rem'}
+          letterSpacing={'tight'}
+          size={'xs'}
+          textTransform={'uppercase'}
+        >
+          {title}
+        </Heading>
+        <Flex
+          className="settings-icon"
+          cursor={'pointer'}
+          transition={'ease'}
+          transitionDuration={'fast'}
+        >
+          <FontAwesomeIcon icon={faGear} size={'xs'} />
+        </Flex>
+      </Flex>
+      <Flex flex={'1'} height={'100%'}>
         {children}
       </Flex>
     </Flex>

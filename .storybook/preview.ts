@@ -10,4 +10,13 @@ export const parameters = {
   chakra: {
     theme,
   },
+  backgrounds: {
+    default: 'dashboard',
+    values: [
+      {
+        name: 'dashboard',
+        value: '#F7FAFC',
+      },
+    ],
+  },
 };
