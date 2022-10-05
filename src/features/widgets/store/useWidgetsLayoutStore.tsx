@@ -10,7 +10,10 @@ export interface WidgetsLayoutState {
 }
 
 export type WidgetsLayoutAction =
-  | { type: 'SET_LAYOUT'; payload: { layout: Layout[]; widgets: WidgetSettings[] } }
+  | {
+      type: 'SET_LAYOUT';
+      payload: { layout: Layout[]; widgets: WidgetSettings[] };
+    }
   | { type: 'UPDATE_LAYOUT'; payload: { layout: Layout[] } }
   | { type: 'ADD_WIDGET'; payload: { widget: WidgetSettings } }
   | { type: 'REMOVE_WIDGET'; payload: { widget: WidgetSettings } };
@@ -26,17 +29,16 @@ const token = {
 
 const settings = {
   balance: {
-    amount: '100000',
+    amount: '0.005',
     token,
-    usdBalance: {
+    fiatBalance: {
       amount: '100000',
     },
   },
-  token,
   historicalBalance: {
     amount: '50000',
     token,
-    usdBalance: {
+    fiatBalance: {
       amount: '50000',
     },
   },

@@ -1,3 +1,4 @@
+import { Button, Input } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
 import { WidgetsLayoutState } from '../../store/useWidgetsLayoutStore';
@@ -5,6 +6,7 @@ import { WidgetsLayout as WidgetsLayoutComponent } from './../../components/Widg
 
 export const WidgetsLayout: React.FC = () => {
   const [state, dispatch] = useStoreContext();
+  const address = 'address';
 
   useEffect(() => {
     window.localStorage.setItem('STATE_LAYOUT', JSON.stringify(state.settings));
@@ -16,7 +18,7 @@ export const WidgetsLayout: React.FC = () => {
       type: 'text/plain',
     });
     a.href = URL.createObjectURL(file);
-    a.download = 'settings.txt';
+    a.download = `${address}-portfolio-dashboard-settings.json`;
     a.click();
   };
 
@@ -41,14 +43,16 @@ export const WidgetsLayout: React.FC = () => {
   };
 
   return (
-    <WidgetsLayoutComponent
-      downloadSettings={downloadSettings}
-      layout={state.settings.layout}
-      restoreSettings={restoreSettings}
-      widgets={state.settings.widgets}
-      onLayoutChange={(layout) =>
-        dispatch({ type: 'UPDATE_LAYOUT', payload: { layout } })
-      }
-    />
+    <>
+      <Button onClick={() => downloadSettings()}>Download Settings</Button>
+      <Input type={'file'} onChange={(e) => restoreSettings(e)}></Input>
+      <WidgetsLayoutComponent
+        layout={state.settings.layout}
+        widgets={state.settings.widgets}
+        onLayoutChange={(layout) =>
+          dispatch({ type: 'UPDATE_LAYOUT', payload: { layout } })
+        }
+      />
+    </>
   );
 };
