@@ -1,7 +1,8 @@
 import { Button, Input } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
-import { WidgetsLayoutState } from '../../store/useWidgetsLayoutStore';
+import { Settings } from '../../components/Settings/Settings';
+import { WidgetsLayoutState } from './store/useWidgetsLayoutStore';
 import { WidgetsLayout as WidgetsLayoutComponent } from './../../components/WidgetsLayout/WidgetsLayout';
 
 export const WidgetsLayout: React.FC = () => {
@@ -46,6 +47,7 @@ export const WidgetsLayout: React.FC = () => {
     <>
       <Button onClick={() => downloadSettings()}>Download Settings</Button>
       <Input type={'file'} onChange={(e) => restoreSettings(e)}></Input>
+      <Settings />
       <WidgetsLayoutComponent
         layout={state.settings.layout}
         widgets={state.settings.widgets}

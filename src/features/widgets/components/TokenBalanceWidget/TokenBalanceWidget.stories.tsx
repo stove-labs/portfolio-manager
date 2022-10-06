@@ -48,7 +48,6 @@ const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => (
       widgets={[
         {
           name: 'TokenBalanceWidget',
-          settings: args,
         },
       ]}
       onLayoutChange={console.log}

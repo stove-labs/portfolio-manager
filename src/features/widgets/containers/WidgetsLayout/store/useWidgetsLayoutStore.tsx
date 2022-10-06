@@ -2,7 +2,7 @@ import { Reducer, useReducer } from 'react';
 import produce from 'immer';
 import { Layout } from 'react-grid-layout';
 import { find, isEmpty, without } from 'lodash';
-import { WidgetSettings } from '../components/WidgetsLayout/WidgetsLayout';
+import { WidgetSettings } from '../../../components/WidgetsLayout/WidgetsLayout';
 
 export interface WidgetsLayoutState {
   layout: Layout[];
@@ -15,35 +15,18 @@ export type WidgetsLayoutAction =
       payload: { layout: Layout[]; widgets: WidgetSettings[] };
     }
   | { type: 'UPDATE_LAYOUT'; payload: { layout: Layout[] } }
-  | { type: 'ADD_WIDGET'; payload: { widget: WidgetSettings } }
-  | { type: 'REMOVE_WIDGET'; payload: { widget: WidgetSettings } };
+  | {
+      type: 'ADD_WIDGET';
+      payload: { layout: Layout[]; widget: WidgetSettings };
+    }
+  | {
+      type: 'REMOVE_WIDGET';
+      payload: { layout: Layout[]; widget: WidgetSettings };
+    };
 
 const data = JSON.parse(
   window.localStorage.getItem('STATE_LAYOUT') ?? '{}'
 ) as WidgetsLayoutState;
-
-const token = {
-  fullName: 'Kolibri USD',
-  ticker: 'kUSD',
-};
-
-const settings = {
-  balance: {
-    amount: '0.005',
-    token,
-    fiatBalance: {
-      amount: '100000',
-    },
-  },
-  historicalBalance: {
-    amount: '50000',
-    token,
-    fiatBalance: {
-      amount: '50000',
-    },
-  },
-  isLoading: false,
-};
 
 export const defaultValues: WidgetsLayoutState = {
   layout: [
@@ -72,15 +55,12 @@ export const defaultValues: WidgetsLayoutState = {
   widgets: [
     {
       name: 'TokenBalanceWidget',
-      settings,
     },
     {
       name: 'TokenBalanceWidget',
-      settings,
     },
     {
       name: 'TokenBalanceWidget',
-      settings,
     },
   ],
 };
@@ -106,11 +86,13 @@ export const widgetsLayoutReducer: Reducer<
 
     case 'ADD_WIDGET':
       return produce(state, (draft) => {
+        draft.layout = action.payload.layout;
         draft.widgets = [...state.widgets, action.payload.widget];
       });
 
     case 'REMOVE_WIDGET':
       return produce(state, (draft) => {
+        draft.layout = action.payload.layout;
         draft.widgets = without(
           state.widgets,
           find(state.widgets, action.payload.widget)

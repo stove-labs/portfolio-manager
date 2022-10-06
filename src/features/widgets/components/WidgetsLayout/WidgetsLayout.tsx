@@ -4,7 +4,7 @@ import RGL, { Layout, WidthProvider } from 'react-grid-layout';
 import {
   TokenBalanceWidget,
   TokenBalanceWidgetProps,
-} from '../../components/TokenBalanceWidget/TokenBalanceWidget';
+} from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -13,7 +13,7 @@ export type WidgetName = 'TokenBalanceWidget';
 
 export interface WidgetSettings {
   name: WidgetName;
-  settings: WidgetProps;
+  settings?: WidgetProps;
 }
 
 export interface WidgetsLayoutProps {
