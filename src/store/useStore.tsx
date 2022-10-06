@@ -9,6 +9,12 @@ import {
   CounterState,
   initialCounterState,
 } from '../features/Counter/store/useCounterStore';
+import {
+  WidgetsLayoutAction,
+  widgetsLayoutReducer,
+  WidgetsLayoutState,
+  initialWidgetsLayoutState,
+} from '../features/widgets/store/useWidgetsLayoutStore';
 import { useWalletEffects } from '../features/Wallet/store/useWalletEffects';
 import {
   initialWalletState,
@@ -20,15 +26,17 @@ import {
 export interface State {
   counter: CounterState;
   wallet: WalletState;
+  settings: WidgetsLayoutState;
 }
 
-export type Action = CounterAction | WalletAction;
+export type Action = CounterAction | WalletAction | WidgetsLayoutAction;
 
 export type AppReducer = Reducer<State, Action>;
 
 const [reducer, initialState] = combineReducers<AppReducer>({
   counter: [counterReducer, initialCounterState],
   wallet: [walletReducer, initialWalletState],
+  settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
 });
 
 export type Effect = (
