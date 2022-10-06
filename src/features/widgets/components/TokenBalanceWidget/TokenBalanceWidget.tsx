@@ -14,6 +14,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
+import { TokenSelector } from '../../../shared/components/TokenSelector/TokenSelector';
+import { HistoricalPeriodSelector } from '../../../shared/components/HistoricalPeriodSelector/HistoricalPeriodSelector';
 
 export interface Token {
   fullName: string;
@@ -63,8 +65,8 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
         };
     }
   }, [size]);
-  const upwardsTrendColor = useColorModeValue('green.400', 'green.400');
-  const downwardsTrendColor = useColorModeValue('red.400', 'red.400');
+  const upwardsTrendColor = useColorModeValue('green.500', 'green.500');
+  const downwardsTrendColor = useColorModeValue('red.500', 'red.500');
   const trendColor = useMemo(() => {
     switch (trend) {
       case 'upwards':
@@ -111,6 +113,19 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
   );
 };
 
+export const TokenBalanceWidgetSettings: React.FC = () => {
+  return (
+    <>
+      <Flex flex={'1'} flexDirection={'column'}>
+        <Flex mb={'2'}>
+          <TokenSelector />
+        </Flex>
+        <HistoricalPeriodSelector />
+      </Flex>
+    </>
+  );
+};
+
 export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
   balance,
   historicalBalance,
@@ -122,6 +137,7 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
 
   return (
     <WidgetWrapper
+      settings={<TokenBalanceWidgetSettings />}
       size={'sm'}
       title={'kUSD balance (24h)'}
       onTitleSubmit={console.log}

@@ -1,11 +1,11 @@
 import { Flex, useColorModeValue, Heading } from '@chakra-ui/react';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
+import { WidgetSettings } from '../WidgetSettings/WidgetSettings';
 
 export interface WidgetWrapperProps {
   title: string;
   size: 'sm' | 'md' | 'lg';
+  settings: ReactNode;
   onTitleSubmit: (title: string) => void;
 }
 
@@ -18,6 +18,7 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
   children,
   size,
   title,
+  settings,
 }) => {
   return (
     <Flex
@@ -30,26 +31,19 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
       pb={'2'}
       shadow={'sm'}
       sx={{
-        '.settings-icon': {
-          opacity: '0',
-        },
         ':hover': {
           '.settings-icon': {
             opacity: '.7',
-            ':hover': {
-              color: useColorModeValue('gray.500', 'gray.900'),
-              opacity: '1',
-            },
           },
         },
       }}
     >
       <Flex
         justifyContent={'space-between'}
-        color={useColorModeValue('gray.400', 'gray.400')}
         // opacity={'0.4'}
       >
         <Heading
+          color={useColorModeValue('gray.400', 'gray.400')}
           fontSize={'0.65rem'}
           letterSpacing={'tight'}
           size={'xs'}
@@ -58,13 +52,11 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
           {title}
         </Heading>
         <Flex
-          className="settings-icon"
           cursor={'pointer'}
           transition={'ease'}
           transitionDuration={'fast'}
-          onMouseDown={(e) => e.stopPropagation()}
         >
-          <FontAwesomeIcon icon={faGear} size={'xs'} />
+          <WidgetSettings>{settings}</WidgetSettings>
         </Flex>
       </Flex>
       <Flex flex={'1'} height={'100%'}>

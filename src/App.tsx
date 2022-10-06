@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, CSSReset } from '@chakra-ui/react';
 import log from 'loglevel';
 import { theme } from './theme';
 import { DependencyProvider } from './providers/DependencyProvider';
@@ -16,6 +16,7 @@ export const App: React.FC = () => {
   return (
     <DependencyProvider>
       <StoreProvider>
+        <CSSReset />
         <ChakraProvider theme={theme}>
           <DispatchUniqueProvider>
             <WidgetRenderer />
