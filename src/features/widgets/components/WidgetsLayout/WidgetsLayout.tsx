@@ -50,9 +50,7 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
       {widgets?.map((widget, i) => (
         <Flex
           key={i}
-          alignItems={'center'}
-          border={'2px'}
-          borderColor={'red'}
+          alignItems={'start'}
           height={'100%'}
           justifyContent={'center'}
           width={'100%'}
