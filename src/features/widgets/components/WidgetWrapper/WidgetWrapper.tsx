@@ -45,8 +45,8 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
       }}
     >
       <Flex
-        justifyContent={'space-between'}
         color={useColorModeValue('gray.400', 'gray.400')}
+        justifyContent={'space-between'}
         // opacity={'0.4'}
       >
         <Heading

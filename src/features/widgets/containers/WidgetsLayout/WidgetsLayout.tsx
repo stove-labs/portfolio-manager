@@ -51,8 +51,11 @@ export const WidgetsLayout: React.FC = () => {
       <WidgetsLayoutComponent
         layout={state.settings.layout}
         widgets={state.settings.widgets}
-        onLayoutChange={(layout) =>
+        onLayoutChange={(layout) => 
           dispatch({ type: 'UPDATE_LAYOUT', payload: { layout } })
+        }
+        onWidgetRemove={(id) =>
+          dispatch({ type: 'REMOVE_WIDGET', payload: { id } })
         }
       />
     </>

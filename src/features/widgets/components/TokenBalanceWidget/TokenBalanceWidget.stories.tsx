@@ -47,10 +47,12 @@ const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => (
       ]}
       widgets={[
         {
+          id: '0',
           name: 'TokenBalanceWidget',
         },
       ]}
       onLayoutChange={console.log}
+      onWidgetRemove={console.log}
     />
   </Flex>
 );

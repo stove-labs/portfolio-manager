@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { Layout } from 'react-grid-layout';
+import { v4 as uuidv4 } from 'uuid';
 import { useStoreContext } from '../../../../store/useStore';
 import { TokenBalanceWidget } from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
 import { WidgetName } from '../WidgetsLayout/WidgetsLayout';
@@ -33,8 +34,9 @@ export const Settings: React.FC = () => {
   };
 
   const handleWidgetSelection = (widget: WidgetName): void => {
+    const id = uuidv4();
     const newWidgetCoordinates: Layout = {
-      i: `${state.settings.widgets.length}`,
+      i: id,
       x: (state.settings.widgets.length * widgetsSizes[widget].w) % 12,
       y: Infinity, // puts it at the bottom
       w: widgetsSizes[widget].w,
@@ -45,7 +47,7 @@ export const Settings: React.FC = () => {
       type: 'ADD_WIDGET',
       payload: {
         layout: [...state.settings.layout, newWidgetCoordinates],
-        widget: { name: widget },
+        widget: { name: widget, id },
       },
     });
   };

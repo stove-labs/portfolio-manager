@@ -1,7 +1,7 @@
 import { Reducer, useReducer } from 'react';
 import produce from 'immer';
 import { Layout } from 'react-grid-layout';
-import { find, isEmpty, without } from 'lodash';
+import { isEmpty } from 'lodash';
 import { WidgetSettings } from '../../../components/WidgetsLayout/WidgetsLayout';
 
 export interface WidgetsLayoutState {
@@ -21,7 +21,7 @@ export type WidgetsLayoutAction =
     }
   | {
       type: 'REMOVE_WIDGET';
-      payload: { layout: Layout[]; widget: WidgetSettings };
+      payload: { id: string };
     };
 
 const data = JSON.parse(
@@ -55,12 +55,15 @@ export const defaultValues: WidgetsLayoutState = {
   widgets: [
     {
       name: 'TokenBalanceWidget',
+      id: '0',
     },
     {
       name: 'TokenBalanceWidget',
+      id: '1',
     },
     {
       name: 'TokenBalanceWidget',
+      id: '2',
     },
   ],
 };
@@ -92,11 +95,12 @@ export const widgetsLayoutReducer: Reducer<
 
     case 'REMOVE_WIDGET':
       return produce(state, (draft) => {
-        draft.layout = action.payload.layout;
-        draft.widgets = without(
-          state.widgets,
-          find(state.widgets, action.payload.widget)
-        ) as WidgetSettings[];
+        draft.layout = state.layout.filter(
+          (item) => item.i !== action.payload.id
+        );
+        draft.widgets = state.widgets.filter(
+          (item) => item.id !== action.payload.id
+        );
       });
 
     default:

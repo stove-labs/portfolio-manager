@@ -44,7 +44,8 @@
     "react-router-dom": "^6.4.0",
     "redux-dynamic-middlewares": "^2.2.0",
     "redux-thunk": "^2.4.1",
-    "use-reducer-logger": "^1.0.2"
+    "use-reducer-logger": "^1.0.2",
+    "uuid": "^9.0.0"
   },
   "peerDependencies": {
     "@chakra-ui/icons": "^2.0.9",
@@ -71,6 +72,7 @@
     "@types/react-combine-reducers": "^1.0.0",
     "@types/react-dom": "^18.0.6",
     "@types/react-grid-layout": "^1.3.2",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "babel-loader": "^8.2.5",
     "eslint": "^8.23.1",
