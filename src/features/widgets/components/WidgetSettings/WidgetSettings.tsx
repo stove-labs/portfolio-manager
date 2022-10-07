@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useCallback } from 'react';
 import {
+  Box,
   Button,
   Flex,
   FormControl,
@@ -57,63 +58,65 @@ export const WidgetSettings: React.FC<PropsWithChildren<{}>> = ({
             />
           </Flex>
         </PopoverTrigger>
-        <PopoverContent
-          color={useColorModeValue('gray.400', 'gray.400')}
-          minWidth={'180px'}
-          shadow={'sm'}
-          width={'auto'}
-        >
-          <PopoverHeader
-            alignItems={'center'}
-            display={'flex'}
-            justifyContent={'space-between'}
-            pb={'1'}
-            pl={'2'}
-            pr={'2'}
-            pt={'1'}
+        <Box zIndex={'9999'}>
+          <PopoverContent
+            color={useColorModeValue('gray.400', 'gray.400')}
+            minWidth={'180px'}
+            shadow={'sm'}
+            width={'auto'}
           >
-            <Heading
-              fontSize={'0.65rem'}
-              letterSpacing={'tight'}
-              pr={'10'}
-              size={'xs'}
-              textTransform={'uppercase'}
+            <PopoverHeader
+              alignItems={'center'}
+              display={'flex'}
+              justifyContent={'space-between'}
+              pb={'1'}
+              pl={'2'}
+              pr={'2'}
+              pt={'1'}
             >
-              Settings
-            </Heading>
-            <PopoverCloseButton
-              position={'relative'}
-              right={'-1'}
-              size={'sm'}
-              top={'0'}
-            />
-          </PopoverHeader>
-          <FormControl>
-            <PopoverBody pl={'2'} pr={'2'}>
-              {children}
-            </PopoverBody>
-            <PopoverFooter mt={2} pl={'2'} pr={'2'}>
-              <Flex flex={'1'} justifyContent={'end'}>
-                <Button
-                  borderRadius={'3'}
-                  mr={'3'}
-                  size={'sm'}
-                  onClick={handleSaveOnClick}
-                >
-                  Close
-                </Button>
-                <Button
-                  borderRadius={'3'}
-                  colorScheme={'green'}
-                  size={'sm'}
-                  onClick={handleSaveOnClick}
-                >
-                  Save
-                </Button>
-              </Flex>
-            </PopoverFooter>
-          </FormControl>
-        </PopoverContent>
+              <Heading
+                fontSize={'0.65rem'}
+                letterSpacing={'tight'}
+                pr={'10'}
+                size={'xs'}
+                textTransform={'uppercase'}
+              >
+                Settings
+              </Heading>
+              <PopoverCloseButton
+                position={'relative'}
+                right={'-1'}
+                size={'sm'}
+                top={'0'}
+              />
+            </PopoverHeader>
+            <FormControl>
+              <PopoverBody pl={'2'} pr={'2'}>
+                {children}
+              </PopoverBody>
+              <PopoverFooter mt={2} pl={'2'} pr={'2'}>
+                <Flex flex={'1'} justifyContent={'end'}>
+                  <Button
+                    borderRadius={'3'}
+                    mr={'3'}
+                    size={'sm'}
+                    onClick={handleSaveOnClick}
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    borderRadius={'3'}
+                    colorScheme={'green'}
+                    size={'sm'}
+                    onClick={handleSaveOnClick}
+                  >
+                    Save
+                  </Button>
+                </Flex>
+              </PopoverFooter>
+            </FormControl>
+          </PopoverContent>
+        </Box>
       </Popover>
     </Flex>
   );
