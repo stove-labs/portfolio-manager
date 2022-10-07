@@ -14,8 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
-import { TokenSelector } from '../../../shared/components/TokenSelector/TokenSelector';
-import { HistoricalPeriodSelector } from '../../../shared/components/HistoricalPeriodSelector/HistoricalPeriodSelector';
+import { TokenBalanceWidgetSettings } from './TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 
 export interface Token {
   fullName: string;
@@ -110,19 +109,6 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
       </Flex>
       <Text fontSize={sizing.fontSize}>(+36%)</Text>
     </Flex>
-  );
-};
-
-export const TokenBalanceWidgetSettings: React.FC = () => {
-  return (
-    <>
-      <Flex flex={'1'} flexDirection={'column'}>
-        <Flex mb={'2'}>
-          <TokenSelector />
-        </Flex>
-        <HistoricalPeriodSelector />
-      </Flex>
-    </>
   );
 };
 
