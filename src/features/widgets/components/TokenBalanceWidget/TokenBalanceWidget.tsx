@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Divider,
   Flex,
@@ -49,6 +49,15 @@ export interface TokenBalanceWidgetProps {
   isLoading: boolean;
 }
 
+export const percentageChange = (start: number, end: number): number => {
+  if (start === Infinity || end === Infinity) return 0;
+  if (start === -Infinity || end === -Infinity) return 0;
+  if (Number.isNaN(start) || Number.isNaN(end)) return 0;
+  if (start === 0 && end === 0) return 0;
+
+  return ((end - start) / start) * 100;
+};
+
 export const TokenBalanceWidget: React.FC<
   TokenBalanceWidgetProps & WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
@@ -59,9 +68,19 @@ export const TokenBalanceWidget: React.FC<
   onSettingsChange,
   settings,
 }) => {
-  // const balancePercentageChange = useMemo(() => {
-  //   return '70%';
-  // }, [balance, historicalBalance]);
+  const balancePercentageChange = useMemo(() => {
+    return percentageChange(
+      Number(balance.amount),
+      Number(historicalBalance.amount)
+    );
+  }, [balance, historicalBalance]);
+
+  const balanceFiatPercentageChange = useMemo(() => {
+    return percentageChange(
+      Number(balance.fiatBalance.amount),
+      Number(historicalBalance.fiatBalance.amount)
+    );
+  }, [balance, historicalBalance]);
 
   const tokens: Token[] = [
     {
@@ -89,7 +108,7 @@ export const TokenBalanceWidget: React.FC<
         />
       }
       // TODO: this cant be undefined
-      title={`kUSD balance (${settings?.historicalPeriod ?? '24h'})`}
+      title={`${balance.token.ticker} balance (${settings?.historicalPeriod ?? '24h'})`}
       onSettingsChange={onSettingsChange}
       onTitleSubmit={console.log}
       onWidgetRemove={onWidgetRemove}
@@ -123,7 +142,9 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'extrabold'}
                   lineHeight={'26px'}
                 >
-                  {abbreviateNumber(Number(balance.amount), 2)}
+                  {Number(balance.amount) > 1
+                    ? abbreviateNumber(Number(balance.amount), 2)
+                    : Number(balance.amount).toFixed(6)}
                 </Text>
                 {/* ticker */}
                 <Text
@@ -134,7 +155,7 @@ export const TokenBalanceWidget: React.FC<
                 >
                   {balance.token.ticker}
                 </Text>
-                <ChangeIndicator size={'lg'} trend={'upwards'} />
+                <ChangeIndicator change={balancePercentageChange} size={'lg'} />
               </Flex>
             </Skeleton>
 
@@ -146,9 +167,15 @@ export const TokenBalanceWidget: React.FC<
                   fontSize={'xs'}
                   fontWeight={'normal'}
                 >
-                  ${abbreviateNumber(Number(balance.fiatBalance.amount), 2)}
+                  $
+                  {Number(balance.fiatBalance.amount) > 1
+                    ? abbreviateNumber(Number(balance.fiatBalance.amount), 2)
+                    : Number(balance.fiatBalance.amount).toFixed(6)}
                 </Text>
-                <ChangeIndicator size={'sm'} trend={'downwards'} />
+                <ChangeIndicator
+                  change={balanceFiatPercentageChange}
+                  size={'sm'}
+                />
               </Flex>
             </Skeleton>
           </Flex>
@@ -170,7 +197,7 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 kUSD = 1.456 XTZ, 1 kUSD = $ 0.99
+              1 {balance.token.ticker} = 1.456 XTZ, 1 {balance.token.ticker} = $ 0.99
             </Text>
           </Skeleton>
         </Flex>

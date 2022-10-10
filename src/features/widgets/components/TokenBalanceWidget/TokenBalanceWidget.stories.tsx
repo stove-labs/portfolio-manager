@@ -5,29 +5,34 @@ import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { TokenBalanceWidget } from './TokenBalanceWidget';
 
 const token = {
+  id: '0',
   fullName: 'Kolibri USD',
   ticker: 'kUSD',
 };
 
 const args = {
   balance: {
-    amount: '0.005',
     token,
+    amount: '0.005',
     fiatBalance: {
       amount: '100000',
     },
   },
   historicalBalance: {
-    amount: '50000',
     token,
+    amount: '50000',
     fiatBalance: {
       amount: '50000',
     },
   },
+  settings: {
+    token: 'kUSD',
+    historicalPeriod: '7d',
+  },
   isLoading: false,
 };
 
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default {
   component: TokenBalanceWidget,
   args,
@@ -52,6 +57,7 @@ const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => (
         },
       ]}
       onLayoutChange={console.log}
+      onSettingsChange={console.log}
       onWidgetRemove={console.log}
     />
   </Flex>

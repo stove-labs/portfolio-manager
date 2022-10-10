@@ -1,7 +1,6 @@
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Flex } from '@chakra-ui/react';
-import TokenBalanceWidgetDefault from '../TokenBalanceWidget/TokenBalanceWidget.stories';
 import { WidgetsLayout } from './WidgetsLayout';
 
 const layout = [
@@ -42,30 +41,30 @@ const layout = [
   },
 ];
 
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default {
   component: WidgetsLayout,
   args: {
     widgets: [
       {
         name: 'TokenBalanceWidget',
-        settings: TokenBalanceWidgetDefault.args,
+        id: '0',
       },
       {
         name: 'TokenBalanceWidget',
-        settings: TokenBalanceWidgetDefault.args,
+        id: '1',
       },
       {
         name: 'TokenBalanceWidget',
-        settings: TokenBalanceWidgetDefault.args,
+        id: '2',
       },
       {
         name: 'TokenBalanceWidget',
-        settings: TokenBalanceWidgetDefault.args,
+        id: '3',
       },
       {
         name: 'TokenBalanceWidget',
-        settings: TokenBalanceWidgetDefault.args,
+        id: '4',
       },
     ],
     layout,

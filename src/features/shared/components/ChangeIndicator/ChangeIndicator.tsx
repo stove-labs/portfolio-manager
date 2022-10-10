@@ -6,12 +6,12 @@ import React, { useMemo } from 'react';
 
 export interface ChangeIndicatorProps {
   size: 'sm' | 'lg';
-  trend: 'upwards' | 'downwards';
+  change: number;
 }
 
 export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
   size,
-  trend,
+  change,
 }) => {
   const sizing = useMemo<{
     iconSize: SizeProp;
@@ -31,6 +31,7 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
         };
     }
   }, [size]);
+  const trend = change > 0 ? 'upwards' : 'downwards';
   const upwardsTrendColor = useColorModeValue('green.500', 'green.500');
   const downwardsTrendColor = useColorModeValue('red.500', 'red.500');
   const trendColor = useMemo(() => {
@@ -74,7 +75,7 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
           }}
         />
       </Flex>
-      <Text fontSize={sizing.fontSize}>(+36%)</Text>
+      <Text fontSize={sizing.fontSize}>({change.toFixed(2)}%)</Text>
     </Flex>
   );
 };
