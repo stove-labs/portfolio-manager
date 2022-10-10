@@ -1,11 +1,19 @@
 import { Button, Input } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
-import { WidgetsLayoutState } from '../../store/useWidgetsLayoutStore';
+import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
+import { Settings } from '../Settings/Settings';
 import { WidgetsLayout as WidgetsLayoutComponent } from './../../components/WidgetsLayout/WidgetsLayout';
+import { WidgetsLayoutState } from './store/useWidgetsLayoutStore';
 
 export const WidgetsLayout: React.FC = () => {
   const [state, dispatch] = useStoreContext();
+  const { flushDispatchQueue } = useDispatchUniqueContext();
+
+  useEffect(() => {
+    flushDispatchQueue();
+  }, []);
+
   const address = 'address';
 
   useEffect(() => {
@@ -46,11 +54,15 @@ export const WidgetsLayout: React.FC = () => {
     <>
       <Button onClick={() => downloadSettings()}>Download Settings</Button>
       <Input type={'file'} onChange={(e) => restoreSettings(e)}></Input>
+      <Settings />
       <WidgetsLayoutComponent
         layout={state.settings.layout}
         widgets={state.settings.widgets}
         onLayoutChange={(layout) =>
           dispatch({ type: 'UPDATE_LAYOUT', payload: { layout } })
+        }
+        onWidgetRemove={(id) =>
+          dispatch({ type: 'REMOVE_WIDGET', payload: { id } })
         }
       />
     </>

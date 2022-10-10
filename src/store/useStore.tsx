@@ -14,7 +14,7 @@ import {
   widgetsLayoutReducer,
   WidgetsLayoutState,
   initialWidgetsLayoutState,
-} from '../features/widgets/store/useWidgetsLayoutStore';
+} from '../features/widgets/containers/WidgetsLayout/store/useWidgetsLayoutStore';
 import { useWalletEffects } from '../features/Wallet/store/useWalletEffects';
 import {
   initialWalletState,

@@ -1,10 +1,10 @@
-import { Flex } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 import RGL, { Layout, WidthProvider } from 'react-grid-layout';
 import {
   TokenBalanceWidget,
   TokenBalanceWidgetProps,
-} from '../../components/TokenBalanceWidget/TokenBalanceWidget';
+} from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -12,8 +12,9 @@ export type WidgetProps = TokenBalanceWidgetProps;
 export type WidgetName = 'TokenBalanceWidget';
 
 export interface WidgetSettings {
+  id: string;
   name: WidgetName;
-  settings: WidgetProps;
+  settings?: WidgetProps;
 }
 
 export interface WidgetsLayoutProps {
@@ -21,12 +22,14 @@ export interface WidgetsLayoutProps {
   widgets: WidgetSettings[];
   isDraggable?: boolean;
   onLayoutChange: (layout: Layout[]) => void;
+  onWidgetRemove: (index: string) => void;
 }
 
 export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
   layout,
   widgets,
   onLayoutChange,
+  onWidgetRemove,
   isDraggable = true,
 }) => {
   const renderWidget = (widget: WidgetSettings): ReactNode => {
@@ -47,14 +50,15 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
       rowHeight={30}
       onLayoutChange={(newLayout) => onLayoutChange(newLayout)}
     >
-      {widgets?.map((widget, i) => (
+      {widgets?.map((widget) => (
         <Flex
-          key={i}
+          key={widget.id}
           alignItems={'start'}
           height={'100%'}
           justifyContent={'center'}
           width={'100%'}
         >
+          <Button onClick={() => onWidgetRemove(widget.id)}>Remove</Button>
           {renderWidget(widget)}
         </Flex>
       ))}
