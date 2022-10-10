@@ -16,5 +16,5 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ tokens }) => {
     [tokens]
   );
 
-  return <AutoComplete label={'Token'} options={options} />;
+  return <AutoComplete label={'Token'} name={'token'} options={options} />;
 };

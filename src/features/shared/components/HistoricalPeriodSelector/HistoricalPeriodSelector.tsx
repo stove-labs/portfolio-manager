@@ -17,5 +17,11 @@ export const HistoricalPeriodSelector: React.FC<
       })),
     [historicalPeriods]
   );
-  return <AutoComplete label={'Historical period'} options={options} />;
+  return (
+    <AutoComplete
+      label={'Historical period'}
+      name={'historicalPeriod'}
+      options={options}
+    />
+  );
 };

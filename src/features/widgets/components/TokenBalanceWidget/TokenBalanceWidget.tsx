@@ -17,6 +17,7 @@ import {
 } from './TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 
 export interface Token {
+  id: string;
   fullName: string;
   ticker: string;
 }
@@ -38,7 +39,7 @@ export interface WidgetProps<T> {
 }
 
 export interface TokenBalanceWidgetSettingsData {
-  token: Token;
+  token: string;
   historicalPeriod: HistoricalPeriod;
 }
 
@@ -64,10 +65,12 @@ export const TokenBalanceWidget: React.FC<
 
   const tokens: Token[] = [
     {
+      id: '0',
       ticker: 'kUSD',
       fullName: 'Kolibri USD',
     },
     {
+      id: '1',
       ticker: 'QUIPU',
       fullName: 'Quipuswap',
     },
@@ -85,7 +88,8 @@ export const TokenBalanceWidget: React.FC<
           tokens={tokens}
         />
       }
-      title={'kUSD balance (24h)'}
+      // TODO: this cant be undefined
+      title={`kUSD balance (${settings?.historicalPeriod ?? '24h'})`}
       onSettingsChange={onSettingsChange}
       onTitleSubmit={console.log}
       onWidgetRemove={onWidgetRemove}

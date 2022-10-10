@@ -10,10 +10,7 @@ export const TokenBalanceWidget: React.FC<
   WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
   settings = {
-    token: {
-      ticker: 'kUSD',
-      fullName: 'Kolibri USD',
-    },
+    token: 'QUIPU',
     historicalPeriod: '7d',
   },
   onWidgetRemove,
@@ -21,11 +18,13 @@ export const TokenBalanceWidget: React.FC<
 }) => {
   const [isLoading] = useState(false);
 
-  const token = settings.token;
-
   const balance: Balance = {
     amount: '0.005',
-    token,
+    token: {
+      id: '0',
+      ticker: settings.token,
+      fullName: 'Kolibri',
+    },
     fiatBalance: {
       amount: '100000',
     },
@@ -33,7 +32,11 @@ export const TokenBalanceWidget: React.FC<
 
   const historicalBalance: Balance = {
     amount: '50000',
-    token,
+    token: {
+      id: '0',
+      ticker: 'kUSD',
+      fullName: 'Kolibri',
+    },
     fiatBalance: {
       amount: '50000',
     },

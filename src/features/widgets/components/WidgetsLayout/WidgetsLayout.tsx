@@ -21,6 +21,7 @@ export interface WidgetsLayoutProps {
   isDraggable?: boolean;
   onLayoutChange: (layout: Layout[]) => void;
   onWidgetRemove: (index: string) => void;
+  onSettingsChange: (index: string, settings: WidgetSettingsData) => void;
 }
 
 export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
@@ -28,6 +29,7 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
   widgets,
   onLayoutChange,
   onWidgetRemove,
+  onSettingsChange,
   isDraggable = true,
 }) => {
   const renderWidget = (widget: WidgetSettings): ReactNode => {
@@ -37,7 +39,7 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
           <TokenBalanceWidget
             settings={widget.settings}
             onSettingsChange={(settings) =>
-              console.log('WidgetsLayout onSettingsChange', settings)
+              onSettingsChange(widget.id, settings)
             }
             onWidgetRemove={() => onWidgetRemove(widget.id)}
           />
