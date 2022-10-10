@@ -21,7 +21,7 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
   label,
 }) => {
   return (
-    <Flex flexDirection={'column'}>
+    <Flex flex={'1'} flexDirection={'column'}>
       <FormLabel fontSize={'12'} mb={1}>
         {label}
       </FormLabel>

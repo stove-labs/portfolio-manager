@@ -19,14 +19,25 @@ import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 
-export const WidgetSettings: React.FC<PropsWithChildren<{}>> = ({
-  children,
-}) => {
+export interface WidgetSettingsProps<T> {
+  onSettingsChange: (settings: T) => void;
+  onWidgetRemove: () => void;
+  settings: T;
+}
+
+export const WidgetSettings: React.FC<
+  PropsWithChildren<WidgetSettingsProps<any>>
+> = ({ children, onSettingsChange, settings, onWidgetRemove }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleSaveOnClick = useCallback(() => {
+    onSettingsChange(settings);
     onClose();
   }, [onClose]);
+
+  const handleRemoveWidgetClick = useCallback(() => {
+    onWidgetRemove();
+  }, [onWidgetRemove]);
   return (
     <Flex onMouseDown={(e) => e.stopPropagation()}>
       <Popover
@@ -92,25 +103,39 @@ export const WidgetSettings: React.FC<PropsWithChildren<{}>> = ({
             </PopoverHeader>
             <FormControl>
               <PopoverBody pl={'2'} pr={'2'}>
+                {/* wrap children into a form */}
                 {children}
               </PopoverBody>
               <PopoverFooter mt={2} pl={'2'} pr={'2'}>
-                <Flex flex={'1'} justifyContent={'end'}>
-                  <Button
-                    borderRadius={'3'}
-                    mr={'3'}
-                    size={'sm'}
-                    onClick={handleSaveOnClick}
-                  >
-                    Close
-                  </Button>
+                <Flex flex={'1'}>
                   <Button
                     borderRadius={'3'}
                     colorScheme={'green'}
+                    flex={'1'}
                     size={'sm'}
                     onClick={handleSaveOnClick}
                   >
                     Save
+                  </Button>
+                </Flex>
+                <Flex flex={'1'} gap={'3'} justifyContent={'end'} mt={'2'}>
+                  <Button
+                    borderRadius={'3'}
+                    flex={'1'}
+                    size={'sm'}
+                    onClick={onClose}
+                  >
+                    Close
+                  </Button>
+                  {/* TODO: add confirmation alert https://chakra-ui.com/docs/components/alert-dialog */}
+                  <Button
+                    borderRadius={'3'}
+                    colorScheme={'red'}
+                    flex={'1'}
+                    size={'sm'}
+                    onClick={handleRemoveWidgetClick}
+                  >
+                    Remove
                   </Button>
                 </Flex>
               </PopoverFooter>

@@ -1,12 +1,13 @@
 import { Flex, useColorModeValue, Heading } from '@chakra-ui/react';
 import React, { PropsWithChildren, ReactNode } from 'react';
+import { WidgetProps } from '../TokenBalanceWidget/TokenBalanceWidget';
 import { WidgetSettings } from '../WidgetSettings/WidgetSettings';
 
 export interface WidgetWrapperProps {
   title: string;
-  size: 'sm' | 'md' | 'lg';
-  settings: ReactNode;
+  settingsContent: ReactNode;
   onTitleSubmit: (title: string) => void;
+  onWidgetRemove: () => void;
 }
 
 export interface WrapperStyle {
@@ -14,10 +15,14 @@ export interface WrapperStyle {
   minHeight: string;
 }
 
-export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
+export const WidgetWrapper: React.FC<
+  PropsWithChildren<WidgetWrapperProps & WidgetProps<any>>
+> = ({
   children,
-  size,
   title,
+  settingsContent,
+  onSettingsChange,
+  onWidgetRemove,
   settings,
 }) => {
   return (
@@ -38,10 +43,7 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
         },
       }}
     >
-      <Flex
-        justifyContent={'space-between'}
-        // opacity={'0.4'}
-      >
+      <Flex justifyContent={'space-between'}>
         <Heading
           color={useColorModeValue('gray.400', 'gray.400')}
           fontSize={'0.65rem'}
@@ -56,7 +58,13 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
           transition={'ease'}
           transitionDuration={'fast'}
         >
-          <WidgetSettings>{settings}</WidgetSettings>
+          <WidgetSettings
+            settings={settings}
+            onSettingsChange={onSettingsChange}
+            onWidgetRemove={onWidgetRemove}
+          >
+            {settingsContent}
+          </WidgetSettings>
         </Flex>
       </Flex>
       <Flex flex={'1'} height={'100%'}>

@@ -2,21 +2,26 @@ import React, { useState } from 'react';
 import {
   Balance,
   TokenBalanceWidget as TokenBalanceWidgetComponent,
+  TokenBalanceWidgetSettingsData,
+  WidgetProps,
 } from './../../components/TokenBalanceWidget/TokenBalanceWidget';
 
-export interface TokenBalanceWidgetProps {
-  ticker?: string;
-}
-
-export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
-  ticker = 'XTZ',
+export const TokenBalanceWidget: React.FC<
+  WidgetProps<TokenBalanceWidgetSettingsData>
+> = ({
+  settings = {
+    token: {
+      ticker: 'kUSD',
+      fullName: 'Kolibri USD',
+    },
+    historicalPeriod: '7d',
+  },
+  onWidgetRemove,
+  onSettingsChange,
 }) => {
   const [isLoading] = useState(false);
 
-  const token = {
-    fullName: 'Kolibri USD',
-    ticker: 'kUSD',
-  };
+  const token = settings.token;
 
   const balance: Balance = {
     amount: '0.005',
@@ -40,6 +45,9 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
         balance={balance}
         historicalBalance={historicalBalance}
         isLoading={isLoading}
+        settings={settings}
+        onSettingsChange={onSettingsChange}
+        onWidgetRemove={onWidgetRemove}
       />
     </>
   );

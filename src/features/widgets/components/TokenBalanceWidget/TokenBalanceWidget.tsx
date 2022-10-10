@@ -11,7 +11,10 @@ import {
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
-import { TokenBalanceWidgetSettings } from './TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
+import {
+  HistoricalPeriod,
+  TokenBalanceWidgetSettings,
+} from './TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 
 export interface Token {
   fullName: string;
@@ -28,16 +31,32 @@ export interface Balance {
   fiatBalance: FiatBalance;
 }
 
+export interface WidgetProps<T> {
+  onWidgetRemove: () => void;
+  onSettingsChange: (settings: T) => void;
+  settings?: T;
+}
+
+export interface TokenBalanceWidgetSettingsData {
+  token: Token;
+  historicalPeriod: HistoricalPeriod;
+}
+
 export interface TokenBalanceWidgetProps {
   balance: Balance;
   historicalBalance: Balance;
   isLoading: boolean;
 }
 
-export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
+export const TokenBalanceWidget: React.FC<
+  TokenBalanceWidgetProps & WidgetProps<TokenBalanceWidgetSettingsData>
+> = ({
   balance,
   historicalBalance,
   isLoading,
+  onWidgetRemove,
+  onSettingsChange,
+  settings,
 }) => {
   // const balancePercentageChange = useMemo(() => {
   //   return '70%';
@@ -45,10 +64,12 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
 
   return (
     <WidgetWrapper
-      settings={<TokenBalanceWidgetSettings />}
-      size={'sm'}
+      settings={settings}
+      settingsContent={<TokenBalanceWidgetSettings />}
       title={'kUSD balance (24h)'}
+      onSettingsChange={onSettingsChange}
       onTitleSubmit={console.log}
+      onWidgetRemove={onWidgetRemove}
     >
       <Flex direction={'column'} minHeight={'117px'} width={'100%'}>
         {/* content */}
