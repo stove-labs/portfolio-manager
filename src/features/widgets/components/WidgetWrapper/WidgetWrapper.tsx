@@ -1,12 +1,13 @@
 import { Flex, useColorModeValue, Heading } from '@chakra-ui/react';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, ReactNode } from 'react';
+import { WidgetProps } from '../TokenBalanceWidget/TokenBalanceWidget';
+import { WidgetSettings } from '../WidgetSettings/WidgetSettings';
 
 export interface WidgetWrapperProps {
   title: string;
-  size: 'sm' | 'md' | 'lg';
+  settingsContent: ReactNode;
   onTitleSubmit: (title: string) => void;
+  onWidgetRemove: () => void;
 }
 
 export interface WrapperStyle {
@@ -14,10 +15,15 @@ export interface WrapperStyle {
   minHeight: string;
 }
 
-export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
+export const WidgetWrapper: React.FC<
+  PropsWithChildren<WidgetWrapperProps & WidgetProps<any>>
+> = ({
   children,
-  size,
   title,
+  settingsContent,
+  onSettingsChange,
+  onWidgetRemove,
+  settings,
 }) => {
   return (
     <Flex
@@ -30,26 +36,16 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
       pb={'2'}
       shadow={'sm'}
       sx={{
-        '.settings-icon': {
-          opacity: '0',
-        },
         ':hover': {
           '.settings-icon': {
             opacity: '.7',
-            ':hover': {
-              color: useColorModeValue('gray.500', 'gray.900'),
-              opacity: '1',
-            },
           },
         },
       }}
     >
-      <Flex
-        color={useColorModeValue('gray.400', 'gray.400')}
-        justifyContent={'space-between'}
-        // opacity={'0.4'}
-      >
+      <Flex justifyContent={'space-between'}>
         <Heading
+          color={useColorModeValue('gray.400', 'gray.400')}
           fontSize={'0.65rem'}
           letterSpacing={'tight'}
           size={'xs'}
@@ -58,13 +54,17 @@ export const WidgetWrapper: React.FC<PropsWithChildren<WidgetWrapperProps>> = ({
           {title}
         </Heading>
         <Flex
-          className="settings-icon"
           cursor={'pointer'}
           transition={'ease'}
           transitionDuration={'fast'}
-          onMouseDown={(e) => e.stopPropagation()}
         >
-          <FontAwesomeIcon icon={faGear} size={'xs'} />
+          <WidgetSettings
+            settings={settings}
+            onSettingsChange={onSettingsChange}
+            onWidgetRemove={onWidgetRemove}
+          >
+            {settingsContent}
+          </WidgetSettings>
         </Flex>
       </Flex>
       <Flex flex={'1'} height={'100%'}>
