@@ -1,7 +1,7 @@
 import { Button, Input } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
-import { Settings } from '../../components/Settings/Settings';
+import { Settings } from '../Settings/Settings';
 import { WidgetsLayoutState } from './store/useWidgetsLayoutStore';
 import { WidgetsLayout as WidgetsLayoutComponent } from './../../components/WidgetsLayout/WidgetsLayout';
 
@@ -51,7 +51,7 @@ export const WidgetsLayout: React.FC = () => {
       <WidgetsLayoutComponent
         layout={state.settings.layout}
         widgets={state.settings.widgets}
-        onLayoutChange={(layout) => 
+        onLayoutChange={(layout) =>
           dispatch({ type: 'UPDATE_LAYOUT', payload: { layout } })
         }
         onWidgetRemove={(id) =>

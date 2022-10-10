@@ -12,8 +12,8 @@ import React from 'react';
 import { Layout } from 'react-grid-layout';
 import { v4 as uuidv4 } from 'uuid';
 import { useStoreContext } from '../../../../store/useStore';
-import { TokenBalanceWidget } from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
-import { WidgetName } from '../WidgetsLayout/WidgetsLayout';
+import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
+import { WidgetName } from '../../components/WidgetsLayout/WidgetsLayout';
 
 export type widgetsSize = {
   [key in WidgetName]: {
