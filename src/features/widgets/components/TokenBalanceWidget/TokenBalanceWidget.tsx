@@ -62,10 +62,29 @@ export const TokenBalanceWidget: React.FC<
   //   return '70%';
   // }, [balance, historicalBalance]);
 
+  const tokens: Token[] = [
+    {
+      ticker: 'kUSD',
+      fullName: 'Kolibri USD',
+    },
+    {
+      ticker: 'QUIPU',
+      fullName: 'Quipuswap',
+    },
+  ];
+
+  const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];
+
   return (
     <WidgetWrapper
       settings={settings}
-      settingsContent={<TokenBalanceWidgetSettings />}
+      // TODO: add TokenBalanceWidgetSettings container
+      settingsContent={
+        <TokenBalanceWidgetSettings
+          historicalPeriods={historicalPeriods}
+          tokens={tokens}
+        />
+      }
       title={'kUSD balance (24h)'}
       onSettingsChange={onSettingsChange}
       onTitleSubmit={console.log}

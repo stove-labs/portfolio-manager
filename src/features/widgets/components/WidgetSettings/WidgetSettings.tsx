@@ -103,7 +103,7 @@ export const WidgetSettings: React.FC<
             </PopoverHeader>
             <FormControl>
               <PopoverBody pl={'2'} pr={'2'}>
-                {/* wrap children into a form */}
+                {/* TODO: wrap children into a form, in order to propagate the changed form values to onSettingsChange */}
                 {children}
               </PopoverBody>
               <PopoverFooter mt={2} pl={'2'} pr={'2'}>

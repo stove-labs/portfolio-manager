@@ -11,14 +11,21 @@ export interface TokenBalanceWidgetSettingsData {
   historicalPeriod: HistoricalPeriod;
 }
 
-export const TokenBalanceWidgetSettings: React.FC = () => {
+export interface TokenBalanceWidgetSettingsProps {
+  tokens: Token[];
+  historicalPeriods: HistoricalPeriod[];
+}
+
+export const TokenBalanceWidgetSettings: React.FC<
+  TokenBalanceWidgetSettingsProps
+> = ({ tokens, historicalPeriods }) => {
   return (
     <>
       <Flex flex={'1'} flexDirection={'column'}>
         <Flex mb={'2'}>
-          <TokenSelector />
+          <TokenSelector tokens={tokens} />
         </Flex>
-        <HistoricalPeriodSelector />
+        <HistoricalPeriodSelector historicalPeriods={historicalPeriods} />
       </Flex>
     </>
   );
