@@ -14,7 +14,7 @@ export interface TokenBalanceWidgetProps {
 }
 
 export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
-  ticker = 'kUSD',
+  ticker = 'tzBTC',
   dummy = false,
 }) => {
   const [state] = useStoreContext();
