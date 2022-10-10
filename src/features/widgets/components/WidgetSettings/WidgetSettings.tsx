@@ -34,13 +34,21 @@ export const WidgetSettings: React.FC<
     defaultValues: settings,
   });
 
-  const handleSaveOnClick = useCallback(
+  const handleSaveClick = useCallback(
     (settings: any) => {
       onSettingsChange(settings);
       onClose();
     },
     [onClose]
   );
+
+  const handleCloseClick = useCallback(() => {
+    // reset after the popover is closed
+    setTimeout(() => {
+      form.reset();
+    }, 100);
+    onClose();
+  }, [form]);
 
   const handleRemoveWidgetClick = useCallback(() => {
     onWidgetRemove();
@@ -116,7 +124,7 @@ export const WidgetSettings: React.FC<
                 <form
                   // TODO: fix eslint error
                   onSubmit={(e) => {
-                    const handleSubmit = form.handleSubmit(handleSaveOnClick);
+                    const handleSubmit = form.handleSubmit(handleSaveClick);
                     handleSubmit(e).catch(console.error);
                   }}
                 >
@@ -142,7 +150,7 @@ export const WidgetSettings: React.FC<
                         borderRadius={'3'}
                         flex={'1'}
                         size={'sm'}
-                        onClick={onClose}
+                        onClick={handleCloseClick}
                       >
                         Close
                       </Button>
