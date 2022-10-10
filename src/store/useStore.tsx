@@ -22,14 +22,21 @@ import {
   walletReducer,
   WalletState,
 } from '../features/Wallet/store/useWalletStore';
+import {
+  TokenBalanceWidgetAction,
+  tokenBalanceWidgetReducer,
+  TokenBalanceWidgetState,
+  initialTokenBalanceWidgetState,
+} from '../features/widgets/containers/TokenBalanceWidget/store/useTokenBalanceWidgetStore';
 
 export interface State {
   counter: CounterState;
   wallet: WalletState;
   settings: WidgetsLayoutState;
+  tokens: TokenBalanceWidgetState;
 }
 
-export type Action = CounterAction | WalletAction | WidgetsLayoutAction;
+export type Action = CounterAction | WalletAction | WidgetsLayoutAction | TokenBalanceWidgetAction;
 
 export type AppReducer = Reducer<State, Action>;
 
@@ -37,6 +44,7 @@ const [reducer, initialState] = combineReducers<AppReducer>({
   counter: [counterReducer, initialCounterState],
   wallet: [walletReducer, initialWalletState],
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
+  tokens: [tokenBalanceWidgetReducer, initialTokenBalanceWidgetState],
 });
 
 export type Effect = (

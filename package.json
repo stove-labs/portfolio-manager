@@ -27,6 +27,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@parcel/config-default": "^2.7.0",
     "@rollup/plugin-commonjs": "^22.0.2",
+    "bignumber.js": "^9.1.0",
     "chakra-ui-steps": "^1.7.4",
     "constate": "^3.3.2",
     "framer-motion": "^7.3.5",

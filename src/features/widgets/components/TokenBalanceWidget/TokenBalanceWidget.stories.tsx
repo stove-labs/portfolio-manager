@@ -10,16 +10,15 @@ const token = {
 };
 
 const args = {
+  token,
   balance: {
     amount: '0.005',
-    token,
     fiatBalance: {
       amount: '100000',
     },
   },
   historicalBalance: {
     amount: '50000',
-    token,
     fiatBalance: {
       amount: '50000',
     },
@@ -27,7 +26,7 @@ const args = {
   isLoading: false,
 };
 
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export default {
   component: TokenBalanceWidget,
   args,

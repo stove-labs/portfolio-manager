@@ -25,12 +25,12 @@ export interface FiatBalance {
 }
 
 export interface Balance {
-  token: Token;
   amount: string;
   fiatBalance: FiatBalance;
 }
 
 export interface TokenBalanceWidgetProps {
+  token: Token;
   balance: Balance;
   historicalBalance: Balance;
   isLoading: boolean;
@@ -112,6 +112,7 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
 };
 
 export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
+  token,
   balance,
   historicalBalance,
   isLoading,
@@ -164,7 +165,7 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
                   pl={'2'}
                   position={'relative'}
                 >
-                  {balance.token.ticker}
+                  {token.ticker}
                 </Text>
                 <ChangeIndicator size={'lg'} trend={'upwards'} />
               </Flex>
