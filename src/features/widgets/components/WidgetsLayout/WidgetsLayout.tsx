@@ -1,20 +1,18 @@
-import { Button, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 import RGL, { Layout, WidthProvider } from 'react-grid-layout';
-import {
-  TokenBalanceWidget,
-  TokenBalanceWidgetProps,
-} from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
+import { TokenBalanceWidget } from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
+import { TokenBalanceWidgetSettingsData } from '../TokenBalanceWidget/TokenBalanceWidget';
 
 const ReactGridLayout = WidthProvider(RGL);
 
-export type WidgetProps = TokenBalanceWidgetProps;
+export type WidgetSettingsData = TokenBalanceWidgetSettingsData;
 export type WidgetName = 'TokenBalanceWidget';
 
 export interface WidgetSettings {
   id: string;
   name: WidgetName;
-  settings?: WidgetProps;
+  settings?: WidgetSettingsData;
 }
 
 export interface WidgetsLayoutProps {
@@ -23,6 +21,7 @@ export interface WidgetsLayoutProps {
   isDraggable?: boolean;
   onLayoutChange: (layout: Layout[]) => void;
   onWidgetRemove: (index: string) => void;
+  onSettingsChange: (index: string, settings: WidgetSettingsData) => void;
 }
 
 export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
@@ -30,12 +29,21 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
   widgets,
   onLayoutChange,
   onWidgetRemove,
+  onSettingsChange,
   isDraggable = true,
 }) => {
   const renderWidget = (widget: WidgetSettings): ReactNode => {
     switch (widget.name) {
       case 'TokenBalanceWidget': {
-        return <TokenBalanceWidget {...widget.settings} />;
+        return (
+          <TokenBalanceWidget
+            settings={widget.settings}
+            onSettingsChange={(settings) =>
+              onSettingsChange(widget.id, settings)
+            }
+            onWidgetRemove={() => onWidgetRemove(widget.id)}
+          />
+        );
       }
     }
   };
@@ -58,7 +66,6 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
           justifyContent={'center'}
           width={'100%'}
         >
-          <Button onClick={() => onWidgetRemove(widget.id)}>Remove</Button>
           {renderWidget(widget)}
         </Flex>
       ))}

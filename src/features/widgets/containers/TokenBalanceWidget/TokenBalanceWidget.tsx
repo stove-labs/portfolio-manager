@@ -1,39 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { useStoreContext } from '../../../../store/useStore';
 import {
   Balance,
   TokenBalanceWidget as TokenBalanceWidgetComponent,
-  TokenBalanceWidgetProps as TokenBalanceWidgetComponentProps,
+  TokenBalanceWidgetSettingsData,
+  WidgetProps,
 } from './../../components/TokenBalanceWidget/TokenBalanceWidget';
-import { Token } from './store/useTokenBalanceWidgetStore';
 
-export interface TokenBalanceWidgetProps {
-  ticker?: string;
-  dummy?: boolean;
-}
-
-export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
-  ticker = 'tzBTC',
-  dummy = false,
+export const TokenBalanceWidget: React.FC<
+  WidgetProps<TokenBalanceWidgetSettingsData>
+> = ({
+  settings = {
+    token: 'QUIPU',
+    historicalPeriod: '7d',
+  },
+  onWidgetRemove,
+  onSettingsChange,
 }) => {
   const [state] = useStoreContext();
-  const [isLoading, setIsLoading] = useState(false);
-  const [token, setToken] = useState<Token | undefined>();
-  const [balance, setBalance] = useState<Balance>({
-    amount: '0',
-    fiatBalance: { amount: '0' },
-  });
-  const [historicalBalance, setHistoricalBalance] = useState<Balance>({
-    amount: '0',
-    fiatBalance: { amount: '0' },
-  });
-
-  useEffect(() => {
-    setIsLoading(
+  const isLoading = useMemo(() => {
+    return (
       state.tokens.tokens.isLoading ||
-        state.tokens.tokensBalance.isLoading ||
-        state.tokens.tokensBalanceHistorical.isLoading
+      state.tokens.tokensBalance.isLoading ||
+      state.tokens.tokensBalanceHistorical.isLoading
     );
   }, [
     state.tokens.tokens.isLoading,
@@ -41,23 +31,21 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
     state.tokens.tokensBalanceHistorical.isLoading,
   ]);
 
-  useEffect(() => {
+  const token = useMemo(() => {
     if (isLoading) return;
 
-    setToken(
-      state.tokens.tokens.data?.filter(
-        (item) => item.metadata?.symbol === ticker
-      )?.['0']
-    );
-  }, [ticker, isLoading]);
-
-  const dummyToken = {
-    fullName: 'Kolibri USD',
-    ticker: 'kUSD',
-  };
+    return state.tokens.tokens.data?.filter(
+      (item) => item.metadata?.symbol === settings.token
+    )?.['0'];
+  }, [settings, isLoading]);
 
   const dummyBalance: Balance = {
     amount: '0.005',
+    token: {
+      id: '0',
+      ticker: settings.token,
+      fullName: 'Kolibri',
+    },
     fiatBalance: {
       amount: '100000',
     },
@@ -65,58 +53,69 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
 
   const dummyHistoricalBalance: Balance = {
     amount: '50000',
+    token: {
+      id: '0',
+      ticker: 'kUSD',
+      fullName: 'Kolibri',
+    },
     fiatBalance: {
       amount: '50000',
     },
   };
 
-  useEffect(() => {
+  const balance = useMemo(() => {
+    if (token === undefined) return;
+
     const tokensBalance = state.tokens.tokensBalance.data?.filter(
       (item) => item.id === token?.id
     )?.['0'];
-    const tokensBalanceHistorical =
-      state.tokens.tokensBalanceHistorical.data?.filter(
-        (item) => item.id === token?.id
-      )?.['0'];
 
-    setBalance({
+    return {
+      token: {
+        id: token.id,
+        ticker: token.metadata?.symbol ?? '',
+        fullName: token.metadata?.name ?? '',
+      },
       amount: String(
         BigNumber(tokensBalance?.balance ?? '0').dividedBy(
           Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
         )
       ),
       fiatBalance: { amount: '0' },
-    });
-    setHistoricalBalance({
+    };
+  }, [token]);
+
+  const historicalBalance = useMemo(() => {
+    if (token === undefined) return;
+
+    const tokensBalanceHistorical =
+      state.tokens.tokensBalanceHistorical.data?.filter(
+        (item) => item.id === token.id
+      )?.['0'];
+
+    return {
+      token: {
+        id: token.id,
+        ticker: token.metadata?.symbol ?? '',
+        fullName: token.metadata?.name ?? '',
+      },
       amount: String(
         BigNumber(tokensBalanceHistorical?.balanceHistorical ?? '0').dividedBy(
           Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
         )
       ),
       fiatBalance: { amount: '0' },
-    });
+    };
   }, [token]);
 
-  const props: TokenBalanceWidgetComponentProps = dummy
-    ? {
-        token: dummyToken,
-        balance: dummyBalance,
-        historicalBalance: dummyHistoricalBalance,
-        isLoading: false,
-      }
-    : {
-        token: {
-          fullName: token?.metadata?.name ?? '',
-          ticker,
-        },
-        balance,
-        historicalBalance,
-        isLoading,
-      };
-
   return (
-    <>
-      <TokenBalanceWidgetComponent {...props} />
-    </>
+    <TokenBalanceWidgetComponent
+      balance={balance ?? dummyBalance}
+      historicalBalance={historicalBalance ?? dummyHistoricalBalance}
+      isLoading={isLoading}
+      settings={settings}
+      onSettingsChange={onSettingsChange}
+      onWidgetRemove={onWidgetRemove}
+    />
   );
 };

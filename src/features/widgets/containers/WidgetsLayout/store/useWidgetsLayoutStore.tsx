@@ -2,7 +2,10 @@ import { Reducer, useReducer } from 'react';
 import produce from 'immer';
 import { Layout } from 'react-grid-layout';
 import { isEmpty } from 'lodash';
-import { WidgetSettings } from '../../../components/WidgetsLayout/WidgetsLayout';
+import {
+  WidgetSettings,
+  WidgetSettingsData,
+} from '../../../components/WidgetsLayout/WidgetsLayout';
 
 export interface WidgetsLayoutState {
   layout: Layout[];
@@ -22,6 +25,10 @@ export type WidgetsLayoutAction =
   | {
       type: 'REMOVE_WIDGET';
       payload: { id: string };
+    }
+  | {
+      type: 'UPDATE_WIDGET';
+      payload: { id: string; settings: WidgetSettingsData };
     };
 
 const data = JSON.parse(
@@ -101,6 +108,17 @@ export const widgetsLayoutReducer: Reducer<
         draft.widgets = state.widgets.filter(
           (item) => item.id !== action.payload.id
         );
+      });
+
+    case 'UPDATE_WIDGET':
+      return produce(state, (draft) => {
+        draft.widgets = draft.widgets.map((widget) => {
+          if (widget.id === action.payload.id) {
+            widget.settings = action.payload.settings;
+          }
+
+          return widget;
+        });
       });
 
     default:

@@ -5,23 +5,29 @@ import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { TokenBalanceWidget } from './TokenBalanceWidget';
 
 const token = {
+  id: '0',
   fullName: 'Kolibri USD',
   ticker: 'kUSD',
 };
 
 const args = {
-  token,
   balance: {
+    token,
     amount: '0.005',
     fiatBalance: {
       amount: '100000',
     },
   },
   historicalBalance: {
+    token,
     amount: '50000',
     fiatBalance: {
       amount: '50000',
     },
+  },
+  settings: {
+    token: 'kUSD',
+    historicalPeriod: '7d',
   },
   isLoading: false,
 };
@@ -51,6 +57,7 @@ const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => (
         },
       ]}
       onLayoutChange={console.log}
+      onSettingsChange={console.log}
       onWidgetRemove={console.log}
     />
   </Flex>

@@ -108,10 +108,7 @@ export const tokenBalanceWidgetReducer: Reducer<
     case 'LOAD_TOKENS_SUCCESS':
       return produce(state, (draft) => {
         draft.tokens.isLoading = false;
-        draft.tokens.data = [
-          ...(state.tokens.data ?? []),
-          ...action.payload.data,
-        ];
+        draft.tokens.data = action.payload.data;
       });
     case 'LOAD_TOKENS_FAILURE':
       return produce(state, (draft) => {
@@ -126,10 +123,7 @@ export const tokenBalanceWidgetReducer: Reducer<
     case 'LOAD_TOKENS_BALANCE_SUCCESS':
       return produce(state, (draft) => {
         draft.tokensBalance.isLoading = false;
-        draft.tokensBalance.data = [
-          ...(state.tokensBalance.data ?? []),
-          ...action.payload.data,
-        ];
+        draft.tokensBalance.data = action.payload.data;
       });
     case 'LOAD_TOKENS_BALANCE_FAILURE':
       return produce(state, (draft) => {
@@ -144,10 +138,7 @@ export const tokenBalanceWidgetReducer: Reducer<
     case 'LOAD_TOKENS_BALANCE_HISTORICAL_SUCCESS':
       return produce(state, (draft) => {
         draft.tokensBalanceHistorical.isLoading = false;
-        draft.tokensBalanceHistorical.data = [
-          ...(state.tokensBalanceHistorical.data ?? []),
-          ...action.payload.data,
-        ];
+        draft.tokensBalanceHistorical.data = action.payload.data;
       });
     case 'LOAD_TOKENS_BALANCE_HISTORICAL_FAILURE':
       return produce(state, (draft) => {
