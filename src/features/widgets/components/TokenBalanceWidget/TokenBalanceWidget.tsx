@@ -68,7 +68,7 @@ export const TokenBalanceWidget: React.FC<TokenBalanceWidgetProps> = ({
             </SkeletonCircle>
           </Flex>
 
-          {/* talances */}
+          {/* balances */}
           <Flex flex={'1'} flexDirection={'column'} justifyContent={'center'}>
             {/* token balance */}
             <Skeleton isLoaded={!isLoading}>
