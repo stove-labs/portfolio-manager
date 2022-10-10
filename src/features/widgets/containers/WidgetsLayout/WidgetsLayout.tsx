@@ -1,12 +1,19 @@
 import { Button, Input } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
+import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
 import { Settings } from '../Settings/Settings';
-import { WidgetsLayoutState } from './store/useWidgetsLayoutStore';
 import { WidgetsLayout as WidgetsLayoutComponent } from './../../components/WidgetsLayout/WidgetsLayout';
+import { WidgetsLayoutState } from './store/useWidgetsLayoutStore';
 
 export const WidgetsLayout: React.FC = () => {
   const [state, dispatch] = useStoreContext();
+  const { flushDispatchQueue } = useDispatchUniqueContext();
+
+  useEffect(() => {
+    flushDispatchQueue();
+  }, []);
+
   const address = 'address';
 
   useEffect(() => {
