@@ -32,9 +32,10 @@ export const WidgetWrapper: React.FC<
       cursor={'grab'}
       flex={'1'}
       flexDirection={'column'}
-      p={'2'}
-      pb={'2'}
+      p={'3'}
+      pb={'3'}
       shadow={'sm'}
+      // mr={'3'}
       sx={{
         ':hover': {
           '.settings-icon': {

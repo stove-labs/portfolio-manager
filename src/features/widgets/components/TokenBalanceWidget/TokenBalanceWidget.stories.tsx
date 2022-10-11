@@ -52,6 +52,7 @@ const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => (
         },
       ]}
       onLayoutChange={console.log}
+      onSettingsChange={console.log}
       onWidgetRemove={console.log}
     />
   </Flex>

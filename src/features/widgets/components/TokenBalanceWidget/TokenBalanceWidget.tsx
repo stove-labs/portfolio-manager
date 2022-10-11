@@ -98,8 +98,13 @@ export const TokenBalanceWidget: React.FC<
         {/* content */}
         <Flex flex={'1'}>
           {/* token logo */}
-          <Flex flexDirection={'column'} justifyContent={'center'} pr={'3'}>
-            <SkeletonCircle isLoaded={!isLoading} size={'50px'}>
+          <Flex
+            flexDirection={'column'}
+            justifyContent={'center'}
+            pl={'0'}
+            pr={'3'}
+          >
+            <SkeletonCircle isLoaded={!isLoading} size={'55px'}>
               <img
                 src={
                   // kusd
@@ -107,7 +112,7 @@ export const TokenBalanceWidget: React.FC<
                   // quipu
                   // 'https://services.tzkt.io/v1/avatars/KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb'
                 }
-                width={'50px'}
+                width={'55px'}
               />
             </SkeletonCircle>
           </Flex>
@@ -127,9 +132,9 @@ export const TokenBalanceWidget: React.FC<
                 </Text>
                 {/* ticker */}
                 <Text
-                  color={useColorModeValue('gray.400', 'gray.400')}
+                  color={useColorModeValue('gray.500', 'gray.400')}
                   lineHeight={'26px'}
-                  pl={'2'}
+                  pl={'1'}
                   position={'relative'}
                 >
                   {balance.token.ticker}
@@ -142,7 +147,7 @@ export const TokenBalanceWidget: React.FC<
             <Skeleton isLoaded={!isLoading} mt={isLoading ? '1' : '0'}>
               <Flex>
                 <Text
-                  color={useColorModeValue('gray.400', 'gray.400')}
+                  color={useColorModeValue('gray.500', 'gray.400')}
                   fontSize={'xs'}
                   fontWeight={'normal'}
                 >
@@ -154,7 +159,7 @@ export const TokenBalanceWidget: React.FC<
           </Flex>
         </Flex>
         {/* footer */}
-        <Flex flexDirection={'column'}>
+        <Flex flexDirection={'column'} justifyContent={'end'}>
           <Skeleton
             isLoaded={!isLoading}
             position={'relative'}
