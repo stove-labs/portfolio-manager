@@ -7,7 +7,11 @@ export const useWidgetEffects = (): Effect => {
     switch (action.type) {
       case 'LOAD_TOKENS': {
         return (async () => {
-          fetch(`https://api.tzkt.io/v1/tokens?limit=1000`)
+          fetch(
+            `https://api.tzkt.io/v1/tokens?limit=1000&account=${
+              state.wallet?.activeAccount?.address ?? ''
+            }&metadata.decimals.ge=1`
+          )
             .then(async (response) => await response.json())
             .then((responseData) => {
               if (responseData.code !== undefined) throw responseData;
@@ -41,11 +45,10 @@ export const useWidgetEffects = (): Effect => {
         return (async () => {
           fetch(
             `https://api.tzkt.io/v1/tokens/balances?token.id=${
-              action.payload.tokenId 
+              action.payload.tokenId
             }&account=${
-              state.wallet?.activeAccount?.address ??
-              'tz1PWtaLXKiHXhXGvpuS8w4sVveNRKedTRSe'
-            }`
+              state.wallet?.activeAccount?.address ?? ''
+            }&metadata.decimals.ge=1`
           )
             .then(async (response) => await response.json())
             .then((responseData) => {
@@ -82,11 +85,10 @@ export const useWidgetEffects = (): Effect => {
         return (async () => {
           fetch(
             `https://api.tzkt.io/v1/tokens/historical_balances/${
-              action.payload.level 
-            }?token.id=${action.payload.tokenId }&account=${
-              state.wallet?.activeAccount?.address ??
-              'tz1PWtaLXKiHXhXGvpuS8w4sVveNRKedTRSe'
-            }`
+              action.payload.level
+            }?token.id=${action.payload.tokenId}&account=${
+              state.wallet?.activeAccount?.address ?? ''
+            }&metadata.decimals.ge=1`
           )
             .then(async (response) => await response.json())
             .then((responseData) => {

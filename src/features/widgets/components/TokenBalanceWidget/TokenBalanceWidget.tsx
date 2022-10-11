@@ -47,6 +47,7 @@ export interface TokenBalanceWidgetProps {
   balance: Balance;
   historicalBalance: Balance;
   isLoading: boolean;
+  settingTokens?: Token[];
 }
 
 export const percentageChange = (start: number, end: number): number => {
@@ -67,6 +68,7 @@ export const TokenBalanceWidget: React.FC<
   onWidgetRemove,
   onSettingsChange,
   settings,
+  settingTokens,
 }) => {
   const balancePercentageChange = useMemo(() => {
     return percentageChange(
@@ -82,7 +84,7 @@ export const TokenBalanceWidget: React.FC<
     );
   }, [balance, historicalBalance]);
 
-  const tokens: Token[] = [
+  const defaultTokens: Token[] = [
     {
       id: '42290944933889',
       ticker: 'kUSD',
@@ -109,7 +111,7 @@ export const TokenBalanceWidget: React.FC<
       settingsContent={
         <TokenBalanceWidgetSettings
           historicalPeriods={historicalPeriods}
-          tokens={tokens}
+          tokens={settingTokens ?? defaultTokens}
         />
       }
       // TODO: this cant be undefined

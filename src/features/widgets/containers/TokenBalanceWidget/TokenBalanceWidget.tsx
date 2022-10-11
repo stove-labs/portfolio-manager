@@ -86,6 +86,23 @@ export const TokenBalanceWidget: React.FC<
     },
   };
 
+  const settingTokens = useMemo(() => {
+    if (
+      state.widgetData.tokens.status === 'LOADING' ||
+      state.widgetData.tokens.status === 'STANDBY'
+    )
+      return;
+
+    const data = (state.widgetData.tokens.data ?? []).map((item) => {
+      return {
+        id: item.id,
+        ticker: item.metadata?.symbol ?? 'No Ticker',
+        fullName: item.metadata?.name ?? 'No Name',
+      };
+    });
+    return data;
+  }, [state.widgetData.tokens]);
+
   const dummyHistoricalBalance: Balance = {
     amount: '50000',
     token: {
@@ -148,6 +165,7 @@ export const TokenBalanceWidget: React.FC<
       balance={balance ?? dummyBalance}
       historicalBalance={historicalBalance ?? dummyHistoricalBalance}
       isLoading={isLoading}
+      settingTokens={settingTokens}
       settings={settings}
       onSettingsChange={onSettingsChange}
       onWidgetRemove={onWidgetRemove}
