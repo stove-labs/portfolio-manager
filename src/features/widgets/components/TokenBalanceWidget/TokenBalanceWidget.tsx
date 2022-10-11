@@ -84,14 +84,19 @@ export const TokenBalanceWidget: React.FC<
 
   const tokens: Token[] = [
     {
-      id: '0',
+      id: '42290944933889',
       ticker: 'kUSD',
       fullName: 'Kolibri USD',
     },
     {
-      id: '1',
+      id: '74079757402113',
       ticker: 'QUIPU',
       fullName: 'Quipuswap',
+    },
+    {
+      id: '24975299837953',
+      ticker: 'tzBTC',
+      fullName: 'tzBTC',
     },
   ];
 
@@ -108,7 +113,9 @@ export const TokenBalanceWidget: React.FC<
         />
       }
       // TODO: this cant be undefined
-      title={`${balance.token.ticker} balance (${settings?.historicalPeriod ?? '24h'})`}
+      title={`${balance.token.ticker} balance (${
+        settings?.historicalPeriod ?? '24h'
+      })`}
       onSettingsChange={onSettingsChange}
       onTitleSubmit={console.log}
       onWidgetRemove={onWidgetRemove}
@@ -143,7 +150,10 @@ export const TokenBalanceWidget: React.FC<
                   lineHeight={'26px'}
                 >
                   {Number(balance.amount) > 1
-                    ? abbreviateNumber(Number(balance.amount), 2)
+                    ? abbreviateNumber(
+                        Number(Number(balance.amount).toFixed(6)),
+                        2
+                      )
                     : Number(balance.amount).toFixed(6)}
                 </Text>
                 {/* ticker */}
@@ -169,7 +179,10 @@ export const TokenBalanceWidget: React.FC<
                 >
                   $
                   {Number(balance.fiatBalance.amount) > 1
-                    ? abbreviateNumber(Number(balance.fiatBalance.amount), 2)
+                    ? abbreviateNumber(
+                        Number(Number(balance.fiatBalance.amount).toFixed(6)),
+                        2
+                      )
                     : Number(balance.fiatBalance.amount).toFixed(6)}
                 </Text>
                 <ChangeIndicator
@@ -197,7 +210,8 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {balance.token.ticker} = 1.456 XTZ, 1 {balance.token.ticker} = $ 0.99
+              1 {balance.token.ticker} = 1.456 XTZ, 1 {balance.token.ticker} = $
+              0.99
             </Text>
           </Skeleton>
         </Flex>

@@ -3,6 +3,7 @@ import React, { Reducer, useCallback, useReducer } from 'react';
 import combineReducers from 'react-combine-reducers';
 import logger from 'use-reducer-logger';
 import { useCounterEffects } from '../features/Counter/store/useCounterEffects';
+import { useWidgetEffects } from '../features/widgets/store/useWidgetEffects';
 import {
   CounterAction,
   counterReducer,
@@ -23,20 +24,24 @@ import {
   WalletState,
 } from '../features/Wallet/store/useWalletStore';
 import {
-  TokenBalanceWidgetAction,
-  tokenBalanceWidgetReducer,
-  TokenBalanceWidgetState,
-  initialTokenBalanceWidgetState,
-} from '../features/widgets/containers/TokenBalanceWidget/store/useTokenBalanceWidgetStore';
+  WidgetAction,
+  widgetReducer,
+  WidgetState,
+  initialWidgetState,
+} from '../features/widgets/store/useWidgetStore';
 
 export interface State {
   counter: CounterState;
   wallet: WalletState;
   settings: WidgetsLayoutState;
-  tokens: TokenBalanceWidgetState;
+  widgetData: WidgetState;
 }
 
-export type Action = CounterAction | WalletAction | WidgetsLayoutAction | TokenBalanceWidgetAction;
+export type Action =
+  | CounterAction
+  | WalletAction
+  | WidgetsLayoutAction
+  | WidgetAction;
 
 export type AppReducer = Reducer<State, Action>;
 
@@ -44,7 +49,7 @@ const [reducer, initialState] = combineReducers<AppReducer>({
   counter: [counterReducer, initialCounterState],
   wallet: [walletReducer, initialWalletState],
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
-  tokens: [tokenBalanceWidgetReducer, initialTokenBalanceWidgetState],
+  widgetData: [widgetReducer, initialWidgetState],
 });
 
 export type Effect = (
@@ -72,7 +77,11 @@ export const useCombineEffects = (effects: EffectHook[]): RunEffects => {
 
 export const useStore = (): [State, React.Dispatch<Action>] => {
   const [state, dispatch] = useReducer(logger(reducer), initialState);
-  const runEffects = useCombineEffects([useCounterEffects, useWalletEffects]);
+  const runEffects = useCombineEffects([
+    useCounterEffects,
+    useWalletEffects,
+    useWidgetEffects,
+  ]);
   const dispatchWithEffects: React.Dispatch<Action> = useCallback(
     (action) => {
       dispatch(action);

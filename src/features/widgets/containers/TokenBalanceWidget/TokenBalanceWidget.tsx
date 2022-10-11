@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { useStoreContext } from '../../../../store/useStore';
 import {
@@ -12,32 +12,67 @@ export const TokenBalanceWidget: React.FC<
   WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
   settings = {
-    token: 'QUIPU',
+    token: 'kUSD',
     historicalPeriod: '7d',
   },
   onWidgetRemove,
   onSettingsChange,
 }) => {
-  const [state] = useStoreContext();
-  const isLoading = useMemo(() => {
-    return (
-      state.tokens.tokens.isLoading ||
-      state.tokens.tokensBalance.isLoading ||
-      state.tokens.tokensBalanceHistorical.isLoading
-    );
-  }, [
-    state.tokens.tokens.isLoading,
-    state.tokens.tokensBalance.isLoading,
-    state.tokens.tokensBalanceHistorical.isLoading,
-  ]);
-
+  const [state, dispatch] = useStoreContext();
   const token = useMemo(() => {
-    if (isLoading) return;
+    if (
+      state.widgetData.tokens.status === 'LOADING' ||
+      state.widgetData.tokens.status === 'STANDBY'
+    )
+      return;
 
-    return state.tokens.tokens.data?.filter(
+    return state.widgetData.tokens.data?.filter(
       (item) => item.metadata?.symbol === settings.token
     )?.['0'];
-  }, [settings, isLoading]);
+  }, [settings, state.widgetData.tokens.status]);
+
+  const isLoading: boolean = useMemo((): boolean => {
+    if (token === undefined) return true;
+
+    const tokenBalancesStatus = state.widgetData.tokenBalances?.filter(
+      (item) => item.tokenId === token?.id
+    )?.['0']?.status;
+    const tokenBalancesHistoricalStatus =
+      state.widgetData.tokenBalancesHistorical?.filter(
+        (item) =>
+          item.tokenId === token?.id && item.level === settings.historicalPeriod
+      )?.['0']?.status;
+
+    return (
+      state.widgetData.tokens.status === 'LOADING' ||
+      tokenBalancesStatus === 'LOADING' ||
+      tokenBalancesHistoricalStatus === 'LOADING'
+    );
+  }, [
+    state.widgetData.tokens,
+    state.widgetData.tokenBalances,
+    state.widgetData.tokenBalancesHistorical,
+  ]);
+
+  useEffect(() => {
+    if (token === undefined) return;
+
+    dispatch({
+      type: 'LOAD_TOKENS_BALANCE',
+      payload: { tokenId: token.id },
+    });
+  }, [token]);
+
+  useEffect(() => {
+    if (token === undefined) return;
+
+    // TODO: calculate level based on historicalPeriod
+    const level = '2600000';
+    dispatch({
+      type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
+      payload: { tokenId: token.id, level },
+    });
+  }, [token, settings.historicalPeriod]);
 
   const dummyBalance: Balance = {
     amount: '0.005',
@@ -66,8 +101,8 @@ export const TokenBalanceWidget: React.FC<
   const balance = useMemo(() => {
     if (token === undefined) return;
 
-    const tokensBalance = state.tokens.tokensBalance.data?.filter(
-      (item) => item.id === token?.id
+    const tokensBalance = state.widgetData.tokenBalances?.filter(
+      (item) => item.tokenId === token?.id
     )?.['0'];
 
     return {
@@ -83,14 +118,14 @@ export const TokenBalanceWidget: React.FC<
       ),
       fiatBalance: { amount: '0' },
     };
-  }, [token]);
+  }, [token, state.widgetData.tokenBalances]);
 
   const historicalBalance = useMemo(() => {
     if (token === undefined) return;
 
     const tokensBalanceHistorical =
-      state.tokens.tokensBalanceHistorical.data?.filter(
-        (item) => item.id === token.id
+      state.widgetData.tokenBalancesHistorical?.filter(
+        (item) => item.tokenId === token.id
       )?.['0'];
 
     return {
@@ -106,7 +141,7 @@ export const TokenBalanceWidget: React.FC<
       ),
       fiatBalance: { amount: '0' },
     };
-  }, [token]);
+  }, [token, state.widgetData.tokenBalancesHistorical]);
 
   return (
     <TokenBalanceWidgetComponent
