@@ -117,6 +117,7 @@ export const WidgetSettings: React.FC<
                 right={'-1'}
                 size={'sm'}
                 top={'0'}
+                onClick={handleCloseClick}
               />
             </PopoverHeader>
             <FormControl>
@@ -145,21 +146,20 @@ export const WidgetSettings: React.FC<
                         Save
                       </Button>
                     </Flex>
-                    <Flex flex={'1'} gap={'3'} justifyContent={'end'} mt={'2'}>
-                      <Button
-                        borderRadius={'3'}
-                        flex={'1'}
-                        size={'sm'}
-                        onClick={handleCloseClick}
-                      >
-                        Close
-                      </Button>
+                    <Flex
+                      flex={'1'}
+                      gap={'3'}
+                      justifyContent={'center'}
+                      mb={'1'}
+                      mt={'2'}
+                    >
                       {/* TODO: add confirmation alert https://chakra-ui.com/docs/components/alert-dialog */}
                       <Button
                         borderRadius={'3'}
                         colorScheme={'red'}
                         flex={'1'}
-                        size={'sm'}
+                        size={'xs'}
+                        variant={'link'}
                         onClick={handleRemoveWidgetClick}
                       >
                         Remove

@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Container, Flex } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 import RGL, { Layout, WidthProvider } from 'react-grid-layout';
 import { TokenBalanceWidget } from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
@@ -49,26 +49,34 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
   };
 
   return (
-    <ReactGridLayout
-      className={'layout'}
-      cols={12}
-      isDraggable={isDraggable}
-      isResizable={false}
-      layout={layout}
-      rowHeight={30}
-      onLayoutChange={(newLayout) => onLayoutChange(newLayout)}
-    >
-      {widgets?.map((widget) => (
-        <Flex
-          key={widget.id}
-          alignItems={'start'}
-          height={'100%'}
-          justifyContent={'center'}
-          width={'100%'}
+    <Flex flex={'1'} position={'relative'}>
+      <Container maxWidth={'6xl'} p={0} position={'relative'}>
+        <ReactGridLayout
+          className={'layout'}
+          cols={12}
+          containerPadding={[0, 0]}
+          isDraggable={isDraggable}
+          isResizable={false}
+          layout={layout}
+          margin={[10, 10]}
+          rowHeight={30}
+          useCSSTransforms={false}
+          width={100}
+          onLayoutChange={(newLayout) => onLayoutChange(newLayout)}
         >
-          {renderWidget(widget)}
-        </Flex>
-      ))}
-    </ReactGridLayout>
+          {widgets?.map((widget) => (
+            <Flex
+              key={widget.id}
+              alignItems={'start'}
+              height={'100%'}
+              justifyContent={'center'}
+              width={'100%'}
+            >
+              {renderWidget(widget)}
+            </Flex>
+          ))}
+        </ReactGridLayout>
+      </Container>
+    </Flex>
   );
 };
