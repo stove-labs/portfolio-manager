@@ -19,6 +19,9 @@ export type WalletAction =
   | { type: 'DISCONNECT_ACTIVE_ACCOUNT' };
 
 export const initialWalletState: WalletState = {
+  activeAccount: {
+    address: 'tz1PWtaLXKiHXhXGvpuS8w4sVveNRKedTRSe',
+  },
   status: 'STANDBY',
 };
 
@@ -44,7 +47,11 @@ export const walletReducer: Reducer<WalletState, WalletAction> = (
 
     case 'SET_ACTIVE_ACCOUNT':
       return produce(state, (draft) => {
-        const activeAccount = action.payload?.activeAccount;
+        // TODO: remove hardcoded address
+        // const activeAccount = action.payload?.activeAccount;
+        const activeAccount = {
+          address: 'tz1PWtaLXKiHXhXGvpuS8w4sVveNRKedTRSe',
+        };
         draft.status = activeAccount ? 'SUCCESS' : 'STANDBY';
         draft.activeAccount = activeAccount;
 

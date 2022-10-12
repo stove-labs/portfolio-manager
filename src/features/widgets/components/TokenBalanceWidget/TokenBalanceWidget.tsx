@@ -20,6 +20,7 @@ export interface Token {
   id: string;
   fullName: string;
   ticker: string;
+  address: string;
 }
 
 export interface FiatBalance {
@@ -47,6 +48,7 @@ export interface TokenBalanceWidgetProps {
   balance: Balance;
   historicalBalance: Balance;
   isLoading: boolean;
+  settingTokens?: Token[];
 }
 
 export const percentageChange = (start: number, end: number): number => {
@@ -67,6 +69,7 @@ export const TokenBalanceWidget: React.FC<
   onWidgetRemove,
   onSettingsChange,
   settings,
+  settingTokens,
 }) => {
   const balancePercentageChange = useMemo(() => {
     return percentageChange(
@@ -82,16 +85,24 @@ export const TokenBalanceWidget: React.FC<
     );
   }, [balance, historicalBalance]);
 
-  const tokens: Token[] = [
+  const defaultTokens: Token[] = [
     {
-      id: '0',
+      id: '42290944933889',
       ticker: 'kUSD',
       fullName: 'Kolibri USD',
+      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
     },
     {
-      id: '1',
+      id: '74079757402113',
       ticker: 'QUIPU',
       fullName: 'Quipuswap',
+      address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
+    },
+    {
+      id: '24975299837953',
+      ticker: 'tzBTC',
+      fullName: 'tzBTC',
+      address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
     },
   ];
 
@@ -104,11 +115,13 @@ export const TokenBalanceWidget: React.FC<
       settingsContent={
         <TokenBalanceWidgetSettings
           historicalPeriods={historicalPeriods}
-          tokens={tokens}
+          tokens={settingTokens ?? defaultTokens}
         />
       }
       // TODO: this cant be undefined
-      title={`${balance.token.ticker} balance (${settings?.historicalPeriod ?? '24h'})`}
+      title={`${balance.token.ticker} balance (${
+        settings?.historicalPeriod ?? '24h'
+      })`}
       onSettingsChange={onSettingsChange}
       onTitleSubmit={console.log}
       onWidgetRemove={onWidgetRemove}
@@ -122,7 +135,10 @@ export const TokenBalanceWidget: React.FC<
               <img
                 src={
                   // kusd
-                  'https://services.tzkt.io/v1/avatars/KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
+                  `https://services.tzkt.io/v1/avatars/${
+                    balance.token.address ??
+                    'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
+                  }`
                   // quipu
                   // 'https://services.tzkt.io/v1/avatars/KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb'
                 }
@@ -143,7 +159,10 @@ export const TokenBalanceWidget: React.FC<
                   lineHeight={'26px'}
                 >
                   {Number(balance.amount) > 1
-                    ? abbreviateNumber(Number(balance.amount), 2)
+                    ? abbreviateNumber(
+                        Number(Number(balance.amount).toFixed(6)),
+                        2
+                      )
                     : Number(balance.amount).toFixed(6)}
                 </Text>
                 {/* ticker */}
@@ -169,7 +188,10 @@ export const TokenBalanceWidget: React.FC<
                 >
                   $
                   {Number(balance.fiatBalance.amount) > 1
-                    ? abbreviateNumber(Number(balance.fiatBalance.amount), 2)
+                    ? abbreviateNumber(
+                        Number(Number(balance.fiatBalance.amount).toFixed(6)),
+                        2
+                      )
                     : Number(balance.fiatBalance.amount).toFixed(6)}
                 </Text>
                 <ChangeIndicator
@@ -197,7 +219,8 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {balance.token.ticker} = 1.456 XTZ, 1 {balance.token.ticker} = $ 0.99
+              1 {balance.token.ticker} = 1.456 XTZ, 1 {balance.token.ticker} = $
+              0.99
             </Text>
           </Skeleton>
         </Flex>
