@@ -20,6 +20,7 @@ export interface Token {
   id: string;
   fullName: string;
   ticker: string;
+  address: string;
 }
 
 export interface FiatBalance {
@@ -89,16 +90,19 @@ export const TokenBalanceWidget: React.FC<
       id: '42290944933889',
       ticker: 'kUSD',
       fullName: 'Kolibri USD',
+      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
     },
     {
       id: '74079757402113',
       ticker: 'QUIPU',
       fullName: 'Quipuswap',
+      address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
     },
     {
       id: '24975299837953',
       ticker: 'tzBTC',
       fullName: 'tzBTC',
+      address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
     },
   ];
 
@@ -131,7 +135,10 @@ export const TokenBalanceWidget: React.FC<
               <img
                 src={
                   // kusd
-                  'https://services.tzkt.io/v1/avatars/KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
+                  `https://services.tzkt.io/v1/avatars/${
+                    balance.token.address ??
+                    'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
+                  }`
                   // quipu
                   // 'https://services.tzkt.io/v1/avatars/KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb'
                 }

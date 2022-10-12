@@ -74,18 +74,6 @@ export const TokenBalanceWidget: React.FC<
     });
   }, [token, settings.historicalPeriod]);
 
-  const dummyBalance: Balance = {
-    amount: '0.005',
-    token: {
-      id: '0',
-      ticker: settings.token,
-      fullName: 'Kolibri',
-    },
-    fiatBalance: {
-      amount: '100000',
-    },
-  };
-
   const settingTokens = useMemo(() => {
     if (
       state.widgetData.tokens.status === 'LOADING' ||
@@ -98,17 +86,33 @@ export const TokenBalanceWidget: React.FC<
         id: item.id,
         ticker: item.metadata?.symbol ?? 'No Ticker',
         fullName: item.metadata?.name ?? 'No Name',
+        address:
+          item.contract?.address ?? 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
       };
     });
     return data;
   }, [state.widgetData.tokens]);
 
+  const dummyBalance: Balance = {
+    amount: '0.005',
+    token: {
+      id: '42290944933889',
+      ticker: settings.token,
+      fullName: 'Kolibri',
+      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
+    },
+    fiatBalance: {
+      amount: '100000',
+    },
+  };
+
   const dummyHistoricalBalance: Balance = {
     amount: '50000',
     token: {
-      id: '0',
+      id: '42290944933889',
       ticker: 'kUSD',
       fullName: 'Kolibri',
+      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
     },
     fiatBalance: {
       amount: '50000',
@@ -127,6 +131,7 @@ export const TokenBalanceWidget: React.FC<
         id: token.id,
         ticker: token.metadata?.symbol ?? '',
         fullName: token.metadata?.name ?? '',
+        address: token.contract?.address ?? '',
       },
       amount: String(
         BigNumber(tokensBalance?.balance ?? '0').dividedBy(
@@ -150,6 +155,7 @@ export const TokenBalanceWidget: React.FC<
         id: token.id,
         ticker: token.metadata?.symbol ?? '',
         fullName: token.metadata?.name ?? '',
+        address: token.contract?.address ?? '',
       },
       amount: String(
         BigNumber(tokensBalanceHistorical?.balanceHistorical ?? '0').dividedBy(

@@ -19,6 +19,9 @@ export type WalletAction =
   | { type: 'DISCONNECT_ACTIVE_ACCOUNT' };
 
 export const initialWalletState: WalletState = {
+  activeAccount: {
+    address: 'tz1PWtaLXKiHXhXGvpuS8w4sVveNRKedTRSe',
+  },
   status: 'STANDBY',
 };
 
