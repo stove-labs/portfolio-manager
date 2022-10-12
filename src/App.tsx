@@ -8,7 +8,7 @@ import { DispatchUniqueProvider } from './features/widgets/providers/DispatchUni
 
 import '../node_modules/react-grid-layout/css/styles.css';
 import '../node_modules/react-resizable/css/styles.css';
-import { WidgetsLayout } from './features/widgets/containers/WidgetsLayout/WidgetsLayout';
+import { Dashboard } from './features/widgets/containers/Dashboard/Dashboard';
 
 log.setDefaultLevel('DEBUG');
 
@@ -19,7 +19,7 @@ export const App: React.FC = () => {
         <CSSReset />
         <ChakraProvider theme={theme}>
           <DispatchUniqueProvider>
-            <WidgetsLayout />
+            <Dashboard />
           </DispatchUniqueProvider>
         </ChakraProvider>
       </StoreProvider>

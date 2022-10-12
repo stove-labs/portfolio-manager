@@ -24,10 +24,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
-import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
+import React, { PropsWithChildren } from 'react';
 
-export const Dashboard: React.FC = () => {
+export const Dashboard: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   return (
     <>
       <Flex
@@ -157,37 +156,7 @@ export const Dashboard: React.FC = () => {
               </Flex>
             </Flex>
 
-            <WidgetsLayout
-              layout={[
-                {
-                  x: 0,
-                  y: 0,
-                  w: 4,
-                  h: 4,
-                  i: '0',
-                },
-                {
-                  x: 4,
-                  y: 0,
-                  w: 4,
-                  h: 4,
-                  i: '1',
-                },
-              ]}
-              widgets={[
-                {
-                  id: '0',
-                  name: 'TokenBalanceWidget',
-                },
-                {
-                  id: '1',
-                  name: 'TokenBalanceWidget',
-                },
-              ]}
-              onLayoutChange={console.log}
-              onSettingsChange={console.log}
-              onWidgetRemove={console.log}
-            />
+            {children}
           </Container>
         </Flex>
       </Flex>
