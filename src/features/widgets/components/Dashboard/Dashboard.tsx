@@ -144,7 +144,12 @@ export const Dashboard: React.FC<PropsWithChildren<{}>> = ({ children }) => {
           </Flex>
         </Container>
       </Flex>
-      <Flex justifyContent={'center'} pt={'20'}>
+      <Flex
+        background={'gray.50'}
+        height={'100%'}
+        justifyContent={'center'}
+        pt={'20'}
+      >
         <Flex flex={'1'} pt={'8'}>
           <Container maxW={'6xl'}>
             <Flex alignItems={'baseline'} gap={'4'}>
