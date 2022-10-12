@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { Effect } from '../../../store/useStore';
-import { Token } from './useWidgetStore';
+import { Token } from './useChainDataStore';
 
-export const useWidgetEffects = (): Effect => {
+export const useChainDataEffects = (): Effect => {
   return useCallback<Effect>((state, action, dispatch) => {
     switch (action.type) {
       case 'LOAD_TOKENS': {

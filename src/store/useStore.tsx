@@ -3,7 +3,7 @@ import React, { Reducer, useCallback, useReducer } from 'react';
 import combineReducers from 'react-combine-reducers';
 import logger from 'use-reducer-logger';
 import { useCounterEffects } from '../features/Counter/store/useCounterEffects';
-import { useWidgetEffects } from '../features/widgets/store/useWidgetEffects';
+import { useChainDataEffects } from '../features/widgets/store/useChainDataEffects';
 import {
   CounterAction,
   counterReducer,
@@ -24,24 +24,24 @@ import {
   WalletState,
 } from '../features/Wallet/store/useWalletStore';
 import {
-  WidgetAction,
-  widgetReducer,
-  WidgetState,
-  initialWidgetState,
-} from '../features/widgets/store/useWidgetStore';
+  chainDataAction,
+  chainDataReducer,
+  ChainDataState,
+  initialChainDataState,
+} from '../features/widgets/store/useChainDataStore';
 
 export interface State {
   counter: CounterState;
   wallet: WalletState;
   settings: WidgetsLayoutState;
-  widgetData: WidgetState;
+  chainData: ChainDataState;
 }
 
 export type Action =
   | CounterAction
   | WalletAction
   | WidgetsLayoutAction
-  | WidgetAction;
+  | chainDataAction;
 
 export type AppReducer = Reducer<State, Action>;
 
@@ -49,7 +49,7 @@ const [reducer, initialState] = combineReducers<AppReducer>({
   counter: [counterReducer, initialCounterState],
   wallet: [walletReducer, initialWalletState],
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
-  widgetData: [widgetReducer, initialWidgetState],
+  chainData: [chainDataReducer, initialChainDataState],
 });
 
 export type Effect = (
@@ -80,7 +80,7 @@ export const useStore = (): [State, React.Dispatch<Action>] => {
   const runEffects = useCombineEffects([
     useCounterEffects,
     useWalletEffects,
-    useWidgetEffects,
+    useChainDataEffects,
   ]);
   const dispatchWithEffects: React.Dispatch<Action> = useCallback(
     (action) => {

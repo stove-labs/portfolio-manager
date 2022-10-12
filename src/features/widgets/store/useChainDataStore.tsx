@@ -31,7 +31,7 @@ export interface TokenBalanceHistorical {
   status: WidgetStatus;
 }
 
-export interface WidgetState {
+export interface ChainDataState {
   tokens: {
     data?: Token[];
     status: WidgetStatus;
@@ -41,7 +41,7 @@ export interface WidgetState {
   tokenBalancesHistorical?: TokenBalanceHistorical[];
 }
 
-export type WidgetAction =
+export type chainDataAction =
   | { type: 'LOAD_TOKENS' }
   | { type: 'LOAD_TOKENS_SUCCESS'; payload: { data: Token[] } }
   | { type: 'LOAD_TOKENS_FAILURE'; payload: { error: string } }
@@ -67,16 +67,16 @@ export type WidgetAction =
       payload: { tokenId: string; level: string; error: string };
     };
 
-const defaultValues: WidgetState = {
+const defaultValues: ChainDataState = {
   tokens: {
     data: [],
     status: 'STANDBY',
   },
 };
 
-export const initialWidgetState: WidgetState = defaultValues;
+export const initialChainDataState: ChainDataState = defaultValues;
 
-export const widgetReducer: Reducer<WidgetState, WidgetAction> = (
+export const chainDataReducer: Reducer<ChainDataState, chainDataAction> = (
   state,
   action
 ) => {
@@ -211,5 +211,7 @@ export const widgetReducer: Reducer<WidgetState, WidgetAction> = (
   }
 };
 
-export const useWidgetStore = (): [WidgetState, React.Dispatch<WidgetAction>] =>
-  useReducer(widgetReducer, initialWidgetState);
+export const useWidgetStore = (): [
+  ChainDataState,
+  React.Dispatch<chainDataAction>
+] => useReducer(chainDataReducer, initialChainDataState);
