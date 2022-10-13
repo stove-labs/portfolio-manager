@@ -11,10 +11,6 @@ export const WidgetsLayout: React.FC = () => {
     flushDispatchQueue();
   }, []);
 
-  useEffect(() => {
-    dispatch({ type: 'LOAD_TOKENS' });
-  }, []);
-
   // const address = 'address';
 
   useEffect(() => {

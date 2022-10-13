@@ -24,7 +24,7 @@ import {
   WalletState,
 } from '../features/Wallet/store/useWalletStore';
 import {
-  chainDataAction,
+  ChainDataAction,
   chainDataReducer,
   ChainDataState,
   initialChainDataState,
@@ -41,7 +41,7 @@ export type Action =
   | CounterAction
   | WalletAction
   | WidgetsLayoutAction
-  | chainDataAction;
+  | ChainDataAction;
 
 export type AppReducer = Reducer<State, Action>;
 

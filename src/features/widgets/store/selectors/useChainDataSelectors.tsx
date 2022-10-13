@@ -1,38 +1,38 @@
 import { useMemo } from 'react';
-import { State } from '../../../../store/useStore';
+import { useStoreContext } from '../../../../store/useStore';
 import { Token } from '../useChainDataStore';
 
 /**
  * Get token based on id
- * @param {State} State - global state
  * @param {string} id - id of token
  * @returns Token
  */
-export const useGetToken = (state: State, id: string): Token => {
+export const useSelectToken = (id: string): Token | undefined => {
+  const [state] = useStoreContext();
+
   return useMemo(() => {
-    return (
-      state.chainData.tokens?.find((token) => token.id === id) ??
-      state.chainData.tokens['0']
-    );
+    return state.chainData.tokens?.find((token) => token.id === id);
   }, [id]);
 };
 
 /**
  * Get all tokens
- * @param {State} State - global state
  * @returns All tokens
  */
-export const useGetAllTokens = (state: State): Token[] => {
+export const useSelectAllTokens = (): Token[] => {
+  const [state] = useStoreContext();
+
   return state.chainData.tokens;
 };
 
 /**
  * Get loading status for token balance and token balance historical
- * @param {State} State - global state
  * @param {string} id - id of token
  * @returns loading state
  */
-export const useIsLoading = (state: State, id: string): boolean => {
+export const useIsLoading = (id: string): boolean => {
+  const [state] = useStoreContext();
+
   return useMemo((): boolean => {
     const tokenBalancesStatus = state.chainData.tokenBalances?.[id].status;
     const tokenBalancesHistoricalStatus =
@@ -40,7 +40,9 @@ export const useIsLoading = (state: State, id: string): boolean => {
 
     return (
       tokenBalancesStatus === 'LOADING' ||
-      tokenBalancesHistoricalStatus === 'LOADING'
+      tokenBalancesStatus === 'STANDBY' ||
+      tokenBalancesHistoricalStatus === 'LOADING' ||
+      tokenBalancesHistoricalStatus === 'STANDBY'
     );
   }, [
     id,

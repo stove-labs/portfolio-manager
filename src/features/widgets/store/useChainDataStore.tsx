@@ -43,7 +43,7 @@ export interface ChainDataState {
   tokenBalancesHistorical?: Record<string, TokenBalanceHistorical>;
 }
 
-export type chainDataAction =
+export type ChainDataAction =
   | { type: 'LOAD_TOKENS_BALANCE'; payload: { id: string } }
   | {
       type: 'LOAD_TOKENS_BALANCE_SUCCESS';
@@ -106,7 +106,7 @@ const defaultValues: ChainDataState = {
 
 export const initialChainDataState: ChainDataState = defaultValues;
 
-export const chainDataReducer: Reducer<ChainDataState, chainDataAction> = (
+export const chainDataReducer: Reducer<ChainDataState, ChainDataAction> = (
   state,
   action
 ) => {
@@ -179,5 +179,5 @@ export const chainDataReducer: Reducer<ChainDataState, chainDataAction> = (
 
 export const useWidgetStore = (): [
   ChainDataState,
-  React.Dispatch<chainDataAction>
+  React.Dispatch<ChainDataAction>
 ] => useReducer(chainDataReducer, initialChainDataState);

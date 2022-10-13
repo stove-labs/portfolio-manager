@@ -29,7 +29,7 @@ export const TokenBalanceWidget: React.FC<
   onSettingsChange,
 }) => {
   const [state, dispatch] = useStoreContext();
-  const isLoading = useIsLoading(state, settings.token.id);
+  const isLoading = useIsLoading(settings.token.id);
 
   useEffect(() => {
     dispatch({
