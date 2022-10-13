@@ -42,13 +42,10 @@ export const getTokenBalancesHistorical = async (
     tokenIds.map(
       async (id): Promise<Record<string, { balanceHistorical: string }>> => {
         const level: string = await getBlockLevel(settings[id].timestamp);
-
         const response = await fetch(
           `https://api.tzkt.io/v1/tokens/historical_balances/${level}?account=${address}&token.id.in=${settings[id].id}`
         );
-
         if (!response.ok) throw new Error(response.statusText);
-
         const responseData =
           (await response.json()) as TokenBalanceHistoricalResponse[];
 
@@ -90,9 +87,7 @@ export const getNativeTokenBalance = async (
   const response = await fetch(
     `https://api.tzkt.io/v1/accounts/${address}/balance_history/${level}`
   );
-
   if (!response.ok) throw new Error(response.statusText);
-
   const responseData = (await response.json()) as string;
 
   return { [id]: { balanceHistorical: responseData ?? '0' } };
