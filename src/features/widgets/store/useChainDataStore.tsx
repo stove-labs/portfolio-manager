@@ -5,73 +5,103 @@ export type WidgetStatus = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
 
 export interface Token {
   id: string;
-  contract?: {
-    alias: string;
+  name: string;
+  symbol: string;
+  contract: {
     address: string;
   };
   metadata?: {
-    name: string;
-    symbol: string;
     decimals: string;
   };
 }
 
+export interface Balance {
+  amount: string;
+}
+
+export interface Price {
+  spotPrice: Balance;
+}
+
 export interface TokenBalance {
-  tokenId: string;
   balance?: string;
   error?: string;
   status: WidgetStatus;
 }
 
 export interface TokenBalanceHistorical {
-  tokenId: string;
   balanceHistorical?: string;
-  level: string;
+  level?: string;
   error?: string;
   status: WidgetStatus;
 }
 
+// key is token id
 export interface ChainDataState {
-  tokens: {
-    data?: Token[];
-    status: WidgetStatus;
-    error?: string;
-  };
-  tokenBalances?: TokenBalance[];
-  tokenBalancesHistorical?: TokenBalanceHistorical[];
+  tokens: Token[];
+  tokenBalances?: Record<string, TokenBalance>;
+  tokenBalancesHistorical?: Record<string, TokenBalanceHistorical>;
 }
 
 export type chainDataAction =
-  | { type: 'LOAD_TOKENS' }
-  | { type: 'LOAD_TOKENS_SUCCESS'; payload: { data: Token[] } }
-  | { type: 'LOAD_TOKENS_FAILURE'; payload: { error: string } }
-  | { type: 'LOAD_TOKENS_BALANCE'; payload: { tokenId: string } }
+  | { type: 'LOAD_TOKENS_BALANCE'; payload: { id: string } }
   | {
       type: 'LOAD_TOKENS_BALANCE_SUCCESS';
-      payload: { tokenId: string; balance: string };
+      payload: { id: string; balance: string };
     }
   | {
       type: 'LOAD_TOKENS_BALANCE_FAILURE';
-      payload: { tokenId: string; error: string };
+      payload: { id: string; error: string };
     }
   | {
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL';
-      payload: { tokenId: string; level: string };
+      payload: { id: string; level: string };
     }
   | {
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL_SUCCESS';
-      payload: { tokenId: string; level: string; balanceHistorical: string };
+      payload: { id: string; level: string; balanceHistorical: string };
     }
   | {
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL_FAILURE';
-      payload: { tokenId: string; level: string; error: string };
+      payload: { id: string; level: string; error: string };
     };
 
 const defaultValues: ChainDataState = {
-  tokens: {
-    data: [],
-    status: 'STANDBY',
-  },
+  tokens: [
+    {
+      id: '42290944933889',
+      name: 'Kolibri USD',
+      symbol: 'kUSD',
+      contract: {
+        address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
+      },
+      metadata: {
+        decimals: '18',
+      },
+    },
+    {
+      id: '74079757402113',
+      name: 'Quipuswap',
+      symbol: 'QUIPU',
+      contract: {
+        address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
+      },
+      metadata: {
+        decimals: '6',
+      },
+    },
+    {
+      id: '24975299837953',
+      name: 'tzBTC',
+      symbol: 'tzBTC',
+      contract: {
+        address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
+      },
+      metadata: {
+        decimals: '8',
+      },
+    },
+  ],
 };
 
 export const initialChainDataState: ChainDataState = defaultValues;
@@ -81,129 +111,65 @@ export const chainDataReducer: Reducer<ChainDataState, chainDataAction> = (
   action
 ) => {
   switch (action.type) {
-    case 'LOAD_TOKENS':
-      return produce(state, (draft) => {
-        draft.tokens.status = 'LOADING';
-      });
-    case 'LOAD_TOKENS_SUCCESS':
-      return produce(state, (draft) => {
-        draft.tokens.status = 'SUCCESS';
-        draft.tokens.data = action.payload.data;
-      });
-    case 'LOAD_TOKENS_FAILURE':
-      return produce(state, (draft) => {
-        draft.tokens.status = 'ERROR';
-        draft.tokens.error = action.payload.error;
-      });
-
     case 'LOAD_TOKENS_BALANCE':
       return produce(state, (draft) => {
-        draft.tokenBalances = state.tokenBalances;
-        const index = (state.tokenBalances ?? []).findIndex(
-          (i) => i.tokenId === action.payload.tokenId
-        );
+        draft.tokenBalances = state.tokenBalances ?? {};
 
-        if (index === -1) {
-          draft.tokenBalances = [
-            ...(draft.tokenBalances ?? []),
-            { tokenId: action.payload.tokenId, status: 'LOADING' },
-          ];
-        } else {
-          (draft.tokenBalances ?? [])[index].status = 'LOADING';
-        }
+        draft.tokenBalances[action.payload.id] = {
+          status: 'LOADING',
+        };
       });
     case 'LOAD_TOKENS_BALANCE_SUCCESS':
       return produce(state, (draft) => {
-        draft.tokenBalances = (state.tokenBalances ?? []).map(
-          (tokenBalance) => {
-            if (tokenBalance.tokenId === action.payload.tokenId) {
-              return {
-                ...tokenBalance,
-                balance: action.payload.balance,
-                status: 'SUCCESS',
-              };
-            }
+        draft.tokenBalances = state.tokenBalances ?? {};
 
-            return tokenBalance;
-          }
-        );
+        draft.tokenBalances[action.payload.id] = {
+          balance: action.payload.balance,
+          status: 'SUCCESS',
+        };
       });
     case 'LOAD_TOKENS_BALANCE_FAILURE':
       return produce(state, (draft) => {
-        draft.tokenBalances = (state.tokenBalances ?? []).map(
-          (tokenBalance) => {
-            if (tokenBalance.tokenId === action.payload.tokenId) {
-              return {
-                ...tokenBalance,
-                error: action.payload.error,
-                status: 'ERROR',
-              };
-            }
+        draft.tokenBalances = state.tokenBalances ?? {};
 
-            return tokenBalance;
-          }
-        );
+        draft.tokenBalances[action.payload.id] = {
+          error: action.payload.error,
+          status: 'ERROR',
+        };
       });
 
     case 'LOAD_TOKENS_BALANCE_HISTORICAL':
       return produce(state, (draft) => {
-        draft.tokenBalancesHistorical = state.tokenBalancesHistorical;
+        draft.tokenBalancesHistorical = state.tokenBalancesHistorical ?? {};
 
-        const index = (draft.tokenBalancesHistorical ?? []).findIndex(
-          (i) =>
-            i.tokenId === action.payload.tokenId &&
-            i.level === action.payload.level
-        );
-        if (index === -1) {
-          draft.tokenBalancesHistorical = [
-            ...(draft.tokenBalancesHistorical ?? []),
-            {
-              tokenId: action.payload.tokenId,
-              level: action.payload.level,
-              status: 'LOADING',
-            },
-          ];
-        } else {
-          (draft.tokenBalancesHistorical ?? [])[index].status = 'LOADING';
-        }
+        draft.tokenBalancesHistorical[
+          action.payload.id + action.payload.level
+        ] = {
+          level: action.payload.level,
+          status: 'LOADING',
+        };
       });
     case 'LOAD_TOKENS_BALANCE_HISTORICAL_SUCCESS':
       return produce(state, (draft) => {
-        draft.tokenBalancesHistorical = (
-          state.tokenBalancesHistorical ?? []
-        ).map((tokenBalanceHistorical) => {
-          if (
-            tokenBalanceHistorical.tokenId === action.payload.tokenId &&
-            tokenBalanceHistorical.level === action.payload.level
-          ) {
-            return {
-              ...tokenBalanceHistorical,
-              balanceHistorical: action.payload.balanceHistorical,
-              status: 'SUCCESS',
-            };
-          }
+        draft.tokenBalancesHistorical = state.tokenBalancesHistorical ?? {};
 
-          return tokenBalanceHistorical;
-        });
+        draft.tokenBalancesHistorical[
+          action.payload.id + action.payload.level
+        ] = {
+          balanceHistorical: action.payload.balanceHistorical,
+          status: 'SUCCESS',
+        };
       });
     case 'LOAD_TOKENS_BALANCE_HISTORICAL_FAILURE':
       return produce(state, (draft) => {
-        draft.tokenBalancesHistorical = (
-          state.tokenBalancesHistorical ?? []
-        ).map((tokenBalanceHistorical) => {
-          if (
-            tokenBalanceHistorical.tokenId === action.payload.tokenId &&
-            tokenBalanceHistorical.level === action.payload.level
-          ) {
-            return {
-              ...tokenBalanceHistorical,
-              error: action.payload.error,
-              status: 'ERROR',
-            };
-          }
+        draft.tokenBalancesHistorical = state.tokenBalancesHistorical ?? {};
 
-          return tokenBalanceHistorical;
-        });
+        draft.tokenBalancesHistorical[
+          action.payload.id + action.payload.level
+        ] = {
+          error: action.payload.error,
+          status: 'ERROR',
+        };
       });
 
     default:

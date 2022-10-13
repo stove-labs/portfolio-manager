@@ -11,17 +11,11 @@ import {
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
+import { Token } from '../../store/useChainDataStore';
 import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
 } from './TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
-
-export interface Token {
-  id: string;
-  fullName: string;
-  ticker: string;
-  address: string;
-}
 
 export interface FiatBalance {
   amount: string;
@@ -40,7 +34,7 @@ export interface WidgetProps<T> {
 }
 
 export interface TokenBalanceWidgetSettingsData {
-  token: string;
+  token: Token;
   historicalPeriod: HistoricalPeriod;
 }
 
@@ -48,14 +42,13 @@ export interface TokenBalanceWidgetProps {
   balance: Balance;
   historicalBalance: Balance;
   isLoading: boolean;
-  settingTokens?: Token[];
 }
 
 export const percentageChange = (start: number, end: number): number => {
   if (start === Infinity || end === Infinity) return 0;
   if (start === -Infinity || end === -Infinity) return 0;
   if (Number.isNaN(start) || Number.isNaN(end)) return 0;
-  if (start === 0 && end === 0) return 0;
+  if (start === 0 || end === 0) return 0;
 
   return ((end - start) / start) * 100;
 };
@@ -69,42 +62,20 @@ export const TokenBalanceWidget: React.FC<
   onWidgetRemove,
   onSettingsChange,
   settings,
-  settingTokens,
 }) => {
   const balancePercentageChange = useMemo(() => {
     return percentageChange(
-      Number(balance.amount),
-      Number(historicalBalance.amount)
+      Number(historicalBalance.amount),
+      Number(balance.amount)
     );
   }, [balance, historicalBalance]);
 
   const balanceFiatPercentageChange = useMemo(() => {
     return percentageChange(
-      Number(balance.fiatBalance.amount),
-      Number(historicalBalance.fiatBalance.amount)
+      Number(historicalBalance.fiatBalance.amount),
+      Number(balance.fiatBalance.amount)
     );
   }, [balance, historicalBalance]);
-
-  const defaultTokens: Token[] = [
-    {
-      id: '42290944933889',
-      ticker: 'kUSD',
-      fullName: 'Kolibri USD',
-      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
-    },
-    {
-      id: '74079757402113',
-      ticker: 'QUIPU',
-      fullName: 'Quipuswap',
-      address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
-    },
-    {
-      id: '24975299837953',
-      ticker: 'tzBTC',
-      fullName: 'tzBTC',
-      address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
-    },
-  ];
 
   const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];
 
@@ -113,13 +84,10 @@ export const TokenBalanceWidget: React.FC<
       settings={settings}
       // TODO: add TokenBalanceWidgetSettings container
       settingsContent={
-        <TokenBalanceWidgetSettings
-          historicalPeriods={historicalPeriods}
-          tokens={settingTokens ?? defaultTokens}
-        />
+        <TokenBalanceWidgetSettings historicalPeriods={historicalPeriods} />
       }
       // TODO: this cant be undefined
-      title={`${balance.token.ticker} balance (${
+      title={`${balance.token.symbol} balance (${
         settings?.historicalPeriod ?? '24h'
       })`}
       onSettingsChange={onSettingsChange}
@@ -141,7 +109,7 @@ export const TokenBalanceWidget: React.FC<
                 src={
                   // kusd
                   `https://services.tzkt.io/v1/avatars/${
-                    balance.token.address ??
+                    balance.token.contract.address ??
                     'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
                   }`
                   // quipu
@@ -177,7 +145,7 @@ export const TokenBalanceWidget: React.FC<
                   pl={'1'}
                   position={'relative'}
                 >
-                  {balance.token.ticker}
+                  {balance.token.symbol}
                 </Text>
                 <ChangeIndicator change={balancePercentageChange} size={'lg'} />
               </Flex>
@@ -224,7 +192,7 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {balance.token.ticker} = 1.456 XTZ, 1 {balance.token.ticker} = $
+              1 {balance.token.symbol} = 1.456 XTZ, 1 {balance.token.symbol} = $
               0.99
             </Text>
           </Skeleton>

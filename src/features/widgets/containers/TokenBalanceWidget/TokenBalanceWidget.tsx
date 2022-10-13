@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { useStoreContext } from '../../../../store/useStore';
+import { useIsLoading } from '../../store/selectors/useChainDataSelectors';
 import {
-  Balance,
   TokenBalanceWidget as TokenBalanceWidgetComponent,
   TokenBalanceWidgetSettingsData,
   WidgetProps,
@@ -12,166 +12,76 @@ export const TokenBalanceWidget: React.FC<
   WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
   settings = {
-    token: 'kUSD',
+    token: {
+      id: '42290944933889',
+      name: 'Kolibri USD',
+      symbol: 'kUSD',
+      contract: {
+        address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
+      },
+      metadata: {
+        decimals: '18',
+      },
+    },
     historicalPeriod: '7d',
   },
   onWidgetRemove,
   onSettingsChange,
 }) => {
   const [state, dispatch] = useStoreContext();
-  const token = useMemo(() => {
-    if (
-      state.widgetData.tokens.status === 'LOADING' ||
-      state.widgetData.tokens.status === 'STANDBY'
-    )
-      return;
-
-    return state.widgetData.tokens.data?.filter(
-      (item) => item.metadata?.symbol === settings.token
-    )?.['0'];
-  }, [settings, state.widgetData.tokens.status]);
-
-  const isLoading: boolean = useMemo((): boolean => {
-    if (token === undefined) return true;
-
-    const tokenBalancesStatus = state.widgetData.tokenBalances?.filter(
-      (item) => item.tokenId === token?.id
-    )?.['0']?.status;
-    const tokenBalancesHistoricalStatus =
-      state.widgetData.tokenBalancesHistorical?.filter(
-        (item) =>
-          item.tokenId === token?.id && item.level === settings.historicalPeriod
-      )?.['0']?.status;
-
-    return (
-      state.widgetData.tokens.status === 'LOADING' ||
-      tokenBalancesStatus === 'LOADING' ||
-      tokenBalancesHistoricalStatus === 'LOADING'
-    );
-  }, [
-    state.widgetData.tokens,
-    state.widgetData.tokenBalances,
-    state.widgetData.tokenBalancesHistorical,
-  ]);
+  const isLoading = useIsLoading(state, settings.token.id);
 
   useEffect(() => {
-    if (token === undefined) return;
-
     dispatch({
       type: 'LOAD_TOKENS_BALANCE',
-      payload: { tokenId: token.id },
+      payload: { id: settings.token.id },
     });
-  }, [token]);
+  }, [settings.token]);
 
   useEffect(() => {
-    if (token === undefined) return;
-
     // TODO: calculate level based on historicalPeriod
     const level = '2600000';
     dispatch({
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
-      payload: { tokenId: token.id, level },
+      payload: { id: settings.token.id, level },
     });
-  }, [token, settings.historicalPeriod]);
-
-  const settingTokens = useMemo(() => {
-    if (
-      state.widgetData.tokens.status === 'LOADING' ||
-      state.widgetData.tokens.status === 'STANDBY'
-    )
-      return;
-
-    const data = (state.widgetData.tokens.data ?? []).map((item) => {
-      return {
-        id: item.id,
-        ticker: item.metadata?.symbol ?? 'No Ticker',
-        fullName: item.metadata?.name ?? 'No Name',
-        address:
-          item.contract?.address ?? 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
-      };
-    });
-    return data;
-  }, [state.widgetData.tokens]);
-
-  const dummyBalance: Balance = {
-    amount: '0.005',
-    token: {
-      id: '42290944933889',
-      ticker: settings.token,
-      fullName: 'Kolibri',
-      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
-    },
-    fiatBalance: {
-      amount: '100000',
-    },
-  };
-
-  const dummyHistoricalBalance: Balance = {
-    amount: '50000',
-    token: {
-      id: '42290944933889',
-      ticker: 'kUSD',
-      fullName: 'Kolibri',
-      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
-    },
-    fiatBalance: {
-      amount: '50000',
-    },
-  };
+  }, [settings.token, settings.historicalPeriod]);
 
   const balance = useMemo(() => {
-    if (token === undefined) return;
-
-    const tokensBalance = state.widgetData.tokenBalances?.filter(
-      (item) => item.tokenId === token?.id
-    )?.['0'];
+    const tokensBalance = state.chainData.tokenBalances?.[settings.token.id];
 
     return {
-      token: {
-        id: token.id,
-        ticker: token.metadata?.symbol ?? '',
-        fullName: token.metadata?.name ?? '',
-        address: token.contract?.address ?? '',
-      },
+      token: settings.token,
       amount: String(
         BigNumber(tokensBalance?.balance ?? '0').dividedBy(
-          Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
+          Math.pow(10, Number(settings.token?.metadata?.decimals ?? '6'))
         )
       ),
       fiatBalance: { amount: '0' },
     };
-  }, [token, state.widgetData.tokenBalances]);
+  }, [settings.token, state.chainData.tokenBalances]);
 
   const historicalBalance = useMemo(() => {
-    if (token === undefined) return;
-
     const tokensBalanceHistorical =
-      state.widgetData.tokenBalancesHistorical?.filter(
-        (item) => item.tokenId === token.id
-      )?.['0'];
+      state.chainData.tokenBalancesHistorical?.[settings.token.id];
 
     return {
-      token: {
-        id: token.id,
-        ticker: token.metadata?.symbol ?? '',
-        fullName: token.metadata?.name ?? '',
-        address: token.contract?.address ?? '',
-      },
+      token: settings.token,
+      level: settings.historicalPeriod,
       amount: String(
         BigNumber(tokensBalanceHistorical?.balanceHistorical ?? '0').dividedBy(
-          Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
+          Math.pow(10, Number(settings.token?.metadata?.decimals ?? '6'))
         )
       ),
       fiatBalance: { amount: '0' },
     };
-  }, [token, state.widgetData.tokenBalancesHistorical]);
+  }, [settings.token, state.chainData.tokenBalancesHistorical]);
 
   return (
     <TokenBalanceWidgetComponent
-      balance={balance ?? dummyBalance}
-      historicalBalance={historicalBalance ?? dummyHistoricalBalance}
+      balance={balance}
+      historicalBalance={historicalBalance}
       isLoading={isLoading}
-      settingTokens={settingTokens}
       settings={settings}
       onSettingsChange={onSettingsChange}
       onWidgetRemove={onWidgetRemove}

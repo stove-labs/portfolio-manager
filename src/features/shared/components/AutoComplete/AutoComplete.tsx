@@ -9,7 +9,7 @@ import {
 import { useFormContext } from 'react-hook-form';
 
 export interface Option {
-  value: any;
+  value: string;
   label: string;
 }
 export interface AutoCompleteProps {
@@ -27,7 +27,7 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
   const input = form.register(name);
 
   const handleOnChange = useCallback(
-    (value: any) => {
+    (value: string) => {
       form.setValue(name, value);
     },
     [input, form, name]

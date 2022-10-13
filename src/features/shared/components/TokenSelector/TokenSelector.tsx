@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Token } from '../../../widgets/components/TokenBalanceWidget/TokenBalanceWidget';
+import { Token } from '../../../widgets/store/useChainDataStore';
 import { Option, AutoComplete } from '../AutoComplete/AutoComplete';
 
 export interface TokenSelectorProps {
@@ -10,8 +10,8 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ tokens }) => {
   const options = useMemo<Option[]>(
     () =>
       tokens.map((token) => ({
-        value: token.ticker,
-        label: token.ticker,
+        value: token.id,
+        label: `${token.symbol} | ${token.name}`,
       })),
     [tokens]
   );

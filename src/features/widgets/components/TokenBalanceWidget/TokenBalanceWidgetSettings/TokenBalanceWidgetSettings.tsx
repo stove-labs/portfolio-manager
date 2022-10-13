@@ -2,23 +2,25 @@ import React from 'react';
 import { Flex } from '@chakra-ui/react';
 import { HistoricalPeriodSelector } from '../../../../shared/components/HistoricalPeriodSelector/HistoricalPeriodSelector';
 import { TokenSelector } from '../../../../shared/components/TokenSelector/TokenSelector';
-import { Token } from '../TokenBalanceWidget';
+import { useGetAllTokens } from '../../../store/selectors/useChainDataSelectors';
+import { useStoreContext } from '../../../../../store/useStore';
 
 export type HistoricalPeriod = '24h' | '7d' | '30d';
 
 export interface TokenBalanceWidgetSettingsData {
-  token: Token;
   historicalPeriod: HistoricalPeriod;
 }
 
 export interface TokenBalanceWidgetSettingsProps {
-  tokens: Token[];
   historicalPeriods: HistoricalPeriod[];
 }
 
 export const TokenBalanceWidgetSettings: React.FC<
   TokenBalanceWidgetSettingsProps
-> = ({ tokens, historicalPeriods }) => {
+> = ({ historicalPeriods }) => {
+  const [state] = useStoreContext();
+  const tokens = useGetAllTokens(state);
+
   return (
     <>
       <Flex flex={'1'} flexDirection={'column'}>
