@@ -41,7 +41,7 @@ export interface Trigger {
 
 export interface DashboardProps {
   onSettingsExport: () => void;
-  onSettingsImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSettingsImport: () => void;
   block: Block;
   trigger: Trigger;
 }
