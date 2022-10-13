@@ -28,15 +28,16 @@ export const useSelectAllTokens = (): Token[] => {
 /**
  * Get loading status for token balance and token balance historical
  * @param {string} id - id of token
+ * @param {string} historicalPeriod - historicalPeriod
  * @returns loading state
  */
-export const useIsLoading = (id: string): boolean => {
+export const useIsLoading = (id: string, historicalPeriod: string): boolean => {
   const [state] = useStoreContext();
 
   return useMemo((): boolean => {
-    const tokenBalancesStatus = state.chainData.tokenBalances?.[id].status;
+    const tokenBalancesStatus = state.chainData.tokenBalances?.[id]?.status;
     const tokenBalancesHistoricalStatus =
-      state.chainData.tokenBalancesHistorical?.[id].status;
+      state.chainData.tokenBalancesHistorical?.[id + historicalPeriod]?.status;
 
     return (
       tokenBalancesStatus === 'LOADING' ||

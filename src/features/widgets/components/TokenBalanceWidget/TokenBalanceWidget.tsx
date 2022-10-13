@@ -22,7 +22,6 @@ export interface FiatBalance {
 }
 
 export interface Balance {
-  token: Token;
   amount: string;
   fiatBalance: FiatBalance;
 }
@@ -34,13 +33,14 @@ export interface WidgetProps<T> {
 }
 
 export interface TokenBalanceWidgetSettingsData {
-  token: Token;
+  id: string;
   historicalPeriod: HistoricalPeriod;
 }
 
 export interface TokenBalanceWidgetProps {
-  balance: Balance;
-  historicalBalance: Balance;
+  token?: Token;
+  balance?: Balance;
+  historicalBalance?: Balance;
   isLoading: boolean;
 }
 
@@ -56,6 +56,7 @@ export const percentageChange = (start: number, end: number): number => {
 export const TokenBalanceWidget: React.FC<
   TokenBalanceWidgetProps & WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
+  token,
   balance,
   historicalBalance,
   isLoading,
@@ -65,15 +66,15 @@ export const TokenBalanceWidget: React.FC<
 }) => {
   const balancePercentageChange = useMemo(() => {
     return percentageChange(
-      Number(historicalBalance.amount),
-      Number(balance.amount)
+      Number(historicalBalance?.amount),
+      Number(balance?.amount)
     );
-  }, [balance, historicalBalance]);
+  }, [balance, historicalBalance, isLoading]);
 
   const balanceFiatPercentageChange = useMemo(() => {
     return percentageChange(
-      Number(historicalBalance.fiatBalance.amount),
-      Number(balance.fiatBalance.amount)
+      Number(historicalBalance?.fiatBalance.amount),
+      Number(balance?.fiatBalance.amount)
     );
   }, [balance, historicalBalance]);
 
@@ -87,7 +88,7 @@ export const TokenBalanceWidget: React.FC<
         <TokenBalanceWidgetSettings historicalPeriods={historicalPeriods} />
       }
       // TODO: this cant be undefined
-      title={`${balance.token.symbol} balance (${
+      title={`${token?.symbol ?? 'Loading'} balance (${
         settings?.historicalPeriod ?? '24h'
       })`}
       onSettingsChange={onSettingsChange}
@@ -109,7 +110,7 @@ export const TokenBalanceWidget: React.FC<
                 src={
                   // kusd
                   `https://services.tzkt.io/v1/avatars/${
-                    balance.token.contract.address ??
+                    token?.contract.address ??
                     'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
                   }`
                   // quipu
@@ -131,12 +132,14 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'extrabold'}
                   lineHeight={'26px'}
                 >
-                  {Number(balance.amount) > 1
-                    ? abbreviateNumber(
-                        Number(Number(balance.amount).toFixed(6)),
-                        2
-                      )
-                    : Number(balance.amount).toFixed(6)}
+                  {balance?.amount
+                    ? Number(balance.amount) > 1
+                      ? abbreviateNumber(
+                          Number(Number(balance.amount).toFixed(6)),
+                          2
+                        )
+                      : Number(balance.amount).toFixed(6)
+                    : 'Loading'}
                 </Text>
                 {/* ticker */}
                 <Text
@@ -145,7 +148,7 @@ export const TokenBalanceWidget: React.FC<
                   pl={'1'}
                   position={'relative'}
                 >
-                  {balance.token.symbol}
+                  {token?.symbol ?? 'Loading'}
                 </Text>
                 <ChangeIndicator change={balancePercentageChange} size={'lg'} />
               </Flex>
@@ -160,12 +163,16 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'normal'}
                 >
                   $
-                  {Number(balance.fiatBalance.amount) > 1
-                    ? abbreviateNumber(
-                        Number(Number(balance.fiatBalance.amount).toFixed(6)),
-                        2
-                      )
-                    : Number(balance.fiatBalance.amount).toFixed(6)}
+                  {balance?.fiatBalance.amount
+                    ? Number(balance?.fiatBalance.amount) > 1
+                      ? abbreviateNumber(
+                          Number(
+                            Number(balance?.fiatBalance.amount).toFixed(6)
+                          ),
+                          2
+                        )
+                      : Number(balance?.fiatBalance.amount).toFixed(6)
+                    : 'Loading'}
                 </Text>
                 <ChangeIndicator
                   change={balanceFiatPercentageChange}
@@ -192,8 +199,8 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {balance.token.symbol} = 1.456 XTZ, 1 {balance.token.symbol} = $
-              0.99
+              1 {token?.symbol ?? 'Loading'} = 1.456 XTZ, 1
+              {token?.symbol ?? 'Loading'} = $ 0.99
             </Text>
           </Skeleton>
         </Flex>
