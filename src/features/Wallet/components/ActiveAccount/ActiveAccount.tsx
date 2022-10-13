@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '@chakra-ui/react';
-import MiddleEllipsis from 'react-middle-ellipsis';
+import { Box, Button } from '@chakra-ui/react';
 import { ActiveAccount as ActiveAccountState } from '../../store/useWalletStore';
 
 export interface ActiveAccountProps {
@@ -18,6 +17,7 @@ export const ActiveAccount: React.FC<ActiveAccountProps> = ({
   return activeAccount?.address ? (
     <Button
       colorScheme={'gray'}
+      textOverflow={'ellipsis'}
       width={'150px'}
       onClick={onDisconnectWallet}
       onMouseLeave={() => setHovering(false)}
@@ -27,9 +27,17 @@ export const ActiveAccount: React.FC<ActiveAccountProps> = ({
       {hovering ? (
         <>Disconnect</>
       ) : (
-        <MiddleEllipsis>
-          <span>{activeAccount.address}</span>
-        </MiddleEllipsis>
+        // <MiddleEllipsis>
+        //   <span>{activeAccount.address}</span>
+        // </MiddleEllipsis>
+        <Box
+          overflow={'hidden'}
+          textOverflow={'ellipsis'}
+          whiteSpace={'nowrap'}
+          width={'150px'}
+        >
+          {activeAccount.address}
+        </Box>
       )}
     </Button>
   ) : (

@@ -36,6 +36,7 @@ export const WidgetSettings: React.FC<
 
   const handleSaveClick = useCallback(
     (settings: any) => {
+      console.log('saving', settings);
       onSettingsChange(settings);
       onClose();
     },

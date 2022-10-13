@@ -22,18 +22,5 @@ export const ActiveAccount: React.FC = () => {
       onConnectWallet={handleWalletConnectClick}
       onDisconnectWallet={handleWalletDisconnectClick}
     />
-    // <Container>
-    //   <Flex direction={'column'}>
-    //     <Heading>Wallet</Heading>
-    //     <Text>Status: {state.wallet.status}</Text>
-    //     <Text>Address: {state.wallet.activeAccount?.address}</Text>
-    //     <Flex>
-    //       <Button onClick={handleWalletConnectClick}>Connect account</Button>
-    //       <Button onClick={handleWalletDisconnectClick}>
-    //         Disconnect account
-    //       </Button>
-    //     </Flex>
-    //   </Flex>
-    // </Container>
   );
 };

@@ -66,7 +66,7 @@ export type ChainDataAction =
       payload: { id: string; level: string; error: string };
     };
 
-const defaultValues: ChainDataState = {
+export const defaultValues: ChainDataState = {
   tokens: [
     {
       id: '42290944933889',

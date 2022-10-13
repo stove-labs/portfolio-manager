@@ -50,5 +50,7 @@ export const walletReducer: Reducer<WalletState, WalletAction> = (
 
         if (!activeAccount) delete draft.activeAccount;
       });
+    default:
+      return state;
   }
 };

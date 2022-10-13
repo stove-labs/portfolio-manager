@@ -15,6 +15,8 @@ export const WidgetsLayout: React.FC = () => {
     window.localStorage.setItem('STATE_LAYOUT', JSON.stringify(state.settings));
   }, [state.settings]);
 
+  console.log('widgets', state.settings.widgets);
+
   return (
     <>
       {/* <Button onClick={() => downloadSettings()}>Download Settings</Button>

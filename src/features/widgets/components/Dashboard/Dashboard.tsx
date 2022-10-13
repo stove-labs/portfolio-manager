@@ -51,6 +51,7 @@ export interface DashboardProps {
   onSettingsImport: () => void;
   addWidgetAs: (disclosure: UseDisclosureReturn) => ReactNode;
   activeAccountAs: () => ReactNode;
+  disableSettings: boolean;
   block: Block;
   trigger: Trigger;
 }
@@ -59,6 +60,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   children,
   onSettingsExport,
   onSettingsImport,
+  disableSettings,
   block,
   trigger: { countdown },
   addWidgetAs,
@@ -186,6 +188,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                   borderRight={'none'}
                   borderTopRightRadius={'0'}
                   colorScheme={'gray'}
+                  disabled={disableSettings}
                   leftIcon={<FontAwesomeIcon icon={faPlus} />}
                   size={'sm'}
                   variant={'outline'}
@@ -199,6 +202,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                     borderBottomLeftRadius={'0'}
                     borderLeft={'none'}
                     borderTopLeftRadius={'0'}
+                    disabled={disableSettings}
                     icon={<FontAwesomeIcon icon={faGear} />}
                     size={'sm'}
                     variant={'outline'}
@@ -239,7 +243,21 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
               </Heading>
             </Flex>
 
-            {children}
+            {children ?? (
+              <Flex
+                alignItems={'center'}
+                flex={'1'}
+                flexDirection={'column'}
+                justifyContent={'center'}
+                pt={'20'}
+              >
+                <Heading size={'md'}>
+                  Welcome to the Stove Labs Portfolio Manager
+                </Heading>
+                <Text mt={'1'}>Please connect your wallet to get started.</Text>
+                <Flex mt={'8'}>{activeAccountAs()}</Flex>
+              </Flex>
+            )}
           </Container>
         </Flex>
       </Flex>

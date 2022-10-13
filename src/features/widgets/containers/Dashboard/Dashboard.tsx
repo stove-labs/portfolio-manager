@@ -6,6 +6,7 @@ import { useStoreContext } from '../../../../store/useStore';
 import { WidgetsLayoutState } from '../WidgetsLayout/store/useWidgetsLayoutStore';
 import { Settings } from '../Settings/Settings';
 import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
+import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 
 export const Dashboard: React.FC = () => {
   // TODO add selectors
@@ -79,43 +80,46 @@ export const Dashboard: React.FC = () => {
           // green
           timestamp: Date.now() - 30000,
         }}
+        disableSettings={!address}
         trigger={{
           countdown: 30000,
         }}
         onSettingsExport={handleSettingsExport}
         onSettingsImport={handleSettingsImport}
       >
-        {/* <WidgetsLayout
-        layout={[
-          {
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            i: '0',
-          },
-          {
-            x: 4,
-            y: 0,
-            w: 4,
-            h: 4,
-            i: '1',
-          },
-        ]}
-        widgets={[
-          {
-            id: '0',
-            name: 'TokenBalanceWidget',
-          },
-          {
-            id: '1',
-            name: 'TokenBalanceWidget',
-          },
-        ]}
-        onLayoutChange={console.log}
-        onSettingsChange={console.log}
-        onWidgetRemove={console.log}
-      /> */}
+        {address ? (
+          <WidgetsLayout
+            layout={[
+              {
+                x: 0,
+                y: 0,
+                w: 4,
+                h: 4,
+                i: '0',
+              },
+              {
+                x: 4,
+                y: 0,
+                w: 4,
+                h: 4,
+                i: '1',
+              },
+            ]}
+            widgets={[
+              {
+                id: '0',
+                name: 'TokenBalanceWidget',
+              },
+              {
+                id: '1',
+                name: 'TokenBalanceWidget',
+              },
+            ]}
+            onLayoutChange={console.log}
+            onSettingsChange={console.log}
+            onWidgetRemove={console.log}
+          />
+        ) : undefined}
       </DashboardComponent>
     </>
   );
