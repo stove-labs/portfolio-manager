@@ -26,8 +26,6 @@ export const TokenBalanceWidget: React.FC<
   // TODO: calculate level based on historicalPeriod
   const isLoading = useIsLoading(settings.token, '2600000');
 
-  console.log('token', token, settings.token);
-
   useEffect(() => {
     dispatch({
       type: 'LOAD_TOKENS_BALANCE',

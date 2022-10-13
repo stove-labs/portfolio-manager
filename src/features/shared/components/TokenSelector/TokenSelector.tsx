@@ -25,7 +25,6 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ tokens }) => {
     const transformedValue = defaultValues.tokens.find(
       (token) => tokenToLabel(token) === value
     )?.id;
-    console.log('transformValueOut', transformedValue);
     if (!transformedValue) throw new Error('Token not found');
     return transformedValue;
   }, []);
@@ -35,7 +34,6 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ tokens }) => {
     const token = defaultValues.tokens.find((token) => token.id === value);
     const transformedValue = token && tokenToLabel(token);
 
-    console.log('transformValueIn', transformedValue);
     if (!transformedValue) throw new Error('Token not found');
     return transformedValue;
   }, []);

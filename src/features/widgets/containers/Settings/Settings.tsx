@@ -25,7 +25,6 @@ export const Settings: React.FC<UseDisclosureReturn> = ({
   isOpen,
   onClose,
 }) => {
-  console.log('isOpen', isOpen);
   const [state, dispatch] = useStoreContext();
 
   const widgetsSizes: widgetsSize = {
