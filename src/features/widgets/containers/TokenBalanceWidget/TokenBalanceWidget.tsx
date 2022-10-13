@@ -5,6 +5,7 @@ import {
   useIsLoading,
   useSelectToken,
 } from '../../store/selectors/useChainDataSelectors';
+import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
   TokenBalanceWidgetSettingsData,
@@ -23,22 +24,36 @@ export const TokenBalanceWidget: React.FC<
 }) => {
   const [state, dispatch] = useStoreContext();
   const token = useSelectToken(settings.token);
-  // TODO: calculate level based on historicalPeriod
-  const isLoading = useIsLoading(settings.token, '2600000');
+  const isLoading = useIsLoading(settings.token, settings.historicalPeriod);
 
   useEffect(() => {
     dispatch({
       type: 'LOAD_TOKENS_BALANCE',
-      payload: { id: settings.token },
+      payload: { ids: [settings.token] },
     });
   }, [settings.token]);
 
   useEffect(() => {
-    // TODO: calculate level based on historicalPeriod
-    const level = '2600000';
+    const offset: Record<HistoricalPeriod, number> = {
+      '24h': 1,
+      '7d': 7,
+      '30d': 30,
+    };
+
+    const date: Date = new Date();
+    const timestamp: string = new Date(
+      date.setDate(date.getDate() - offset[settings.historicalPeriod])
+    ).toISOString();
+
     dispatch({
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
-      payload: { id: settings.token, level },
+      payload: {
+        [settings.token + settings.historicalPeriod]: {
+          id: settings.token ,
+          historicalPeriod: settings.historicalPeriod,
+          timestamp,
+        },
+      },
     });
   }, [settings.token, settings.historicalPeriod]);
 
@@ -55,7 +70,7 @@ export const TokenBalanceWidget: React.FC<
       ),
       fiatBalance: { amount: '0' },
     };
-  }, [token, settings.id, isLoading]);
+  }, [token, isLoading]);
 
   const historicalBalance = useMemo(() => {
     if (isLoading) return;

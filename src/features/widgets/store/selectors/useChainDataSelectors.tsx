@@ -31,23 +31,30 @@ export const useSelectAllTokens = (): Token[] => {
  * @param {string} historicalPeriod - historicalPeriod
  * @returns loading state
  */
-export const useIsLoading = (id: string, historicalPeriod: string): boolean => {
+export const useIsLoading = (
+  id: string,
+  historicalPeriod: string
+): boolean => {
   const [state] = useStoreContext();
 
   return useMemo((): boolean => {
     const tokenBalancesStatus = state.chainData.tokenBalances?.[id]?.status;
     const tokenBalancesHistoricalStatus =
-      state.chainData.tokenBalancesHistorical?.[id + historicalPeriod]?.status;
+      state.chainData.tokenBalancesHistorical?.[id + historicalPeriod]
+        ?.status;
 
     return (
+      tokenBalancesStatus === undefined ||
       tokenBalancesStatus === 'LOADING' ||
       tokenBalancesStatus === 'STANDBY' ||
+      tokenBalancesHistoricalStatus === undefined ||
       tokenBalancesHistoricalStatus === 'LOADING' ||
       tokenBalancesHistoricalStatus === 'STANDBY'
     );
   }, [
     id,
-    state.chainData.tokenBalances,
-    state.chainData.tokenBalancesHistorical,
+    historicalPeriod,
+    state.chainData.tokenBalances?.[id]?.status,
+    state.chainData.tokenBalancesHistorical?.[id + historicalPeriod]?.status,
   ]);
 };
