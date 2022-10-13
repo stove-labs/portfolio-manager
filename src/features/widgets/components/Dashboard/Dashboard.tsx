@@ -22,9 +22,16 @@ import {
   Text,
   Tooltip,
   useColorModeValue,
+  useDisclosure,
+  UseDisclosureReturn,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { PropsWithChildren, useMemo } from 'react';
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useMemo,
+} from 'react';
 
 // TODO move definition to the appropriate data store
 export interface Block {
@@ -42,6 +49,8 @@ export interface Trigger {
 export interface DashboardProps {
   onSettingsExport: () => void;
   onSettingsImport: () => void;
+  addWidgetAs: (disclosure: UseDisclosureReturn) => ReactNode;
+  activeAccountAs: () => ReactNode;
   block: Block;
   trigger: Trigger;
 }
@@ -52,7 +61,10 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   onSettingsImport,
   block,
   trigger: { countdown },
+  addWidgetAs,
+  activeAccountAs,
 }) => {
+  const disclosure = useDisclosure();
   // how old the block is in seconds
   const blockOldness = useMemo(() => {
     const now = Date.now();
@@ -75,6 +87,10 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   const countdownSeconds = useMemo(() => {
     return countdown / 1000;
   }, [countdown]);
+
+  const handleAddWidget = useCallback(() => {
+    disclosure.onOpen();
+  }, [disclosure]);
 
   return (
     <>
@@ -173,6 +189,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                   leftIcon={<FontAwesomeIcon icon={faPlus} />}
                   size={'sm'}
                   variant={'outline'}
+                  onClick={handleAddWidget}
                 >
                   Add widget
                 </Button>
@@ -202,11 +219,12 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                   </MenuList>
                 </Menu>
               </Flex>
-              <Button colorScheme={'gray'}>Connect wallet</Button>
+              {activeAccountAs()}
             </Flex>
           </Flex>
         </Container>
       </Flex>
+      {addWidgetAs(disclosure)}
       <Flex
         background={'gray.50'}
         height={'100%'}

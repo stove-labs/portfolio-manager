@@ -1,9 +1,11 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 // import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
-import { Input } from '@chakra-ui/react';
+import { Input, UseDisclosureReturn } from '@chakra-ui/react';
 import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dashboard';
 import { useStoreContext } from '../../../../store/useStore';
 import { WidgetsLayoutState } from '../WidgetsLayout/store/useWidgetsLayoutStore';
+import { Settings } from '../Settings/Settings';
+import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 
 export const Dashboard: React.FC = () => {
   // TODO add selectors
@@ -64,6 +66,10 @@ export const Dashboard: React.FC = () => {
         onChange={(e) => importSettings(e)}
       ></Input>
       <DashboardComponent
+        activeAccountAs={() => <ActiveAccount />}
+        addWidgetAs={(disclosure: UseDisclosureReturn) => (
+          <Settings {...disclosure} />
+        )}
         block={{
           level: '1234567',
           // red

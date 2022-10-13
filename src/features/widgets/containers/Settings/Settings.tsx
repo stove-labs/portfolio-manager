@@ -1,12 +1,11 @@
 import {
-  useDisclosure,
-  Button,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalCloseButton,
   ModalBody,
+  UseDisclosureReturn,
 } from '@chakra-ui/react';
 import React from 'react';
 import { Layout } from 'react-grid-layout';
@@ -22,9 +21,12 @@ export type widgetsSize = {
   };
 };
 
-export const Settings: React.FC = () => {
+export const Settings: React.FC<UseDisclosureReturn> = ({
+  isOpen,
+  onClose,
+}) => {
+  console.log('isOpen', isOpen);
   const [state, dispatch] = useStoreContext();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const widgetsSizes: widgetsSize = {
     TokenBalanceWidget: {
@@ -53,8 +55,6 @@ export const Settings: React.FC = () => {
   };
   return (
     <>
-      <Button onClick={onOpen}>Add Widget</Button>
-
       <Modal isOpen={isOpen} scrollBehavior={'inside'} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

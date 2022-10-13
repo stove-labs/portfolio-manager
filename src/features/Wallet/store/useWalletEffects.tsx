@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useDependencyContext } from '../../../providers/DependencyProvider';
 import { Effect } from '../../../store/useStore';
+import { ActiveAccount } from './useWalletStore';
 
 export const useWalletEffects = (): Effect => {
   const { dependencies } = useDependencyContext();
@@ -10,8 +11,20 @@ export const useWalletEffects = (): Effect => {
       switch (action.type) {
         case 'CHECK_ACTIVE_ACCOUNT': {
           return (async () => {
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const params = Object.fromEntries(urlSearchParams.entries());
+
+            const activeAccountFromURL: ActiveAccount | undefined =
+              params.address
+                ? {
+                    address: params.address,
+                  }
+                : undefined;
+
             const activeAccount =
-              await dependencies.dAppClient.getActiveAccount();
+              activeAccountFromURL ??
+              (await dependencies.dAppClient.getActiveAccount());
+
             dispatch({
               type: 'SET_ACTIVE_ACCOUNT',
               payload: { activeAccount },
