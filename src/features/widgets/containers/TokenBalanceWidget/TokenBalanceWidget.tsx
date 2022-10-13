@@ -15,37 +15,37 @@ export const TokenBalanceWidget: React.FC<
   WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
   settings = {
-    id: '42290944933889',
+    token: '42290944933889',
     historicalPeriod: '7d',
   },
   onWidgetRemove,
   onSettingsChange,
 }) => {
   const [state, dispatch] = useStoreContext();
-  const token = useSelectToken(settings.id);
+  const token = useSelectToken(settings.token);
   // TODO: calculate level based on historicalPeriod
-  const isLoading = useIsLoading(settings.id, '2600000');
+  const isLoading = useIsLoading(settings.token, '2600000');
 
   useEffect(() => {
     dispatch({
       type: 'LOAD_TOKENS_BALANCE',
-      payload: { id: settings.id },
+      payload: { id: settings.token },
     });
-  }, [settings.id]);
+  }, [settings.token]);
 
   useEffect(() => {
     // TODO: calculate level based on historicalPeriod
     const level = '2600000';
     dispatch({
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
-      payload: { id: settings.id, level },
+      payload: { id: settings.token, level },
     });
-  }, [settings.id, settings.historicalPeriod]);
+  }, [settings.token, settings.historicalPeriod]);
 
   const balance = useMemo(() => {
     if (isLoading) return;
 
-    const tokensBalance = state.chainData.tokenBalances?.[settings.id];
+    const tokensBalance = state.chainData.tokenBalances?.[settings.token];
 
     return {
       amount: String(
@@ -62,7 +62,7 @@ export const TokenBalanceWidget: React.FC<
 
     const tokensBalanceHistorical =
       state.chainData.tokenBalancesHistorical?.[
-        settings.id + settings.historicalPeriod
+        settings.token + settings.historicalPeriod
       ];
 
     return {

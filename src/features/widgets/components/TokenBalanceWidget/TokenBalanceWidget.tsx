@@ -33,7 +33,7 @@ export interface WidgetProps<T> {
 }
 
 export interface TokenBalanceWidgetSettingsData {
-  id: string;
+  token: string;
   historicalPeriod: HistoricalPeriod;
 }
 
