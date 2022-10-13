@@ -25,13 +25,11 @@ export const getTokenBalancesHistorical = async (
   let payload: Record<string, { balanceHistorical: string }> = {};
 
   if (nativeTokenIds) {
-    const promises: Array<
-      Promise<Record<string, { balanceHistorical: string }>>
-    > = nativeTokenIds.map(async (id) => {
-      return await getNativeTokenBalance(id, address, settings[id].timestamp);
-    });
-
-    await Promise.all(promises).then((resolvedPromises) => {
+    await Promise.all(
+      nativeTokenIds.map(async (id) => {
+        return await getNativeTokenBalance(id, address, settings[id].timestamp);
+      })
+    ).then((resolvedPromises) => {
       resolvedPromises.forEach((record) => {
         payload = { ...payload, ...record };
       });
