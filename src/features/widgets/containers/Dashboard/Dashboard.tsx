@@ -64,6 +64,18 @@ export const Dashboard: React.FC = () => {
         onChange={(e) => importSettings(e)}
       ></Input>
       <DashboardComponent
+        block={{
+          level: '1234567',
+          // red
+          // timestamp: Date.now() - 120000,
+          // yellow
+          // timestamp: Date.now() - 80000,
+          // green
+          timestamp: Date.now() - 30000,
+        }}
+        trigger={{
+          countdown: 30000,
+        }}
         onSettingsExport={handleSettingsExport}
         onSettingsImport={handleSettingsImport}
       >

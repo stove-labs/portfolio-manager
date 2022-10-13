@@ -5,7 +5,6 @@ import {
   faGear,
   faCircle,
   faCode,
-  faLock,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   Box,
@@ -21,21 +20,62 @@ import {
   MenuList,
   Tag,
   Text,
+  Tooltip,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
+
+// TODO move definition to the appropriate data store
+export interface Block {
+  // level/height of the chain
+  level: string;
+  // when was this block created / retrieved
+  timestamp: number;
+}
+
+export interface Trigger {
+  // miliseconds
+  countdown: number;
+}
 
 export interface DashboardProps {
   onSettingsExport: () => void;
   onSettingsImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  block: Block;
+  trigger: Trigger;
 }
 
 export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   children,
   onSettingsExport,
   onSettingsImport,
+  block,
+  trigger: { countdown },
 }) => {
+  // how old the block is in seconds
+  const blockOldness = useMemo(() => {
+    const now = Date.now();
+    const timestamp = block.timestamp;
+    return (now - timestamp) / 1000;
+  }, [block.timestamp]);
+
+  const blockLivelinessColor = useMemo(() => {
+    // TODO adjust based on API having older blocks due to finalisation
+    // green -> yellow -> red (400)
+    // younger than 60 seconds
+    // older than 120 seconds
+    if (blockOldness > 120) return '#F56565';
+    // older than 60 seconds
+    if (blockOldness > 60) return '#ECC94B';
+    // younger than 60 seconds
+    if (blockOldness < 60) return '#48BB78';
+  }, [blockOldness]);
+
+  const countdownSeconds = useMemo(() => {
+    return countdown / 1000;
+  }, [countdown]);
+
   return (
     <>
       <Flex
@@ -88,31 +128,39 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                 orientation={'vertical'}
               />
               <Flex>
-                <Flex flexDirection={'column'} justifyContent={'left'}>
-                  <Flex alignItems={'center'} gap={'1.5'}>
-                    <FontAwesomeIcon
-                      // green.400
-                      color={'#48BB78'}
-                      icon={faCircle}
-                      size={'xs'}
-                    />
-                    <Text
-                      fontSize={'xs'}
-                      fontWeight={'normal'}
-                      letterSpacing={'tight'}
+                <Tooltip
+                  size={'md'}
+                  // TODO: format the block age in a way that handles edge cases
+                  label={`Current block is ${blockOldness.toFixed(0)}s old`}
+                >
+                  <Flex flexDirection={'column'} justifyContent={'left'}>
+                    <Flex alignItems={'center'} gap={'1.5'}>
+                      <FontAwesomeIcon
+                        // green.400
+                        color={blockLivelinessColor}
+                        icon={faCircle}
+                        size={'xs'}
+                      />
+                      <Text
+                        fontSize={'xs'}
+                        fontWeight={'normal'}
+                        letterSpacing={'tight'}
+                      >
+                        #{block.level}
+                      </Text>
+                    </Flex>
+                    <Flex
+                      alignItems={'center'}
+                      color={'gray.700'}
+                      flex={'1'}
+                      justifyContent={'start'}
                     >
-                      #234567
-                    </Text>
+                      <Text fontSize={'x-small'}>
+                        Refreshing in {countdownSeconds}s
+                      </Text>
+                    </Flex>
                   </Flex>
-                  <Flex
-                    alignItems={'center'}
-                    color={'gray.700'}
-                    flex={'1'}
-                    justifyContent={'start'}
-                  >
-                    <Text fontSize={'x-small'}>Refreshing in 3s</Text>
-                  </Flex>
-                </Flex>
+                </Tooltip>
               </Flex>
             </Flex>
             <Flex alignItems={'center'} gap={'3'}>
@@ -171,9 +219,6 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
               <Heading color={'gray.700'} pb={7} size={'lg'}>
                 My dashboard
               </Heading>
-              <Flex color={'blackAlpha.800'} position={'relative'} top={'-2px'}>
-                <FontAwesomeIcon icon={faLock} size={'1x'} />
-              </Flex>
             </Flex>
 
             {children}
