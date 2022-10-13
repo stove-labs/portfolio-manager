@@ -26,7 +26,16 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { PropsWithChildren } from 'react';
 
-export const Dashboard: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+export interface DashboardProps {
+  onSettingsExport: () => void;
+  onSettingsImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
+  children,
+  onSettingsExport,
+  onSettingsImport,
+}) => {
   return (
     <>
       <Flex
@@ -130,11 +139,17 @@ export const Dashboard: React.FC<PropsWithChildren<{}>> = ({ children }) => {
                     variant={'outline'}
                   ></MenuButton>
                   <MenuList>
-                    <MenuItem icon={<FontAwesomeIcon icon={faDownload} />}>
-                      Download settings
+                    <MenuItem
+                      icon={<FontAwesomeIcon icon={faDownload} />}
+                      onClick={onSettingsExport}
+                    >
+                      Export settings
                     </MenuItem>
-                    <MenuItem icon={<FontAwesomeIcon icon={faUpload} />}>
-                      Upload settings
+                    <MenuItem
+                      icon={<FontAwesomeIcon icon={faUpload} />}
+                      onClick={onSettingsImport}
+                    >
+                      Import settings
                     </MenuItem>
                   </MenuList>
                 </Menu>
