@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { Effect } from '../../../store/useStore';
-import { getTokenBalances } from './lib/fetchBalances';
-import { getTokenBalancesHistorical } from './lib/fetchBalancesHistorical';
+import { Effect } from '../../../../store/useStore';
+import { getTokenBalances } from '../lib/chainData/fetchBalances';
+import { getTokenBalancesHistorical } from '../lib/chainData/fetchBalancesHistorical';
 
 export const useChainDataEffects = (): Effect => {
   return useCallback<Effect>((state, action, dispatch) => {

@@ -7,7 +7,7 @@ import {
   useSelectToken,
   useSelectBalance,
   useSelectBalanceHistorical,
-} from '../../store/selectors/useChainDataSelectors';
+} from '../../store/selectors/chainData/useChainDataSelectors';
 import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
@@ -40,6 +40,13 @@ export const TokenBalanceWidget: React.FC<
       payload: { ids: [settings.token] },
     });
   }, [settings.token]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'LOAD_SPOT_PRICE',
+      payload: { pairIds: [['XTZ', 'USD']] },
+    });
+  }, []);
 
   useEffect(() => {
     const offset: Record<HistoricalPeriod, number> = {

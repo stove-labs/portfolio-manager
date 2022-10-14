@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { defaultValues, Token } from '../../../widgets/store/useChainDataStore';
+import { defaultValues, Token } from '../../../widgets/store/chainData/useChainDataStore';
 import { Option, AutoComplete } from '../AutoComplete/AutoComplete';
 
 export interface TokenSelectorProps {

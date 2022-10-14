@@ -14,7 +14,7 @@ export const defaultBalance: string = '0';
  * Get token balances for selected ids
  * @param {string} address - wallet address
  * @param {string} ids - array of ids
- * @returns JSON with balances
+ * @returns Record with balances
  */
 export const getTokenBalances = async (
   address: string,
@@ -54,7 +54,7 @@ export const getTokenBalances = async (
 /**
  * Get native token balance
  * @param {string} address - wallet address
- * @returns JSON with balances
+ * @returns balance
  */
 export const getNativeTokenBalance = async (
   address: string

@@ -15,7 +15,7 @@ export const defaultBalance: string = '0';
  * Get historical token balances for selected ids
  * @param {string} address - wallet address
  * @param {Record} settings - Record<id + historicalPeriod, { id, timestamp }>
- * @returns JSON with historical balances
+ * @returns Record<recordId, balanceHistorical>
  */
 export const getTokenBalancesHistorical = async (
   address: string,
@@ -93,7 +93,7 @@ export const getTokenBalancesHistorical = async (
  * @param {string} recordId - token id + historicalPeriod
  * @param {string} address - wallet address
  * @param {string} timestamp - ISO timestamp
- * @returns Record<id, balanceHistorical>
+ * @returns Record<recordId, balanceHistorical>
  */
 export const getNativeTokenBalanceHistorical = async (
   recordId: string,

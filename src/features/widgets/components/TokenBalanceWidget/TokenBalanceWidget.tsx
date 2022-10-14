@@ -11,7 +11,7 @@ import {
 import { abbreviateNumber } from 'js-abbreviation-number';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
-import { Token } from '../../store/useChainDataStore';
+import { Token } from '../../store/chainData/useChainDataStore';
 import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
@@ -139,7 +139,7 @@ export const TokenBalanceWidget: React.FC<
                           2
                         )
                       : Number(balance.amount).toFixed(6)
-                    : 'Loading'}
+                    : '-'}
                 </Text>
                 {/* ticker */}
                 <Text
@@ -172,7 +172,7 @@ export const TokenBalanceWidget: React.FC<
                           2
                         )
                       : Number(balance?.fiatBalance.amount).toFixed(6)
-                    : 'Loading'}
+                    : '-'}
                 </Text>
                 <ChangeIndicator
                   change={balanceFiatPercentageChange}

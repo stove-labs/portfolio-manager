@@ -3,7 +3,8 @@ import React, { Reducer, useCallback, useReducer } from 'react';
 import combineReducers from 'react-combine-reducers';
 import logger from 'use-reducer-logger';
 import { useCounterEffects } from '../features/Counter/store/useCounterEffects';
-import { useChainDataEffects } from '../features/widgets/store/useChainDataEffects';
+import { useChainDataEffects } from '../features/widgets/store/chainData/useChainDataEffects';
+import { useSpotPriceEffects } from '../features/widgets/store/spotPrice/useSpotPriceEffects';
 import {
   CounterAction,
   counterReducer,
@@ -28,20 +29,28 @@ import {
   chainDataReducer,
   ChainDataState,
   initialChainDataState,
-} from '../features/widgets/store/useChainDataStore';
+} from '../features/widgets/store/chainData/useChainDataStore';
+import {
+  initialSpotPriceState,
+  SpotPriceAction,
+  spotPriceReducer,
+  SpotPriceState,
+} from '../features/widgets/store/spotPrice/useSpotPriceStore';
 
 export interface State {
   counter: CounterState;
   wallet: WalletState;
   settings: WidgetsLayoutState;
   chainData: ChainDataState;
+  prices: SpotPriceState;
 }
 
 export type Action =
   | CounterAction
   | WalletAction
   | WidgetsLayoutAction
-  | ChainDataAction;
+  | ChainDataAction
+  | SpotPriceAction;
 
 export type AppReducer = Reducer<State, Action>;
 
@@ -50,6 +59,7 @@ const [reducer, initialState] = combineReducers<AppReducer>({
   wallet: [walletReducer, initialWalletState],
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
   chainData: [chainDataReducer, initialChainDataState],
+  prices: [spotPriceReducer, initialSpotPriceState],
 });
 
 export type Effect = (
@@ -81,6 +91,7 @@ export const useStore = (): [State, React.Dispatch<Action>] => {
     useCounterEffects,
     useWalletEffects,
     useChainDataEffects,
+    useSpotPriceEffects,
   ]);
   const dispatchWithEffects: React.Dispatch<Action> = useCallback(
     (action) => {

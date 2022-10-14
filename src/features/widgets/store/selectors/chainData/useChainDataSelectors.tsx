@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import BigNumber from 'bignumber.js';
-import { useStoreContext } from '../../../../store/useStore';
-import { Token } from '../useChainDataStore';
-import { Balance } from '../../components/TokenBalanceWidget/TokenBalanceWidget';
-import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
+import { useStoreContext } from '../../../../../store/useStore';
+import { Token } from '../../chainData/useChainDataStore';
+import { Balance } from '../../../components/TokenBalanceWidget/TokenBalanceWidget';
+import { HistoricalPeriod } from '../../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 
 /**
  * Get token based on id
