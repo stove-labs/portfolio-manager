@@ -1,10 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
-import BigNumber from 'bignumber.js';
+import React, { useEffect } from 'react';
+import moment from 'moment';
 import { useStoreContext } from '../../../../store/useStore';
 import {
-  useIsLoading,
+  useSelectIsBalanceLoading,
+  useSelectIsBalanceHistoricalLoading,
   useSelectToken,
+  useSelectBalance,
+  useSelectBalanceHistorical,
 } from '../../store/selectors/useChainDataSelectors';
+import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
   TokenBalanceWidgetSettingsData,
@@ -21,60 +25,50 @@ export const TokenBalanceWidget: React.FC<
   onWidgetRemove,
   onSettingsChange,
 }) => {
-  const [state, dispatch] = useStoreContext();
+  const [, dispatch] = useStoreContext();
   const token = useSelectToken(settings.token);
-  // TODO: calculate level based on historicalPeriod
-  const isLoading = useIsLoading(settings.token, '2600000');
+  const isBalanceLoading = useSelectIsBalanceLoading(settings.token);
+  const isBalanceHistoricalLoading = useSelectIsBalanceHistoricalLoading(
+    settings.token,
+    settings.historicalPeriod
+  );
+  const isLoading = isBalanceLoading || isBalanceHistoricalLoading;
 
   useEffect(() => {
     dispatch({
       type: 'LOAD_TOKENS_BALANCE',
-      payload: { id: settings.token },
+      payload: { ids: [settings.token] },
     });
   }, [settings.token]);
 
   useEffect(() => {
-    // TODO: calculate level based on historicalPeriod
-    const level = '2600000';
+    const offset: Record<HistoricalPeriod, number> = {
+      '24h': 24,
+      '7d': 24 * 7,
+      '30d': 24 * 30,
+    };
+
+    const timestamp: string = moment(Date.now())
+      .subtract(offset[settings.historicalPeriod], 'h')
+      .toISOString();
+
     dispatch({
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
-      payload: { id: settings.token, level },
+      payload: {
+        [settings.token + settings.historicalPeriod]: {
+          id: settings.token,
+          historicalPeriod: settings.historicalPeriod,
+          timestamp,
+        },
+      },
     });
   }, [settings.token, settings.historicalPeriod]);
 
-  const balance = useMemo(() => {
-    if (isLoading) return;
-
-    const tokensBalance = state.chainData.tokenBalances?.[settings.token];
-
-    return {
-      amount: String(
-        BigNumber(tokensBalance?.balance ?? '0').dividedBy(
-          Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
-        )
-      ),
-      fiatBalance: { amount: '0' },
-    };
-  }, [token, settings.id, isLoading]);
-
-  const historicalBalance = useMemo(() => {
-    if (isLoading) return;
-
-    const tokensBalanceHistorical =
-      state.chainData.tokenBalancesHistorical?.[
-        settings.token + settings.historicalPeriod
-      ];
-
-    return {
-      level: settings.historicalPeriod,
-      amount: String(
-        BigNumber(tokensBalanceHistorical?.balanceHistorical ?? '0').dividedBy(
-          Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
-        )
-      ),
-      fiatBalance: { amount: '0' },
-    };
-  }, [token, settings, isLoading]);
+  const balance = useSelectBalance(token);
+  const historicalBalance = useSelectBalanceHistorical(
+    settings.historicalPeriod,
+    token
+  );
 
   return (
     <TokenBalanceWidgetComponent
