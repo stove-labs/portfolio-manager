@@ -10,6 +10,12 @@ import {
 } from '../../store/selectors/chainData/useChainDataSelectors';
 import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
+  useSelectTokenSpotPrice,
+  useSelectTokenSpotPriceHistorical,
+  useSelectNativeTokenSpotPrice,
+  useSelectNativeTokenSpotPriceHistorical,
+} from '../../store/selectors/spotPrice/useSpotPriceSelectors';
+import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
   TokenBalanceWidgetSettingsData,
   WidgetProps,
@@ -57,7 +63,7 @@ export const TokenBalanceWidget: React.FC<
       type: 'LOAD_SPOT_PRICE',
       payload: { pairIds: [['XTZ', 'USD']] },
     });
-  }, [settings.token]);
+  }, []);
 
   useEffect(() => {
     const tokenA = 'XTZ';
@@ -69,6 +75,7 @@ export const TokenBalanceWidget: React.FC<
         [tokenA + tokenB + settings.historicalPeriod]: {
           tokenA,
           tokenB,
+          historicalPeriod: settings.historicalPeriod,
           timestamp,
         },
       },
@@ -94,12 +101,25 @@ export const TokenBalanceWidget: React.FC<
     token
   );
 
+  const spotPriceNativeToken = useSelectNativeTokenSpotPrice();
+  const spotPriceNativeTokenHistorical =
+    useSelectNativeTokenSpotPriceHistorical(settings.historicalPeriod);
+  const spotPriceToken = useSelectTokenSpotPrice(token?.symbol);
+  const spotPriceTokenHistorical = useSelectTokenSpotPriceHistorical(
+    settings.historicalPeriod,
+    token?.symbol
+  );
+
   return (
     <TokenBalanceWidgetComponent
       balance={balance}
       historicalBalance={historicalBalance}
       isLoading={isLoading}
       settings={settings}
+      spotPriceNativeToken={spotPriceNativeToken}
+      spotPriceNativeTokenHistorical={spotPriceNativeTokenHistorical}
+      spotPriceToken={spotPriceToken}
+      spotPriceTokenHistorical={spotPriceTokenHistorical}
       token={token}
       onSettingsChange={onSettingsChange}
       onWidgetRemove={onWidgetRemove}

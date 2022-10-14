@@ -41,6 +41,10 @@ export interface TokenBalanceWidgetProps {
   token?: Token;
   balance?: Balance;
   historicalBalance?: Balance;
+  spotPriceToken?: string;
+  spotPriceTokenHistorical?: string;
+  spotPriceNativeToken?: string;
+  spotPriceNativeTokenHistorical?: string;
   isLoading: boolean;
 }
 
@@ -59,6 +63,10 @@ export const TokenBalanceWidget: React.FC<
   token,
   balance,
   historicalBalance,
+  spotPriceToken,
+  spotPriceTokenHistorical,
+  spotPriceNativeToken,
+  spotPriceNativeTokenHistorical,
   isLoading,
   onWidgetRemove,
   onSettingsChange,
@@ -71,12 +79,39 @@ export const TokenBalanceWidget: React.FC<
     );
   }, [balance, historicalBalance, isLoading]);
 
-  const balanceFiatPercentageChange = useMemo(() => {
+  // spot prices are in tokenA-nativeToken
+  const price = useMemo(() => {
+    if (!spotPriceToken || !spotPriceNativeToken) return;
+
+    return Number(spotPriceToken) * Number(spotPriceNativeToken);
+  }, [spotPriceToken, spotPriceNativeToken]);
+
+  const tokenValue = useMemo(() => {
+    if (!price || !balance?.amount) return;
+
+    return price * Number(balance?.amount);
+  }, [price, balance]);
+
+  const tokenValuePercentageChange = useMemo(() => {
+    if (
+      !spotPriceTokenHistorical ||
+      !spotPriceNativeTokenHistorical ||
+      !tokenValue
+    )
+      return 0;
+
     return percentageChange(
-      Number(historicalBalance?.fiatBalance.amount),
-      Number(balance?.fiatBalance.amount)
+      Number(spotPriceTokenHistorical) *
+        Number(spotPriceNativeTokenHistorical) *
+        Number(balance?.amount),
+      tokenValue
     );
-  }, [balance, historicalBalance]);
+  }, [
+    spotPriceTokenHistorical,
+    spotPriceNativeTokenHistorical,
+    tokenValue,
+    balance,
+  ]);
 
   const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];
 
@@ -109,13 +144,16 @@ export const TokenBalanceWidget: React.FC<
               <img
                 src={
                   // kusd
-                  `https://services.tzkt.io/v1/avatars/${
-                    token?.contract.address ??
-                    'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
-                  }`
+                  token?.symbol === 'XTZ'
+                    ? 'https://tzkt.io/tezos-logo.svg'
+                    : `https://services.tzkt.io/v1/avatars/${
+                        token?.contract.address ??
+                        'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
+                      }`
                   // quipu
                   // 'https://services.tzkt.io/v1/avatars/KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb'
                 }
+                style={{ maxHeight: '100%' }}
                 width={'55px'}
               />
             </SkeletonCircle>
@@ -163,19 +201,17 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'normal'}
                 >
                   $
-                  {balance?.fiatBalance.amount
-                    ? Number(balance?.fiatBalance.amount) > 1
+                  {tokenValue
+                    ? Number(tokenValue) > 1
                       ? abbreviateNumber(
-                          Number(
-                            Number(balance?.fiatBalance.amount).toFixed(6)
-                          ),
+                          Number(Number(tokenValue).toFixed(2)),
                           2
                         )
-                      : Number(balance?.fiatBalance.amount).toFixed(6)
+                      : Number(tokenValue).toFixed(2)
                     : '-'}
                 </Text>
                 <ChangeIndicator
-                  change={balanceFiatPercentageChange}
+                  change={tokenValuePercentageChange}
                   size={'sm'}
                 />
               </Flex>
@@ -199,8 +235,8 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {token?.symbol ?? 'Loading'} = 1.456 XTZ, 1
-              {token?.symbol ?? 'Loading'} = $ 0.99
+              1 {token?.symbol ?? 'Loading'} = {spotPriceToken ?? '-'} XTZ, 1
+              {token?.symbol ?? 'Loading'} = ${price ?? '-'}
             </Text>
           </Skeleton>
         </Flex>

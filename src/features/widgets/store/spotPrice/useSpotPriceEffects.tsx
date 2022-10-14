@@ -8,7 +8,6 @@ export const useSpotPriceEffects = (): Effect => {
     switch (action.type) {
       case 'LOAD_SPOT_PRICE': {
         return (async () => {
-          console.log('getSpotPrices', action.payload.pairIds);
           const payload = await getSpotPrices(action.payload.pairIds);
 
           dispatch({
