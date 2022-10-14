@@ -77,7 +77,7 @@ export const TokenBalanceWidget: React.FC<
       Number(historicalBalance?.amount),
       Number(balance?.amount)
     );
-  }, [balance, historicalBalance, isLoading]);
+  }, [balance, historicalBalance]);
 
   // spot prices are in tokenA-nativeToken
   const price = useMemo(() => {
@@ -103,14 +103,14 @@ export const TokenBalanceWidget: React.FC<
     return percentageChange(
       Number(spotPriceTokenHistorical) *
         Number(spotPriceNativeTokenHistorical) *
-        Number(balance?.amount),
+        Number(historicalBalance?.amount),
       tokenValue
     );
   }, [
     spotPriceTokenHistorical,
     spotPriceNativeTokenHistorical,
     tokenValue,
-    balance,
+    historicalBalance,
   ]);
 
   const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];

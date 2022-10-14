@@ -40,7 +40,7 @@ export const useSelectNativeTokenSpotPriceHistorical = (
   return useMemo(() => {
     return state.prices.spotPricesHistorical?.[
       nativeToken + currencyToken + historicalPeriod
-    ].price;
+    ]?.price;
   }, [
     historicalPeriod,
     currencyToken,

@@ -80,7 +80,32 @@ export const TokenBalanceWidget: React.FC<
         },
       },
     });
-  }, [settings.token, settings.historicalPeriod]);
+  }, [settings.historicalPeriod]);
+
+  useEffect(() => {
+    if (!token || token.symbol === 'XTZ') return;
+
+    dispatch({
+      type: 'LOAD_SPOT_PRICE',
+      payload: { pairIds: [[token.symbol, 'XTZ']] },
+    });
+  }, [token]);
+
+  useEffect(() => {
+    if (!token || token.symbol === 'XTZ') return;
+
+    dispatch({
+      type: 'LOAD_SPOT_PRICE_HISTORICAL',
+      payload: {
+        [token.symbol + 'XTZ' + settings.historicalPeriod]: {
+          tokenA: token.symbol,
+          tokenB: 'XTZ',
+          historicalPeriod: settings.historicalPeriod,
+          timestamp,
+        },
+      },
+    });
+  }, [token, settings.historicalPeriod]);
 
   useEffect(() => {
     dispatch({
