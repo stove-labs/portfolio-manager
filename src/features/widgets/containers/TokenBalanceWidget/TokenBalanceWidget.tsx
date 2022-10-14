@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import moment from 'moment';
 import { useStoreContext } from '../../../../store/useStore';
 import {
@@ -33,6 +33,17 @@ export const TokenBalanceWidget: React.FC<
     settings.historicalPeriod
   );
   const isLoading = isBalanceLoading || isBalanceHistoricalLoading;
+  const timestamp = useMemo(() => {
+    const offset: Record<HistoricalPeriod, number> = {
+      '24h': 24,
+      '7d': 24 * 7,
+      '30d': 24 * 30,
+    };
+
+    return moment(Date.now())
+      .subtract(offset[settings.historicalPeriod], 'h')
+      .toISOString();
+  }, [settings.historicalPeriod]);
 
   useEffect(() => {
     dispatch({
@@ -46,19 +57,25 @@ export const TokenBalanceWidget: React.FC<
       type: 'LOAD_SPOT_PRICE',
       payload: { pairIds: [['XTZ', 'USD']] },
     });
-  }, []);
+  }, [settings.token]);
 
   useEffect(() => {
-    const offset: Record<HistoricalPeriod, number> = {
-      '24h': 24,
-      '7d': 24 * 7,
-      '30d': 24 * 30,
-    };
+    const tokenA = 'XTZ';
+    const tokenB = 'USD';
 
-    const timestamp: string = moment(Date.now())
-      .subtract(offset[settings.historicalPeriod], 'h')
-      .toISOString();
+    dispatch({
+      type: 'LOAD_SPOT_PRICE_HISTORICAL',
+      payload: {
+        [tokenA + tokenB + settings.historicalPeriod]: {
+          tokenA,
+          tokenB,
+          timestamp,
+        },
+      },
+    });
+  }, [settings.token, settings.historicalPeriod]);
 
+  useEffect(() => {
     dispatch({
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
       payload: {

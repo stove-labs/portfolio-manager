@@ -42,7 +42,6 @@ export type SpotPriceAction =
         {
           tokenA: string;
           tokenB: string;
-          historicalPeriod: HistoricalPeriod;
           timestamp: string;
         }
       >;

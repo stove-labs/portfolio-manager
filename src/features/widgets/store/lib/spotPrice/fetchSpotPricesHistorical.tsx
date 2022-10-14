@@ -27,13 +27,13 @@ export const getSpotPricesHistorical = async (
     (data) => data.tokenA !== 'XTZ'
   );
   const nativeTokenSettings = Object.values(settings).filter(
-    (data) => data.tokenA !== 'XTZ'
+    (data) => data.tokenA === 'XTZ'
   );
   let payload: Payload = {};
 
   if (nativeTokenSettings) {
     await Promise.all(
-      tokenSettings.map(
+      nativeTokenSettings.map(
         async ({ tokenA, tokenB, timestamp }, i): PayloadPromise => {
           return await getNativeTokenBalance(
             [tokenA, tokenB],
@@ -70,11 +70,9 @@ export const getNativeTokenBalance = async (
 ): PayloadPromise => {
   const [XTZ, currency] = pair;
   const response = await fetch(
-    `https://api.coinbase.com/v2/prices/${XTZ}-${currency}/spot?data=${timestamp}`
+    `https://api.coinbase.com/v2/prices/${XTZ}-${currency}/spot?date=${timestamp}`
   );
-
   if (!response.ok) throw new Error(response.statusText);
-
   const responseData = (await response.json()) as NativeTokenBalanceResponse;
 
   return {
