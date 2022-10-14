@@ -18,11 +18,11 @@ import {
 } from './TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 
 export interface FiatBalance {
-  amount: string;
+  amount?: string;
 }
 
 export interface Balance {
-  amount: string;
+  amount?: string;
   fiatBalance: FiatBalance;
 }
 

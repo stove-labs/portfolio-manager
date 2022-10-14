@@ -39,6 +39,7 @@
     "js-abbreviation-number": "^1.4.0",
     "lodash": "^4.17.21",
     "loglevel": "^1.8.0",
+    "moment": "^2.29.4",
     "number-abbreviate": "^2.0.0",
     "parcel": "^2.7.0",
     "react": "^18.2.0",

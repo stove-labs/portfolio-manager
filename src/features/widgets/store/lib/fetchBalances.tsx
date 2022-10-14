@@ -1,9 +1,14 @@
 import { isEmpty } from 'lodash';
 
-export interface TokenBalanceResponse {
-  token: { id: string };
+export interface TokenBalanceResponseItem {
+  id: string;
   balance: string;
 }
+export type TokenBalanceResponse = TokenBalanceResponseItem[];
+export type Payload = Record<string, { balance: string }>;
+export type PayloadPromise = Promise<Payload>;
+
+export const defaultBalance: string = '0';
 
 /**
  * Get token balances for selected ids
@@ -14,27 +19,34 @@ export interface TokenBalanceResponse {
 export const getTokenBalances = async (
   address: string,
   ids: string[]
-): Promise<Record<string, { balance: string }>> => {
+): PayloadPromise => {
+  // Filter out XTZ as we get balance from different api
   const tokenIds: string[] = ids.filter((id) => id !== '0');
-  const payload: Record<string, { balance: string }> = {};
+  const payload: Payload = {};
 
+  // 0 is XTZ id
   if (ids.includes('0')) payload['0'] = await getNativeTokenBalance(address);
   if (isEmpty(tokenIds)) return payload;
 
   const response = await fetch(
-    `https://api.tzkt.io/v1/tokens/balances?token.id.in=${tokenIds.join()}&account=${address}&metadata.decimals.ge=1`
+    `https://api.tzkt.io/v1/tokens/balances?token.id.in=${tokenIds.join()}&account=${address}&select=balance,token.id as id`
   );
 
   if (!response.ok) throw new Error(response.statusText);
 
-  const responseData = (await response.json()) as TokenBalanceResponse[];
+  const responseData = (await response.json()) as TokenBalanceResponse;
 
   responseData.forEach(
-    (data) => (payload[data.token.id] = { balance: data.balance })
+    (data) => (payload[data.id] = { balance: data.balance ?? defaultBalance })
   );
 
-  if (responseData.length === 0)
-    tokenIds.forEach((id) => (payload[id] = { balance: '0' }));
+  // API only returns existing balances, fill zero balances
+  tokenIds.forEach(
+    (id) =>
+      (payload[id] = {
+        balance: payload[id].balance ?? defaultBalance,
+      })
+  );
 
   return payload;
 };
@@ -55,5 +67,5 @@ export const getNativeTokenBalance = async (
 
   const responseData = (await response.json()) as string;
 
-  return { balance: responseData ?? '0' };
+  return { balance: responseData ?? defaultBalance };
 };

@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
-import BigNumber from 'bignumber.js';
+import React, { useEffect } from 'react';
+import moment from 'moment';
 import { useStoreContext } from '../../../../store/useStore';
 import {
-  useIsLoading,
+  useSelectIsBalanceLoading,
+  useSelectIsBalanceHistoricalLoading,
   useSelectToken,
+  useSelectBalance,
+  useSelectBalanceHistorical,
 } from '../../store/selectors/useChainDataSelectors';
 import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
@@ -22,9 +25,14 @@ export const TokenBalanceWidget: React.FC<
   onWidgetRemove,
   onSettingsChange,
 }) => {
-  const [state, dispatch] = useStoreContext();
+  const [, dispatch] = useStoreContext();
   const token = useSelectToken(settings.token);
-  const isLoading = useIsLoading(settings.token, settings.historicalPeriod);
+  const isBalanceLoading = useSelectIsBalanceLoading(settings.token);
+  const isBalanceHistoricalLoading = useSelectIsBalanceHistoricalLoading(
+    settings.token,
+    settings.historicalPeriod
+  );
+  const isLoading = isBalanceLoading || isBalanceHistoricalLoading;
 
   useEffect(() => {
     dispatch({
@@ -35,21 +43,20 @@ export const TokenBalanceWidget: React.FC<
 
   useEffect(() => {
     const offset: Record<HistoricalPeriod, number> = {
-      '24h': 1,
-      '7d': 7,
-      '30d': 30,
+      '24h': 24,
+      '7d': 24 * 7,
+      '30d': 24 * 30,
     };
 
-    const date: Date = new Date();
-    const timestamp: string = new Date(
-      date.setDate(date.getDate() - offset[settings.historicalPeriod])
-    ).toISOString();
+    const timestamp: string = moment(Date.now())
+      .subtract(offset[settings.historicalPeriod], 'h')
+      .toISOString();
 
     dispatch({
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
       payload: {
         [settings.token + settings.historicalPeriod]: {
-          id: settings.token ,
+          id: settings.token,
           historicalPeriod: settings.historicalPeriod,
           timestamp,
         },
@@ -57,39 +64,11 @@ export const TokenBalanceWidget: React.FC<
     });
   }, [settings.token, settings.historicalPeriod]);
 
-  const balance = useMemo(() => {
-    if (isLoading) return;
-
-    const tokensBalance = state.chainData.tokenBalances?.[settings.token];
-
-    return {
-      amount: String(
-        BigNumber(tokensBalance?.balance ?? '0').dividedBy(
-          Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
-        )
-      ),
-      fiatBalance: { amount: '0' },
-    };
-  }, [token, isLoading]);
-
-  const historicalBalance = useMemo(() => {
-    if (isLoading) return;
-
-    const tokensBalanceHistorical =
-      state.chainData.tokenBalancesHistorical?.[
-        settings.token + settings.historicalPeriod
-      ];
-
-    return {
-      level: settings.historicalPeriod,
-      amount: String(
-        BigNumber(tokensBalanceHistorical?.balanceHistorical ?? '0').dividedBy(
-          Math.pow(10, Number(token?.metadata?.decimals ?? '6'))
-        )
-      ),
-      fiatBalance: { amount: '0' },
-    };
-  }, [token, settings, isLoading]);
+  const balance = useSelectBalance(token);
+  const historicalBalance = useSelectBalanceHistorical(
+    settings.historicalPeriod,
+    token
+  );
 
   return (
     <TokenBalanceWidgetComponent
