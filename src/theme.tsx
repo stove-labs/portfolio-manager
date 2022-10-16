@@ -15,6 +15,9 @@ export const theme = extendTheme({
         opacity: 0.2,
         borderRadius: '6px',
       },
+      '.react-grid-item:has(.settings-open)': {
+        zIndex: '10',
+      },
     },
   },
 });
