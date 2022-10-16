@@ -24,6 +24,7 @@ export const WidgetWrapper: React.FC<
   onSettingsChange,
   onWidgetRemove,
   settings,
+  settingsDisabled,
 }) => {
   return (
     <Flex
@@ -59,13 +60,17 @@ export const WidgetWrapper: React.FC<
           transition={'ease'}
           transitionDuration={'fast'}
         >
-          <WidgetSettings
-            settings={settings}
-            onSettingsChange={onSettingsChange}
-            onWidgetRemove={onWidgetRemove}
-          >
-            {settingsContent}
-          </WidgetSettings>
+          {!settingsDisabled ? (
+            <WidgetSettings
+              settings={settings}
+              onSettingsChange={onSettingsChange}
+              onWidgetRemove={onWidgetRemove}
+            >
+              {settingsContent}
+            </WidgetSettings>
+          ) : (
+            <></>
+          )}
         </Flex>
       </Flex>
       <Flex flex={'1'} height={'100%'}>

@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
 import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
-import { WidgetsLayout as WidgetsLayoutComponent } from './../../components/WidgetsLayout/WidgetsLayout';
+import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
+import {
+  WidgetName,
+  WidgetsLayout as WidgetsLayoutComponent,
+} from './../../components/WidgetsLayout/WidgetsLayout';
 
 export const WidgetsLayout: React.FC = () => {
   const [state, dispatch] = useStoreContext();
@@ -15,13 +19,18 @@ export const WidgetsLayout: React.FC = () => {
     window.localStorage.setItem('STATE_LAYOUT', JSON.stringify(state.settings));
   }, [state.settings]);
 
+  const widgetAs = useCallback((name: WidgetName) => {
+    switch (name) {
+      case 'TokenBalanceWidget':
+        return TokenBalanceWidget;
+    }
+  }, []);
+
   return (
     <>
-      {/* <Button onClick={() => downloadSettings()}>Download Settings</Button>
-      <Input type={'file'} onChange={(e) => restoreSettings(e)}></Input>
-      <Settings /> */}
       <WidgetsLayoutComponent
         layout={state.settings.layout}
+        widgetAs={widgetAs}
         widgets={state.settings.widgets}
         onLayoutChange={(layout) =>
           dispatch({ type: 'UPDATE_LAYOUT', payload: { layout } })
