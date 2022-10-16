@@ -1,18 +1,23 @@
 import { Container, Flex } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 import RGL, { Layout, WidthProvider } from 'react-grid-layout';
-import { TokenBalanceWidget } from '../../containers/TokenBalanceWidget/TokenBalanceWidget';
+import {
+  TokenBalanceWidget as TokenBalanceWidgetComponent,
+  WidgetProps,
+} from '../../components/TokenBalanceWidget/TokenBalanceWidget';
+
 import { TokenBalanceWidgetSettingsData } from '../TokenBalanceWidget/TokenBalanceWidget';
 
 const ReactGridLayout = WidthProvider(RGL);
 
 export type WidgetSettingsData = TokenBalanceWidgetSettingsData;
+export type WidgetsProps = Parameters<typeof TokenBalanceWidgetComponent>[0];
 export type WidgetName = 'TokenBalanceWidget';
 
 export interface WidgetSettings {
   id: string;
   name: WidgetName;
-  settings?: WidgetSettingsData;
+  settings: WidgetSettingsData;
 }
 
 export interface WidgetsLayoutProps {
@@ -22,6 +27,7 @@ export interface WidgetsLayoutProps {
   onLayoutChange: (layout: Layout[]) => void;
   onWidgetRemove: (index: string) => void;
   onSettingsChange: (index: string, settings: WidgetSettingsData) => void;
+  widgetAs: (name: WidgetName) => React.FC<WidgetProps<WidgetSettingsData>>;
 }
 
 export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
@@ -31,21 +37,17 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
   onWidgetRemove,
   onSettingsChange,
   isDraggable = true,
+  widgetAs,
 }) => {
   const renderWidget = (widget: WidgetSettings): ReactNode => {
-    switch (widget.name) {
-      case 'TokenBalanceWidget': {
-        return (
-          <TokenBalanceWidget
-            settings={widget.settings}
-            onSettingsChange={(settings) =>
-              onSettingsChange(widget.id, settings)
-            }
-            onWidgetRemove={() => onWidgetRemove(widget.id)}
-          />
-        );
-      }
-    }
+    const Widget = widgetAs(widget.name);
+    return (
+      <Widget
+        settings={widget.settings}
+        onSettingsChange={(settings) => onSettingsChange(widget.id, settings)}
+        onWidgetRemove={() => onWidgetRemove(widget.id)}
+      />
+    );
   };
 
   return (
@@ -58,9 +60,10 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
           isDraggable={isDraggable}
           isResizable={false}
           layout={layout}
-          margin={[10, 10]}
-          rowHeight={30}
-          useCSSTransforms={false}
+          // margin={[10, 10]}
+          margin={[10, 5]}
+          rowHeight={50}
+          useCSSTransforms={true}
           width={100}
           onLayoutChange={(newLayout) => onLayoutChange(newLayout)}
         >

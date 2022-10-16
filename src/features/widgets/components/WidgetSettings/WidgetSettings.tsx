@@ -24,15 +24,36 @@ export interface WidgetSettingsProps<T> {
   onSettingsChange: (settings: T) => void;
   onWidgetRemove: () => void;
   settings: T;
+  onSettingsPopoverToggle?: (open: boolean) => void;
 }
 
 export const WidgetSettings: React.FC<
   PropsWithChildren<WidgetSettingsProps<any>>
-> = ({ children, onSettingsChange, settings, onWidgetRemove }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+> = ({
+  children,
+  onSettingsChange,
+  settings,
+  onWidgetRemove,
+  onSettingsPopoverToggle = (open) => {},
+}) => {
+  const {
+    isOpen,
+    onOpen: onPopoverOpen,
+    onClose: onPopoverClose,
+  } = useDisclosure();
   const form = useForm<any>({
     defaultValues: settings,
   });
+
+  const onOpen = useCallback(() => {
+    onSettingsPopoverToggle(true);
+    onPopoverOpen();
+  }, [onPopoverOpen]);
+
+  const onClose = useCallback(() => {
+    onSettingsPopoverToggle(false);
+    onPopoverClose();
+  }, [onPopoverOpen]);
 
   const handleSaveClick = useCallback(
     (settings: any) => {
@@ -59,7 +80,7 @@ export const WidgetSettings: React.FC<
   return (
     <Flex onMouseDown={(e) => e.stopPropagation()}>
       <Popover
-        closeOnBlur={false}
+        closeOnBlur={true}
         closeOnEsc={true}
         isOpen={isOpen}
         onClose={onClose}

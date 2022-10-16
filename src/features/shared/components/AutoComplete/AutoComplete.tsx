@@ -20,6 +20,11 @@ export interface AutoCompleteProps {
   transformValueIn?: (value?: string) => string | undefined;
 }
 
+export const stopEvent = (e: any): void => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
 export const AutoComplete: React.FC<AutoCompleteProps> = ({
   options,
   label,
@@ -46,11 +51,13 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
         // ref={input.ref as any}
         listAllValuesOnFocus
         openOnFocus
+        closeOnBlur={false}
         defaultValue={
           transformValueIn
             ? transformValueIn(form.getValues(name))
             : form.getValues(name)
         }
+        onBlur={stopEvent}
         onChange={handleOnChange}
       >
         <AutoCompleteInput fontSize={'12px'} size={'sm'} />
@@ -61,6 +68,7 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
           pb={'1'}
           pt={'1'}
           shadow={'md'}
+          onBlur={stopEvent}
         >
           {options.map((option) => (
             <AutoCompleteItem
@@ -70,6 +78,7 @@ export const AutoComplete: React.FC<AutoCompleteProps> = ({
               ml={'0'}
               mr={'0'}
               value={option.label}
+              onBlur={stopEvent}
             >
               {option.label}
             </AutoCompleteItem>

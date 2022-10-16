@@ -4,7 +4,7 @@ import { Input, UseDisclosureReturn } from '@chakra-ui/react';
 import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dashboard';
 import { useStoreContext } from '../../../../store/useStore';
 import { WidgetsLayoutState } from '../WidgetsLayout/store/useWidgetsLayoutStore';
-import { Settings } from '../Settings/Settings';
+import { WidgetStore } from '../WidgetStore/WidgetStore';
 import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 
@@ -69,7 +69,7 @@ export const Dashboard: React.FC = () => {
       <DashboardComponent
         activeAccountAs={() => <ActiveAccount />}
         addWidgetAs={(disclosure: UseDisclosureReturn) => (
-          <Settings {...disclosure} />
+          <WidgetStore {...disclosure} />
         )}
         block={{
           level: '1234567',
@@ -87,39 +87,7 @@ export const Dashboard: React.FC = () => {
         onSettingsExport={handleSettingsExport}
         onSettingsImport={handleSettingsImport}
       >
-        {address ? (
-          <WidgetsLayout
-            layout={[
-              {
-                x: 0,
-                y: 0,
-                w: 4,
-                h: 4,
-                i: '0',
-              },
-              {
-                x: 4,
-                y: 0,
-                w: 4,
-                h: 4,
-                i: '1',
-              },
-            ]}
-            widgets={[
-              {
-                id: '0',
-                name: 'TokenBalanceWidget',
-              },
-              {
-                id: '1',
-                name: 'TokenBalanceWidget',
-              },
-            ]}
-            onLayoutChange={console.log}
-            onSettingsChange={console.log}
-            onWidgetRemove={console.log}
-          />
-        ) : undefined}
+        {address ? <WidgetsLayout /> : undefined}
       </DashboardComponent>
     </>
   );

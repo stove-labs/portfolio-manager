@@ -41,36 +41,18 @@ export const defaultValues: WidgetsLayoutState = {
       x: 0,
       y: 0,
       w: 4,
-      h: 5,
+      h: 3,
       i: '0',
-    },
-    {
-      x: 4,
-      y: 0,
-      w: 4,
-      h: 5,
-      i: '1',
-    },
-    {
-      x: 8,
-      y: 0,
-      w: 4,
-      h: 5,
-      i: '2',
     },
   ],
   widgets: [
     {
       name: 'TokenBalanceWidget',
       id: '0',
-    },
-    {
-      name: 'TokenBalanceWidget',
-      id: '1',
-    },
-    {
-      name: 'TokenBalanceWidget',
-      id: '2',
+      settings: {
+        token: '0',
+        historicalPeriod: '7d',
+      },
     },
   ],
 };

@@ -1,5 +1,5 @@
 import { Flex, useColorModeValue, Heading } from '@chakra-ui/react';
-import React, { PropsWithChildren, ReactNode } from 'react';
+import React, { PropsWithChildren, ReactNode, useState } from 'react';
 import { WidgetProps } from '../TokenBalanceWidget/TokenBalanceWidget';
 import { WidgetSettings } from '../WidgetSettings/WidgetSettings';
 
@@ -24,11 +24,14 @@ export const WidgetWrapper: React.FC<
   onSettingsChange,
   onWidgetRemove,
   settings,
+  settingsDisabled,
 }) => {
+  const [areSettingsOpen, setAreSettingsOpen] = useState(false);
   return (
     <Flex
       background={useColorModeValue('white', 'white')}
       borderRadius={'md'}
+      className={areSettingsOpen ? 'settings-open' : ''}
       cursor={'grab'}
       flex={'1'}
       flexDirection={'column'}
@@ -59,13 +62,18 @@ export const WidgetWrapper: React.FC<
           transition={'ease'}
           transitionDuration={'fast'}
         >
-          <WidgetSettings
-            settings={settings}
-            onSettingsChange={onSettingsChange}
-            onWidgetRemove={onWidgetRemove}
-          >
-            {settingsContent}
-          </WidgetSettings>
+          {!settingsDisabled ? (
+            <WidgetSettings
+              settings={settings}
+              onSettingsChange={onSettingsChange}
+              onSettingsPopoverToggle={setAreSettingsOpen}
+              onWidgetRemove={onWidgetRemove}
+            >
+              {settingsContent}
+            </WidgetSettings>
+          ) : (
+            <></>
+          )}
         </Flex>
       </Flex>
       <Flex flex={'1'} height={'100%'}>
