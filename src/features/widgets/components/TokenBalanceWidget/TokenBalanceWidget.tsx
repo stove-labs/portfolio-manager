@@ -32,6 +32,7 @@ export interface WidgetProps<T> {
   onWidgetRemove: () => void;
   onSettingsChange: (settings: T) => void;
   settings?: T;
+  settingsDisabled?: boolean;
 }
 
 export interface TokenBalanceWidgetSettingsData {
@@ -69,6 +70,7 @@ export const TokenBalanceWidget: React.FC<
   onWidgetRemove,
   onSettingsChange,
   settings,
+  settingsDisabled,
 }) => {
   const emDash: string = '—';
   const balancePercentageChange = useMemo(() => {
@@ -101,18 +103,19 @@ export const TokenBalanceWidget: React.FC<
 
   return (
     <WidgetWrapper
+      settingsDisabled={settingsDisabled}
+      title={`${token?.symbol ?? 'Loading'} balance (${
+        settings?.historicalPeriod ?? '24h'
+      })`}
+      // TODO: this cant be undefined
+      onSettingsChange={onSettingsChange}
+      onTitleSubmit={console.log}
+      onWidgetRemove={onWidgetRemove}
       settings={settings}
       // TODO: add TokenBalanceWidgetSettings container
       settingsContent={
         <TokenBalanceWidgetSettings historicalPeriods={historicalPeriods} />
       }
-      // TODO: this cant be undefined
-      title={`${token?.symbol ?? 'Loading'} balance (${
-        settings?.historicalPeriod ?? '24h'
-      })`}
-      onSettingsChange={onSettingsChange}
-      onTitleSubmit={console.log}
-      onWidgetRemove={onWidgetRemove}
     >
       <Flex direction={'column'} minHeight={'117px'} width={'100%'}>
         {/* content */}

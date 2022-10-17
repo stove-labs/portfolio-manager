@@ -104,6 +104,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
         pt={4}
         shadow={'sm'}
         width={'100%'}
+        zIndex={'100'}
       >
         <Container maxW={'6xl'}>
           <Flex
