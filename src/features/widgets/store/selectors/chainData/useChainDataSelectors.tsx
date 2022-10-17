@@ -1,9 +1,22 @@
 import { useMemo } from 'react';
 import BigNumber from 'bignumber.js';
-import { useStoreContext } from '../../../../store/useStore';
-import { Token } from '../useChainDataStore';
-import { Balance } from '../../components/TokenBalanceWidget/TokenBalanceWidget';
-import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
+import { useStoreContext } from '../../../../../store/useStore';
+import { Token } from '../../chainData/useChainDataStore';
+import { Balance } from '../../../components/TokenBalanceWidget/TokenBalanceWidget';
+import { HistoricalPeriod } from '../../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
+import {
+  useSelectTokenSpotPrice,
+  useSelectTokenSpotPriceHistorical,
+} from '../spotPrice/useSpotPriceSelectors';
+
+/**
+ * Check if token is native
+ * @param {Token} token - token
+ * @returns boolean
+ */
+export const isNativeToken = (token: Token | undefined): boolean => {
+  return token ? token.id === '0' : false;
+};
 
 /**
  * Get token based on id
@@ -82,23 +95,38 @@ export const useSelectIsBalanceHistoricalLoading = (
  */
 export const useSelectBalance = (token?: Token): Balance => {
   const [state] = useStoreContext();
+  const isLoading = useSelectIsBalanceLoading(token?.id ?? '');
+  const price: string | undefined = useSelectTokenSpotPrice(
+    state.prices.currency,
+    token?.id ?? ''
+  );
 
   return useMemo(() => {
-    if (!token) {
+    if (isLoading || !token) {
       return {
         amount: undefined,
         fiatBalance: { amount: undefined },
       };
     }
-    const tokensBalance = state.chainData.tokenBalances?.[token.id];
+    const tokenBalance: BigNumber = BigNumber(
+      state.chainData.tokenBalances?.[token.id]?.balance ?? '0'
+    ).dividedBy(10 ** Number(token?.metadata?.decimals ?? '6'));
+    const amount: string | undefined = tokenBalance.toFixed(
+      Number(token?.metadata?.decimals) ?? 6
+    );
+    const fiatBalance: { amount: string | undefined } = {
+      amount:
+        price &&
+        tokenBalance
+          .multipliedBy(price)
+          .toFixed(Number(token?.metadata?.decimals) ?? 6),
+    };
 
     return {
-      amount: BigNumber(tokensBalance?.balance ?? '0')
-        .dividedBy(Math.pow(10, Number(token?.metadata?.decimals ?? '6')))
-        .toFixed(Number(token?.metadata?.decimals) ?? 6),
-      fiatBalance: { amount: undefined },
+      amount,
+      fiatBalance,
     };
-  }, [token, state.chainData.tokenBalances]);
+  }, [isLoading, price, token, state.chainData.tokenBalances]);
 };
 
 /**
@@ -112,9 +140,18 @@ export const useSelectBalanceHistorical = (
   token?: Token
 ): Balance => {
   const [state] = useStoreContext();
+  const isLoading = useSelectIsBalanceHistoricalLoading(
+    token?.id ?? '',
+    historicalPeriod
+  );
+  const price: string | undefined = useSelectTokenSpotPriceHistorical(
+    historicalPeriod,
+    state.prices.currency,
+    token?.id ?? ''
+  );
 
   return useMemo(() => {
-    if (!token) {
+    if (isLoading || !token) {
       return {
         level: historicalPeriod,
         amount: undefined,
@@ -122,15 +159,31 @@ export const useSelectBalanceHistorical = (
       };
     }
 
-    const tokensBalanceHistorical =
-      state.chainData.tokenBalancesHistorical?.[token.id + historicalPeriod];
+    const tokenBalancesHistorical: BigNumber = BigNumber(
+      state.chainData.tokenBalancesHistorical?.[token.id + historicalPeriod]
+        ?.balanceHistorical ?? '0'
+    ).dividedBy(10 ** Number(token?.metadata?.decimals ?? '6'));
+    const amount: string | undefined = tokenBalancesHistorical.toFixed(
+      Number(token?.metadata?.decimals) ?? 6
+    );
+    const fiatBalance: { amount: string | undefined } = {
+      amount:
+        price &&
+        tokenBalancesHistorical
+          .multipliedBy(price)
+          .toFixed(Number(token?.metadata?.decimals) ?? 6),
+    };
 
     return {
       level: historicalPeriod,
-      amount: BigNumber(tokensBalanceHistorical?.balanceHistorical ?? '0')
-        .dividedBy(Math.pow(10, Number(token?.metadata?.decimals ?? '6')))
-        .toFixed(Number(token?.metadata?.decimals) ?? 6),
-      fiatBalance: { amount: undefined },
+      amount,
+      fiatBalance,
     };
-  }, [token, historicalPeriod, state.chainData.tokenBalancesHistorical]);
+  }, [
+    isLoading,
+    price,
+    token,
+    historicalPeriod,
+    state.chainData.tokenBalancesHistorical,
+  ]);
 };

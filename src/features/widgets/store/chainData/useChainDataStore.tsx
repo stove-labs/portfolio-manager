@@ -1,8 +1,8 @@
 import { Reducer, useReducer } from 'react';
 import produce from 'immer';
-import { HistoricalPeriod } from '../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
+import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 
-export type WidgetStatus = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
+export type Status = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
 
 export interface Token {
   id: string;
@@ -11,7 +11,7 @@ export interface Token {
   contract: {
     address: string;
   };
-  metadata?: {
+  metadata: {
     decimals: string;
   };
 }
@@ -27,14 +27,14 @@ export interface Price {
 export interface TokenBalance {
   balance?: string;
   error?: string;
-  status: WidgetStatus;
+  status: Status;
 }
 
 export interface TokenBalanceHistorical {
   balanceHistorical?: string;
   historicalPeriod?: HistoricalPeriod;
   error?: string;
-  status: WidgetStatus;
+  status: Status;
 }
 
 export interface ChainDataState {
@@ -204,7 +204,7 @@ export const chainDataReducer: Reducer<ChainDataState, ChainDataAction> = (
   }
 };
 
-export const useWidgetStore = (): [
+export const useChainDataStore = (): [
   ChainDataState,
   React.Dispatch<ChainDataAction>
 ] => useReducer(chainDataReducer, initialChainDataState);
