@@ -8,7 +8,10 @@ export const useSpotPriceEffects = (): Effect => {
     switch (action.type) {
       case 'LOAD_SPOT_PRICE': {
         return (async () => {
-          const payload = await getSpotPrices(action.payload.pairIds);
+          const payload = await getSpotPrices(
+            action.payload.ids,
+            action.payload.currency
+          );
 
           dispatch({
             type: 'LOAD_SPOT_PRICE_SUCCESS',
@@ -17,8 +20,8 @@ export const useSpotPriceEffects = (): Effect => {
         })().catch((error) => {
           const payload: Record<string, { error: string }> = {};
 
-          action.payload.pairIds.forEach(
-            ([tokenA, tokenB]) => (payload[tokenA + tokenB] = { error })
+          action.payload.ids.forEach(
+            (token) => (payload[token + action.payload.currency] = { error })
           );
 
           dispatch({

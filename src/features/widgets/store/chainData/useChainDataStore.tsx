@@ -11,7 +11,7 @@ export interface Token {
   contract: {
     address: string;
   };
-  metadata?: {
+  metadata: {
     decimals: string;
   };
 }

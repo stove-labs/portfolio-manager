@@ -9,9 +9,11 @@ import {
 } from '@chakra-ui/react';
 
 import { abbreviateNumber } from 'js-abbreviation-number';
+import { BigNumber } from 'bignumber.js';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
 import { Token } from '../../store/chainData/useChainDataStore';
+import { isNativeToken } from '../../store/selectors/chainData/useChainDataSelectors';
 import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
@@ -42,9 +44,7 @@ export interface TokenBalanceWidgetProps {
   balance?: Balance;
   historicalBalance?: Balance;
   spotPriceToken?: string;
-  spotPriceTokenHistorical?: string;
   spotPriceNativeToken?: string;
-  spotPriceNativeTokenHistorical?: string;
   isLoading: boolean;
 }
 
@@ -64,54 +64,38 @@ export const TokenBalanceWidget: React.FC<
   balance,
   historicalBalance,
   spotPriceToken,
-  spotPriceTokenHistorical,
   spotPriceNativeToken,
-  spotPriceNativeTokenHistorical,
   isLoading,
   onWidgetRemove,
   onSettingsChange,
   settings,
 }) => {
+  const emDash: string = '—';
   const balancePercentageChange = useMemo(() => {
     return percentageChange(
       Number(historicalBalance?.amount),
       Number(balance?.amount)
     );
-  }, [balance, historicalBalance]);
+  }, [balance?.amount, historicalBalance?.amount]);
 
-  // spot prices are in tokenA-nativeToken
-  const price = useMemo(() => {
+  // spot prices are in tokenA-USD
+  const priceToNativeToken = useMemo(() => {
     if (!spotPriceToken || !spotPriceNativeToken) return;
 
-    return Number(spotPriceToken) * Number(spotPriceNativeToken);
+    return BigNumber(spotPriceToken)
+      .dividedBy(BigNumber(spotPriceNativeToken))
+      .toFixed(6);
   }, [spotPriceToken, spotPriceNativeToken]);
 
-  const tokenValue = useMemo(() => {
-    if (!price || !balance?.amount) return;
-
-    return price * Number(balance?.amount);
-  }, [price, balance]);
-
-  const tokenValuePercentageChange = useMemo(() => {
-    if (
-      !spotPriceTokenHistorical ||
-      !spotPriceNativeTokenHistorical ||
-      !tokenValue
-    )
+  const tokenAmountPercentageChange = useMemo(() => {
+    if (!historicalBalance?.fiatBalance.amount || !balance?.fiatBalance.amount)
       return 0;
 
     return percentageChange(
-      Number(spotPriceTokenHistorical) *
-        Number(spotPriceNativeTokenHistorical) *
-        Number(historicalBalance?.amount),
-      tokenValue
+      Number(historicalBalance?.fiatBalance.amount),
+      Number(balance?.fiatBalance.amount)
     );
-  }, [
-    spotPriceTokenHistorical,
-    spotPriceNativeTokenHistorical,
-    tokenValue,
-    historicalBalance,
-  ]);
+  }, [balance?.fiatBalance.amount, historicalBalance?.fiatBalance.amount]);
 
   const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];
 
@@ -143,15 +127,11 @@ export const TokenBalanceWidget: React.FC<
             <SkeletonCircle isLoaded={!isLoading} size={'55px'}>
               <img
                 src={
-                  // kusd
-                  token?.symbol === 'XTZ'
+                  isNativeToken(token)
                     ? 'https://tzkt.io/tezos-logo.svg'
                     : `https://services.tzkt.io/v1/avatars/${
-                        token?.contract.address ??
-                        'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV'
+                        token?.contract.address ?? ''
                       }`
-                  // quipu
-                  // 'https://services.tzkt.io/v1/avatars/KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb'
                 }
                 style={{ maxHeight: '100%' }}
                 width={'55px'}
@@ -177,7 +157,7 @@ export const TokenBalanceWidget: React.FC<
                           2
                         )
                       : Number(balance.amount).toFixed(6)
-                    : '-'}
+                    : emDash}
                 </Text>
                 {/* ticker */}
                 <Text
@@ -201,17 +181,19 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'normal'}
                 >
                   $
-                  {tokenValue
-                    ? Number(tokenValue) > 1
+                  {balance?.fiatBalance.amount
+                    ? Number(balance?.fiatBalance.amount) > 1
                       ? abbreviateNumber(
-                          Number(Number(tokenValue).toFixed(2)),
+                          Number(
+                            Number(balance?.fiatBalance.amount).toFixed(2)
+                          ),
                           2
                         )
-                      : Number(tokenValue).toFixed(2)
-                    : '-'}
+                      : Number(balance?.fiatBalance.amount).toFixed(2)
+                    : emDash}
                 </Text>
                 <ChangeIndicator
-                  change={tokenValuePercentageChange}
+                  change={tokenAmountPercentageChange}
                   size={'sm'}
                 />
               </Flex>
@@ -235,8 +217,8 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {token?.symbol ?? 'Loading'} = {spotPriceToken ?? '-'} XTZ, 1
-              {token?.symbol ?? 'Loading'} = ${price ?? '-'}
+              1 {token?.symbol ?? 'Loading'} = {priceToNativeToken ?? emDash}{' '}
+              XTZ, 1 {token?.symbol ?? 'Loading'} = ${spotPriceToken ?? emDash}
             </Text>
           </Skeleton>
         </Flex>

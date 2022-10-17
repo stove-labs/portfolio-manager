@@ -5,31 +5,33 @@ import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalan
 export type Status = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
 
 export interface spotPrice {
+  token?: string;
+  currency?: string;
   price?: string;
   error?: string;
   status: Status;
 }
 
 export interface spotPriceHistorical {
-  tokanA?: string;
-  tokanB?: string;
+  token?: string;
+  currency?: string;
   price?: string;
   error?: string;
   historicalPeriod?: HistoricalPeriod;
-  currency?: string;
   status: Status;
 }
 
 export interface SpotPriceState {
   spotPrices?: Record<string, spotPrice>;
   spotPricesHistorical?: Record<string, spotPriceHistorical>;
+  currency: string;
 }
 
 export type SpotPriceAction =
-  | { type: 'LOAD_SPOT_PRICE'; payload: { pairIds: Array<[string, string]> } }
+  | { type: 'LOAD_SPOT_PRICE'; payload: { ids: string[]; currency: string } }
   | {
       type: 'LOAD_SPOT_PRICE_SUCCESS';
-      payload: Record<string, { currency: string; price: string }>;
+      payload: Record<string, { price: string }>;
     }
   | {
       type: 'LOAD_SPOT_PRICE_FAILURE';
@@ -40,23 +42,28 @@ export type SpotPriceAction =
       payload: Record<
         string,
         {
-          tokenA: string;
-          tokenB: string;
-          historicalPeriod: HistoricalPeriod
+          tokenId: string;
+          currency: string;
+          historicalPeriod: HistoricalPeriod;
           timestamp: string;
         }
       >;
     }
   | {
       type: 'LOAD_SPOT_PRICE_HISTORICAL_SUCCESS';
-      payload: Record<string, { currency: string; price: string }>;
+      payload: Record<string, { price: string }>;
     }
   | {
       type: 'LOAD_SPOT_PRICE_HISTORICAL_FAILURE';
       payload: Record<string, { error: string }>;
     };
 
-export const initialSpotPriceState: SpotPriceState = {};
+export const initialSpotPriceState: SpotPriceState = {
+  currency: 'USD',
+};
+
+export const nativeToken = 'XTZ';
+export const nativeTokenId = '0'
 
 export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
   state,
@@ -67,10 +74,12 @@ export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
       return produce(state, (draft) => {
         draft.spotPrices = state.spotPrices ?? {};
 
-        action.payload.pairIds.forEach(([tokenA, tokenB]) => {
+        action.payload.ids.forEach((token) => {
           if (draft.spotPrices === undefined) return;
 
-          draft.spotPrices[tokenA + tokenB] = {
+          draft.spotPrices[token + state.currency] = {
+            token,
+            currency: state.currency,
             status: 'LOADING',
           };
         });

@@ -11,9 +11,8 @@ import {
 import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
   useSelectTokenSpotPrice,
-  useSelectTokenSpotPriceHistorical,
   useSelectNativeTokenSpotPrice,
-  useSelectNativeTokenSpotPriceHistorical,
+  useSelectCurrency,
 } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
 import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
@@ -33,13 +32,16 @@ export const TokenBalanceWidget: React.FC<
 }) => {
   const [, dispatch] = useStoreContext();
   const token = useSelectToken(settings.token);
+  const currency = useSelectCurrency();
   const isBalanceLoading = useSelectIsBalanceLoading(settings.token);
   const isBalanceHistoricalLoading = useSelectIsBalanceHistoricalLoading(
     settings.token,
     settings.historicalPeriod
   );
-  const isLoading = isBalanceLoading || isBalanceHistoricalLoading;
-  const timestamp = useMemo(() => {
+  const isLoading = useMemo(() => {
+    return isBalanceLoading || isBalanceHistoricalLoading;
+  }, [isBalanceLoading, isBalanceHistoricalLoading]);
+  const historicalTimestamp = useMemo(() => {
     const offset: Record<HistoricalPeriod, number> = {
       '24h': 24,
       '7d': 24 * 7,
@@ -60,65 +62,65 @@ export const TokenBalanceWidget: React.FC<
 
   useEffect(() => {
     dispatch({
-      type: 'LOAD_SPOT_PRICE',
-      payload: { pairIds: [['XTZ', 'USD']] },
-    });
-  }, []);
-
-  useEffect(() => {
-    const tokenA = 'XTZ';
-    const tokenB = 'USD';
-
-    dispatch({
-      type: 'LOAD_SPOT_PRICE_HISTORICAL',
-      payload: {
-        [tokenA + tokenB + settings.historicalPeriod]: {
-          tokenA,
-          tokenB,
-          historicalPeriod: settings.historicalPeriod,
-          timestamp,
-        },
-      },
-    });
-  }, [settings.historicalPeriod]);
-
-  useEffect(() => {
-    if (!token || token.symbol === 'XTZ') return;
-
-    dispatch({
-      type: 'LOAD_SPOT_PRICE',
-      payload: { pairIds: [[token.symbol, 'XTZ']] },
-    });
-  }, [token]);
-
-  useEffect(() => {
-    if (!token || token.symbol === 'XTZ') return;
-
-    dispatch({
-      type: 'LOAD_SPOT_PRICE_HISTORICAL',
-      payload: {
-        [token.symbol + 'XTZ' + settings.historicalPeriod]: {
-          tokenA: token.symbol,
-          tokenB: 'XTZ',
-          historicalPeriod: settings.historicalPeriod,
-          timestamp,
-        },
-      },
-    });
-  }, [token, settings.historicalPeriod]);
-
-  useEffect(() => {
-    dispatch({
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
       payload: {
         [settings.token + settings.historicalPeriod]: {
           id: settings.token,
           historicalPeriod: settings.historicalPeriod,
-          timestamp,
+          timestamp: historicalTimestamp,
         },
       },
     });
   }, [settings.token, settings.historicalPeriod]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'LOAD_SPOT_PRICE',
+      payload: { ids: ['0'], currency },
+    });
+  }, [currency]);
+
+  useEffect(() => {
+    // Native token XTZ has id=0
+    dispatch({
+      type: 'LOAD_SPOT_PRICE_HISTORICAL',
+      payload: {
+        ['0' + currency + settings.historicalPeriod]: {
+          tokenId: '0',
+          currency,
+          historicalPeriod: settings.historicalPeriod,
+          timestamp: historicalTimestamp,
+        },
+      },
+    });
+  }, [currency, settings.historicalPeriod]);
+
+  useEffect(() => {
+    // prevent double fetching of native token
+    if (settings.token === '0') return;
+
+    dispatch({
+      type: 'LOAD_SPOT_PRICE',
+      payload: { ids: [settings.token], currency },
+    });
+  }, [currency, settings.token]);
+
+  useEffect(() => {
+    // prevent double fetching of native token
+    if (settings.token === '0') return;
+
+    dispatch({
+      type: 'LOAD_SPOT_PRICE_HISTORICAL',
+      payload: {
+        [settings.token + currency + settings.historicalPeriod]: {
+          tokenId: settings.token,
+          currency,
+          historicalPeriod: settings.historicalPeriod,
+          timestamp: historicalTimestamp,
+        },
+      },
+    });
+  }, [currency, settings.token, settings.historicalPeriod]);
 
   const balance = useSelectBalance(token);
   const historicalBalance = useSelectBalanceHistorical(
@@ -126,14 +128,8 @@ export const TokenBalanceWidget: React.FC<
     token
   );
 
-  const spotPriceNativeToken = useSelectNativeTokenSpotPrice();
-  const spotPriceNativeTokenHistorical =
-    useSelectNativeTokenSpotPriceHistorical(settings.historicalPeriod);
-  const spotPriceToken = useSelectTokenSpotPrice(token?.symbol);
-  const spotPriceTokenHistorical = useSelectTokenSpotPriceHistorical(
-    settings.historicalPeriod,
-    token?.symbol
-  );
+  const spotPriceNativeToken = useSelectNativeTokenSpotPrice(currency);
+  const spotPriceToken = useSelectTokenSpotPrice(currency, settings.token);
 
   return (
     <TokenBalanceWidgetComponent
@@ -142,9 +138,7 @@ export const TokenBalanceWidget: React.FC<
       isLoading={isLoading}
       settings={settings}
       spotPriceNativeToken={spotPriceNativeToken}
-      spotPriceNativeTokenHistorical={spotPriceNativeTokenHistorical}
       spotPriceToken={spotPriceToken}
-      spotPriceTokenHistorical={spotPriceTokenHistorical}
       token={token}
       onSettingsChange={onSettingsChange}
       onWidgetRemove={onWidgetRemove}

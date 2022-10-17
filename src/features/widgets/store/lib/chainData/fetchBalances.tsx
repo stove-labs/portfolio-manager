@@ -22,10 +22,10 @@ export const getTokenBalances = async (
 ): PayloadPromise => {
   // Filter out XTZ as we get balance from different api
   const tokenIds: string[] = ids.filter((id) => id !== '0');
-  const payload: Payload = {};
+  let payload: Payload = {};
 
   // 0 is XTZ id
-  if (ids.includes('0')) payload['0'] = await getNativeTokenBalance(address);
+  if (ids.includes('0')) payload = await getNativeTokenBalance(address);
   if (isEmpty(tokenIds)) return payload;
 
   const response = await fetch(
@@ -54,11 +54,11 @@ export const getTokenBalances = async (
 /**
  * Get native token balance
  * @param {string} address - wallet address
- * @returns balance
+ * @returns Record with balances
  */
 export const getNativeTokenBalance = async (
   address: string
-): Promise<{ balance: string }> => {
+): Promise<Payload> => {
   const response = await fetch(
     `https://api.tzkt.io/v1/accounts/${address}/balance`
   );
@@ -67,5 +67,5 @@ export const getNativeTokenBalance = async (
 
   const responseData = (await response.json()) as string;
 
-  return { balance: responseData ?? defaultBalance };
+  return { '0': { balance: responseData ?? defaultBalance } };
 };
