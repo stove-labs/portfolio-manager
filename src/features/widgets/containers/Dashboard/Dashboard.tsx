@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 // import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { Input, UseDisclosureReturn } from '@chakra-ui/react';
 import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dashboard';
@@ -7,12 +13,25 @@ import { WidgetsLayoutState } from '../WidgetsLayout/store/useWidgetsLayoutStore
 import { WidgetStore } from '../WidgetStore/WidgetStore';
 import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
+import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
 
 export const Dashboard: React.FC = () => {
   // TODO add selectors
   const [state, dispatch] = useStoreContext();
   const settings = useMemo(() => state.settings, [state]);
   const address = useMemo(() => state.wallet.activeAccount?.address, [state]);
+  const block = useSelectCurrentBlock();
+  const [timer, setTimer] = useState(30 * 1000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!block?.level) return;
+      setTimer(timer <= 0 ? 30 * 1000 : timer - 1000);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [block?.level, timer]);
 
   // ref to the hidden file input element
   const settingsFileInput = useRef<HTMLInputElement>(null);
@@ -58,6 +77,13 @@ export const Dashboard: React.FC = () => {
     settingsFileInput.current?.click();
   }, [settingsFileInput]);
 
+  useEffect(() => {
+    if (!(timer === 30 * 1000)) return;
+    dispatch({
+      type: 'LOAD_LATEST_BLOCK',
+    });
+  }, [timer]);
+
   return (
     <>
       <Input
@@ -72,17 +98,17 @@ export const Dashboard: React.FC = () => {
           <WidgetStore {...disclosure} />
         )}
         block={{
-          level: '1234567',
+          level: block?.level ?? '-',
           // red
           // timestamp: Date.now() - 120000,
           // yellow
           // timestamp: Date.now() - 80000,
           // green
-          timestamp: Date.now() - 30000,
+          timestamp: new Date(block?.timestamp ?? '').getTime(),
         }}
         disableSettings={!address}
         trigger={{
-          countdown: 30000,
+          countdown: timer,
         }}
         onSettingsExport={handleSettingsExport}
         onSettingsImport={handleSettingsImport}

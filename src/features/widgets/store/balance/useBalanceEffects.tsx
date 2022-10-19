@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { Effect } from '../../../../store/useStore';
-import { getTokenBalances } from '../lib/chainData/fetchBalances';
-import { getTokenBalancesHistorical } from '../lib/chainData/fetchBalancesHistorical';
+import { getTokenBalances } from '../lib/balance/fetchBalances';
+import { getTokenBalancesHistorical } from '../lib/balance/fetchBalancesHistorical';
 
-export const useChainDataEffects = (): Effect => {
+export const useBalanceEffects = (): Effect => {
   return useCallback<Effect>((state, action, dispatch) => {
     switch (action.type) {
       case 'LOAD_TOKENS_BALANCE': {
@@ -23,7 +23,7 @@ export const useChainDataEffects = (): Effect => {
         })().catch((error) => {
           const payload: Record<string, { error: string }> = {};
 
-          action.payload.ids.forEach((id) => (payload[id] = { error }));
+          action.payload.ids.forEach((id: string) => (payload[id] = { error }));
 
           dispatch({
             type: 'LOAD_TOKENS_BALANCE_FAILURE',

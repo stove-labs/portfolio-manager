@@ -3,12 +3,9 @@ import { BigNumber } from 'bignumber.js';
 import {
   getNativeTokenBalance,
   getTokenBalances,
-} from '../chainData/fetchBalances';
+} from '../balance/fetchBalances';
 import { nativeToken, nativeTokenId } from '../../spotPrice/useSpotPriceStore';
-import {
-  useSelectPoolId,
-  useSelectTokenDecimals,
-} from '../../selectors/spotPrice/useSpotPriceSelectors';
+import { getPoolId, getTokenDecimals } from '../../../../../config/lib/helpers';
 
 export interface NativeTokenBalanceResponse {
   data: {
@@ -43,7 +40,7 @@ export const getSpotPrices = async (
 
   await Promise.all(
     tokenIds.map(async (id): PayloadPromise => {
-      return await getTokenSpotPrice(id, currency);
+      return await getTokenSpotPrice(id);
     })
   ).then((resolvedPromises) => {
     resolvedPromises.forEach((record: Payload) => {
@@ -80,19 +77,12 @@ export const getNativeTokenSpotPrice = async (
 /**
  * Get token spot price, we calculated from pool native and token balance
  * @param {string} tokenId - token id
- * @param {string} currency - currency symbols ei USD, EUR
  * @returns Record with spot prices Record<token+currency, {price, currency}>
  */
-export const getTokenSpotPrice = async (
-  tokenId: string,
-  currency: string
-): PayloadPromise => {
-  const poolAddress: string = useSelectPoolId(tokenId);
-  const nativeTokenDecimal: string = useSelectTokenDecimals(nativeTokenId);
-  const tokenDecimal: string = useSelectTokenDecimals(tokenId);
-  const nativeTokenPrice: string = Object.values(
-    await getNativeTokenSpotPrice(currency)
-  )?.['0']?.price;
+export const getTokenSpotPrice = async (tokenId: string): PayloadPromise => {
+  const poolAddress: string = getPoolId(tokenId);
+  const nativeTokenDecimal: string = getTokenDecimals(nativeTokenId);
+  const tokenDecimal: string = getTokenDecimals(tokenId);
   const tokenBalance: string = Object.values(
     await getTokenBalances(poolAddress, [tokenId])
   )?.['0']?.balance;
@@ -100,9 +90,9 @@ export const getTokenSpotPrice = async (
     await getNativeTokenBalance(poolAddress)
   )?.['0']?.balance;
 
-  if (!nativeTokenBalance || !tokenBalance || !nativeTokenPrice)
+  if (!nativeTokenBalance || !tokenBalance)
     throw new Error(
-      'Could not calculate price due to missing nativeTokenBalance, tokenBalance or nativeTokenPrice'
+      'Could not calculate price due to missing nativeTokenBalance, tokenBalance'
     );
 
   const nativeTokenBalanceWithDecimals = BigNumber(
@@ -117,11 +107,10 @@ export const getTokenSpotPrice = async (
   // which we then multiple with native token fiat price
   const price: string = nativeTokenBalanceWithDecimals
     .dividedBy(tokenBalanceWithDecimals)
-    .multipliedBy(nativeTokenPrice)
-    .toFixed(2);
+    .toFixed(6);
 
   return {
-    [tokenId + currency]: {
+    [tokenId + nativeToken]: {
       price,
     },
   };

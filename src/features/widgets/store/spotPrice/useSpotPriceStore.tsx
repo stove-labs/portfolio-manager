@@ -1,6 +1,7 @@
 import { Reducer, useReducer } from 'react';
 import produce from 'immer';
 import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
+import { Block } from '../chain/useChainStore';
 
 export type Status = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
 
@@ -45,7 +46,7 @@ export type SpotPriceAction =
           tokenId: string;
           currency: string;
           historicalPeriod: HistoricalPeriod;
-          timestamp: string;
+          historicalBlock: Block;
         }
       >;
     }
@@ -63,7 +64,7 @@ export const initialSpotPriceState: SpotPriceState = {
 };
 
 export const nativeToken = 'XTZ';
-export const nativeTokenId = '0'
+export const nativeTokenId = '0';
 
 export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
   state,
@@ -77,7 +78,9 @@ export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
         action.payload.ids.forEach((token) => {
           if (draft.spotPrices === undefined) return;
 
-          draft.spotPrices[token + state.currency] = {
+          draft.spotPrices[
+            token + (token === '0' ? state.currency : nativeToken)
+          ] = {
             token,
             currency: state.currency,
             status: 'LOADING',

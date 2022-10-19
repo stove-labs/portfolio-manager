@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { Effect } from '../../../../store/useStore';
 import { getSpotPrices } from '../lib/spotPrice/fetchSpotPrices';
 import { getSpotPricesHistorical } from '../lib/spotPrice/fetchSpotPricesHistorical';
+import { nativeToken } from './useSpotPriceStore';
 
 export const useSpotPriceEffects = (): Effect => {
   return useCallback<Effect>((state, action, dispatch) => {
@@ -21,7 +22,10 @@ export const useSpotPriceEffects = (): Effect => {
           const payload: Record<string, { error: string }> = {};
 
           action.payload.ids.forEach(
-            (token) => (payload[token + action.payload.currency] = { error })
+            (token) =>
+              (payload[
+                token + (token === '0' ? action.payload.currency : nativeToken)
+              ] = { error })
           );
 
           dispatch({

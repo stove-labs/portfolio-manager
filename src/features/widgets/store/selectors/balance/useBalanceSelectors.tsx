@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { useStoreContext } from '../../../../../store/useStore';
-import { Token } from '../../chainData/useChainDataStore';
+import { Token } from '../../../../../config/config/tokens';
+import { getToken } from '../../../../../config/lib/helpers';
 import { Balance } from '../../../components/TokenBalanceWidget/TokenBalanceWidget';
 import { HistoricalPeriod } from '../../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
@@ -10,35 +11,14 @@ import {
 } from '../spotPrice/useSpotPriceSelectors';
 
 /**
- * Check if token is native
- * @param {Token} token - token
- * @returns boolean
- */
-export const isNativeToken = (token: Token | undefined): boolean => {
-  return token ? token.id === '0' : false;
-};
-
-/**
  * Get token based on id
  * @param {string} id - id of token
  * @returns Token
  */
 export const useSelectToken = (id: string): Token | undefined => {
-  const [state] = useStoreContext();
-
   return useMemo(() => {
-    return state.chainData.tokens?.find((token) => token.id === id);
+    return getToken(id);
   }, [id]);
-};
-
-/**
- * Get all tokens
- * @returns All tokens
- */
-export const useSelectAllTokens = (): Token[] => {
-  const [state] = useStoreContext();
-
-  return state.chainData.tokens;
 };
 
 /**
@@ -50,14 +30,14 @@ export const useSelectIsBalanceLoading = (id: string): boolean => {
   const [state] = useStoreContext();
 
   return useMemo((): boolean => {
-    const tokenBalancesStatus = state.chainData.tokenBalances?.[id]?.status;
+    const tokenBalancesStatus = state.balances.tokenBalances?.[id]?.status;
 
     return (
       tokenBalancesStatus === undefined ||
       tokenBalancesStatus === 'LOADING' ||
       tokenBalancesStatus === 'STANDBY'
     );
-  }, [id, state.chainData.tokenBalances?.[id]?.status]);
+  }, [id, state.balances.tokenBalances?.[id]?.status]);
 };
 
 /**
@@ -74,7 +54,7 @@ export const useSelectIsBalanceHistoricalLoading = (
 
   return useMemo((): boolean => {
     const tokenBalancesHistoricalStatus =
-      state.chainData.tokenBalancesHistorical?.[id + historicalPeriod]?.status;
+      state.balances.tokenBalancesHistorical?.[id + historicalPeriod]?.status;
 
     return (
       tokenBalancesHistoricalStatus === undefined ||
@@ -84,7 +64,7 @@ export const useSelectIsBalanceHistoricalLoading = (
   }, [
     id,
     historicalPeriod,
-    state.chainData.tokenBalancesHistorical?.[id + historicalPeriod]?.status,
+    state.balances.tokenBalancesHistorical?.[id + historicalPeriod]?.status,
   ]);
 };
 
@@ -109,7 +89,7 @@ export const useSelectBalance = (token?: Token): Balance => {
       };
     }
     const tokenBalance: BigNumber = BigNumber(
-      state.chainData.tokenBalances?.[token.id]?.balance ?? '0'
+      state.balances.tokenBalances?.[token.id]?.balance ?? '0'
     ).dividedBy(10 ** Number(token?.metadata?.decimals ?? '6'));
     const amount: string | undefined = tokenBalance.toFixed(
       Number(token?.metadata?.decimals) ?? 6
@@ -126,7 +106,7 @@ export const useSelectBalance = (token?: Token): Balance => {
       amount,
       fiatBalance,
     };
-  }, [isLoading, price, token, state.chainData.tokenBalances]);
+  }, [isLoading, price, token, state.balances.tokenBalances]);
 };
 
 /**
@@ -160,7 +140,7 @@ export const useSelectBalanceHistorical = (
     }
 
     const tokenBalancesHistorical: BigNumber = BigNumber(
-      state.chainData.tokenBalancesHistorical?.[token.id + historicalPeriod]
+      state.balances.tokenBalancesHistorical?.[token.id + historicalPeriod]
         ?.balanceHistorical ?? '0'
     ).dividedBy(10 ** Number(token?.metadata?.decimals ?? '6'));
     const amount: string | undefined = tokenBalancesHistorical.toFixed(
@@ -184,6 +164,6 @@ export const useSelectBalanceHistorical = (
     price,
     token,
     historicalPeriod,
-    state.chainData.tokenBalancesHistorical,
+    state.balances.tokenBalancesHistorical,
   ]);
 };

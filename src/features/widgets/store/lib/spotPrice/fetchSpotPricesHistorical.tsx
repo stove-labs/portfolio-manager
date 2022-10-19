@@ -1,15 +1,13 @@
 import { isEmpty } from 'lodash';
 import { BigNumber } from 'bignumber.js';
 import { HistoricalPeriod } from '../../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
-import {
-  useSelectPoolId,
-  useSelectTokenDecimals,
-} from '../../selectors/spotPrice/useSpotPriceSelectors';
+import { getPoolId, getTokenDecimals } from '../../../../../config/lib/helpers';
 import { nativeToken, nativeTokenId } from '../../spotPrice/useSpotPriceStore';
 import {
   getNativeTokenBalanceHistorical,
   getTokenBalancesHistorical,
-} from '../chainData/fetchBalancesHistorical';
+} from '../balance/fetchBalancesHistorical';
+import { Block } from '../../chain/useChainStore';
 export interface NativeTokenBalanceResponse {
   data: {
     base: string;
@@ -23,7 +21,7 @@ export interface SettingsItem {
   tokenId: string;
   historicalPeriod: HistoricalPeriod;
   currency: string;
-  timestamp: string;
+  historicalBlock: Block;
 }
 export type Settings = Record<string, SettingsItem>;
 
@@ -46,11 +44,11 @@ export const getSpotPricesHistorical = async (
   let payload: Payload = {};
 
   if (nativeTokenSettings) {
-    const [recordId, { currency, timestamp }] = nativeTokenSettings;
+    const [recordId, { currency, historicalBlock }] = nativeTokenSettings;
     const record = await getNativeTokenSpotPriceHistorical(
       recordId,
       currency,
-      timestamp
+      historicalBlock.timestamp
     );
 
     payload = { ...payload, ...record };
@@ -62,14 +60,13 @@ export const getSpotPricesHistorical = async (
     tokenSettings.map(
       async ([
         recordId,
-        { tokenId, historicalPeriod, currency, timestamp },
+        { tokenId, historicalPeriod, historicalBlock },
       ]): PayloadPromise => {
         return await getTokenSpotPriceHistorical(
           recordId,
           tokenId,
           historicalPeriod,
-          currency,
-          timestamp
+          historicalBlock
         );
       }
     )
@@ -92,8 +89,12 @@ export const getSpotPricesHistorical = async (
 export const getNativeTokenSpotPriceHistorical = async (
   recordId: string,
   currency: string,
-  timestamp: string
+  timestamp?: string
 ): PayloadPromise => {
+  if (!timestamp)
+    throw new Error(
+      'Could not load spot price historical because of missing timestamp'
+    );
   const response = await fetch(
     `https://api.coinbase.com/v2/prices/${nativeToken}-${currency}/spot?date=${timestamp}`
   );
@@ -113,36 +114,36 @@ export const getNativeTokenSpotPriceHistorical = async (
  * @param {string} tokenId - token id
  * @param {HistoricalPeriod} historicalPeriod - historical period
  * @param {string} currency - currency symbols ei USD, EUR
- * @param {string} timestamp - ISO timestamp
+ * @param {string} level - block
  * @returns Record with historical spot prices Record<token+currency+historicalPeriod, {price}>
  */
 export const getTokenSpotPriceHistorical = async (
   recordId: string,
   tokenId: string,
   historicPeriod: HistoricalPeriod,
-  currency: string,
-  timestamp: string
+  historicalBlock: Block
 ): PayloadPromise => {
-  const poolAddress: string = useSelectPoolId(tokenId);
-  const nativeTokenDecimal: string = useSelectTokenDecimals(nativeTokenId);
-  const tokenDecimal: string = useSelectTokenDecimals(tokenId);
-  const nativeTokenPriceHistorical: string = Object.values(
-    await getNativeTokenSpotPriceHistorical(recordId, currency, timestamp)
-  )?.['0']?.price;
+  if (!historicalBlock.timestamp || !historicalBlock.level)
+    throw new Error(
+      'Could not load spot price historical because of missing historical block'
+    );
+  const poolAddress: string = getPoolId(tokenId);
+  const nativeTokenDecimal: string = getTokenDecimals(nativeTokenId);
+  const tokenDecimal: string = getTokenDecimals(tokenId);
   const tokenBalanceHistorical: string = Object.values(
     await getTokenBalancesHistorical(poolAddress, {
-      [tokenId + historicPeriod]: { id: tokenId, timestamp },
+      [tokenId + historicPeriod]: { id: tokenId, level: historicalBlock.level },
     })
   )?.['0']?.balanceHistorical;
   const nativeTokenBalanceHistorical: string = Object.values(
-    await getNativeTokenBalanceHistorical(recordId, poolAddress, timestamp)
+    await getNativeTokenBalanceHistorical(
+      recordId,
+      poolAddress,
+      historicalBlock.level
+    )
   )?.['0']?.balanceHistorical;
 
-  if (
-    !tokenBalanceHistorical ||
-    !nativeTokenBalanceHistorical ||
-    !nativeTokenPriceHistorical
-  )
+  if (!tokenBalanceHistorical || !nativeTokenBalanceHistorical)
     throw new Error(
       'Could not calculate price due to missing nativeTokenBalanceHistorical, tokenBalanceHistorical or nativeTokenPriceHistorical'
     );
@@ -159,7 +160,6 @@ export const getTokenSpotPriceHistorical = async (
   // which we then multiple with native token fiat price
   const price: string = nativeTokenBalanceHistoricalWithDecimals
     .dividedBy(tokenBalanceHistoricalWithDecimals)
-    .multipliedBy(nativeTokenPriceHistorical)
     .toFixed(2);
 
   return {

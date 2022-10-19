@@ -18,7 +18,7 @@ export const defaultBalance: string = '0';
  */
 export const getTokenBalances = async (
   address: string,
-  ids: string[]
+  ids: string[],
 ): PayloadPromise => {
   // Filter out XTZ as we get balance from different api
   const tokenIds: string[] = ids.filter((id) => id !== '0');

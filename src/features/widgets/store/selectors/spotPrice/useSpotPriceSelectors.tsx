@@ -2,7 +2,57 @@ import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 import { useStoreContext } from '../../../../../store/useStore';
 import { HistoricalPeriod } from '../../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
-import { nativeTokenId } from '../../spotPrice/useSpotPriceStore';
+import { nativeToken, nativeTokenId } from '../../spotPrice/useSpotPriceStore';
+
+/**
+ * Get loading status for token price
+ * @param {string} id - id of token
+ * @returns loading state
+ */
+export const useSelectIsPriceLoading = (id: string): boolean => {
+  const [state] = useStoreContext();
+  const tokenB = id === nativeTokenId ? state.prices.currency : nativeToken;
+
+  return useMemo((): boolean => {
+    const priceStatus = state.prices.spotPrices?.[id + tokenB]?.status;
+
+    return (
+      priceStatus === undefined ||
+      priceStatus === 'LOADING' ||
+      priceStatus === 'STANDBY'
+    );
+  }, [id, state.prices.spotPrices?.[id + tokenB]?.status]);
+};
+
+/**
+ * Get loading status for token price historical
+ * @param {string} id - id of token
+ * @param {string} historicalPeriod - historicalPeriod
+ * @returns loading state
+ */
+export const useSelectIsPriceHistoricalLoading = (
+  id: string,
+  historicalPeriod: string
+): boolean => {
+  const [state] = useStoreContext();
+  const tokenB = id === nativeTokenId ? state.prices.currency : nativeToken;
+
+  return useMemo((): boolean => {
+    const priceHistoricalStatus =
+      state.prices.spotPricesHistorical?.[id + tokenB + historicalPeriod]
+        ?.status;
+
+    return (
+      priceHistoricalStatus === undefined ||
+      priceHistoricalStatus === 'LOADING' ||
+      priceHistoricalStatus === 'STANDBY'
+    );
+  }, [
+    id,
+    historicalPeriod,
+    state.prices.spotPricesHistorical?.[id + tokenB + historicalPeriod]?.status,
+  ]);
+};
 
 /**
  * Get currency
@@ -75,15 +125,17 @@ export const useSelectTokenSpotPrice = (
     if (tokenId === nativeTokenId) return nativeTokenPrice;
 
     const tokenToNativeTokenPrice: string | undefined =
-      state.prices.spotPrices?.[tokenId + currency]?.price;
+      state.prices.spotPrices?.[tokenId + nativeToken]?.price;
     if (!tokenToNativeTokenPrice) return;
 
-    return new BigNumber(tokenToNativeTokenPrice).toFixed(2);
+    return new BigNumber(tokenToNativeTokenPrice)
+      .multipliedBy(nativeTokenPrice)
+      .toFixed(2);
   }, [
     tokenId,
     currency,
     nativeTokenPrice,
-    state.prices.spotPrices?.[tokenId + currency],
+    state.prices.spotPrices?.[tokenId + nativeToken],
   ]);
 };
 
@@ -108,56 +160,22 @@ export const useSelectTokenSpotPriceHistorical = (
     if (tokenId === nativeTokenId) return nativeTokenPrice;
 
     const tokenToNativeTokenPriceHistorical: string | undefined =
-      state.prices.spotPricesHistorical?.[tokenId + currency + historicalPeriod]
-        ?.price;
+      state.prices.spotPricesHistorical?.[
+        tokenId + nativeToken + historicalPeriod
+      ]?.price;
 
     if (!tokenToNativeTokenPriceHistorical) return;
 
-    return new BigNumber(tokenToNativeTokenPriceHistorical).toFixed(2);
+    return new BigNumber(tokenToNativeTokenPriceHistorical)
+      .multipliedBy(nativeTokenPrice)
+      .toFixed(2);
   }, [
     tokenId,
     currency,
     historicalPeriod,
     nativeTokenPrice,
-    state.prices.spotPricesHistorical?.[tokenId + currency + historicalPeriod],
+    state.prices.spotPricesHistorical?.[
+      tokenId + nativeToken + historicalPeriod
+    ],
   ]);
-};
-
-/**
- * Get pool address
- * @param {string} id - token id
- * @returns pool address
- */
-export const useSelectPoolId = (id: string): string => {
-  const poolsMap: Record<string, string> = {
-    '42290944933889': 'KT1K4EwTpbvYN9agJdjpyJm4ZZdhpUNKB3F6',
-    '74079757402113': 'KT1X3zxdTzPB9DgVzA3ad6dgZe9JEamoaeRy',
-    '24975299837953': 'KT1WBLrLE2vG8SedBqiSJFm4VVAZZBytJYHc',
-  };
-
-  const poolId = poolsMap[id];
-
-  if (!poolId) throw new Error("Price pool doesn't exist for selected token");
-
-  return poolId;
-};
-
-/**
- * Get token decimals
- * @param {string} id - token id
- * @returns decimals
- */
-export const useSelectTokenDecimals = (id: string): string => {
-  const decimalsMap: Record<string, string> = {
-    '0': '6',
-    '42290944933889': '18',
-    '74079757402113': '6',
-    '24975299837953': '8',
-  };
-
-  const decimals = decimalsMap[id];
-
-  if (!decimals) throw new Error("Decimals doesn't exist for selected token");
-
-  return decimals;
 };

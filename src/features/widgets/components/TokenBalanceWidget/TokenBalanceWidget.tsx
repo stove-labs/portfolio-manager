@@ -12,8 +12,8 @@ import { abbreviateNumber } from 'js-abbreviation-number';
 import { BigNumber } from 'bignumber.js';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
-import { Token } from '../../store/chainData/useChainDataStore';
-import { isNativeToken } from '../../store/selectors/chainData/useChainDataSelectors';
+import { Token } from '../../../../config/config/tokens';
+import { isNativeToken } from '../../../../config/lib/helpers';
 import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
@@ -109,7 +109,6 @@ export const TokenBalanceWidget: React.FC<
       })`}
       // TODO: this cant be undefined
       onSettingsChange={onSettingsChange}
-      onTitleSubmit={console.log}
       onWidgetRemove={onWidgetRemove}
       settings={settings}
       // TODO: add TokenBalanceWidgetSettings container
@@ -220,8 +219,8 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {token?.symbol ?? 'Loading'} = {priceToNativeToken ?? emDash}{' '}
-              XTZ, 1 {token?.symbol ?? 'Loading'} = ${spotPriceToken ?? emDash}
+              1 {token?.symbol} = {priceToNativeToken ?? emDash} XTZ, 1{' '}
+              {token?.symbol} = ${spotPriceToken ?? emDash}
             </Text>
           </Skeleton>
         </Flex>

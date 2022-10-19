@@ -4,18 +4,6 @@ import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalan
 
 export type Status = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
 
-export interface Token {
-  id: string;
-  name: string;
-  symbol: string;
-  contract: {
-    address: string;
-  };
-  metadata: {
-    decimals: string;
-  };
-}
-
 export interface Balance {
   amount: string;
 }
@@ -37,13 +25,12 @@ export interface TokenBalanceHistorical {
   status: Status;
 }
 
-export interface ChainDataState {
-  tokens: Token[];
+export interface BalanceState {
   tokenBalances?: Record<string, TokenBalance>;
   tokenBalancesHistorical?: Record<string, TokenBalanceHistorical>;
 }
 
-export type ChainDataAction =
+export type BalanceAction =
   | { type: 'LOAD_TOKENS_BALANCE'; payload: { ids: string[] } }
   | {
       type: 'LOAD_TOKENS_BALANCE_SUCCESS';
@@ -57,7 +44,7 @@ export type ChainDataAction =
       type: 'LOAD_TOKENS_BALANCE_HISTORICAL';
       payload: Record<
         string,
-        { id: string; historicalPeriod: HistoricalPeriod; timestamp: string }
+        { id: string; historicalPeriod: HistoricalPeriod; level: string }
       >;
     }
   | {
@@ -69,58 +56,9 @@ export type ChainDataAction =
       payload: Record<string, { error: string }>;
     };
 
-export const defaultValues: ChainDataState = {
-  tokens: [
-    {
-      id: '0',
-      name: 'Tezos',
-      symbol: 'XTZ',
-      contract: {
-        address: '0',
-      },
-      metadata: {
-        decimals: '6',
-      },
-    },
-    {
-      id: '42290944933889',
-      name: 'Kolibri USD',
-      symbol: 'kUSD',
-      contract: {
-        address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
-      },
-      metadata: {
-        decimals: '18',
-      },
-    },
-    {
-      id: '74079757402113',
-      name: 'Quipuswap',
-      symbol: 'QUIPU',
-      contract: {
-        address: 'KT193D4vozYnhGJQVtw7CoxxqphqUEEwK6Vb',
-      },
-      metadata: {
-        decimals: '6',
-      },
-    },
-    {
-      id: '24975299837953',
-      name: 'tzBTC',
-      symbol: 'tzBTC',
-      contract: {
-        address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
-      },
-      metadata: {
-        decimals: '8',
-      },
-    },
-  ],
-};
+export const initialBalanceState: BalanceState = {};
 
-export const initialChainDataState: ChainDataState = defaultValues;
-
-export const chainDataReducer: Reducer<ChainDataState, ChainDataAction> = (
+export const balanceReducer: Reducer<BalanceState, BalanceAction> = (
   state,
   action
 ) => {
@@ -204,7 +142,7 @@ export const chainDataReducer: Reducer<ChainDataState, ChainDataAction> = (
   }
 };
 
-export const useChainDataStore = (): [
-  ChainDataState,
-  React.Dispatch<ChainDataAction>
-] => useReducer(chainDataReducer, initialChainDataState);
+export const useBalanceStore = (): [
+  BalanceState,
+  React.Dispatch<BalanceAction>
+] => useReducer(balanceReducer, initialBalanceState);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex } from '@chakra-ui/react';
 import { HistoricalPeriodSelector } from '../../../../shared/components/HistoricalPeriodSelector/HistoricalPeriodSelector';
 import { TokenSelector } from '../../../../shared/components/TokenSelector/TokenSelector';
-import { useSelectAllTokens } from '../../../store/selectors/chainData/useChainDataSelectors';
+import { getAllTokens } from '../../../../../config/lib/helpers';
 
 export type HistoricalPeriod = '24h' | '7d' | '30d';
 
@@ -17,7 +17,7 @@ export interface TokenBalanceWidgetSettingsProps {
 export const TokenBalanceWidgetSettings: React.FC<
   TokenBalanceWidgetSettingsProps
 > = ({ historicalPeriods }) => {
-  const tokens = useSelectAllTokens();
+  const tokens = getAllTokens();
 
   return (
     <>

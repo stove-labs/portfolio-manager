@@ -14,12 +14,12 @@ export const defaultBalance: string = '0';
 /**
  * Get historical token balances for selected ids
  * @param {string} address - wallet address
- * @param {Record} settings - Record<id + historicalPeriod, { id, timestamp }>
+ * @param {Record} settings - Record<id + historicalPeriod, { id, level }>
  * @returns Record<recordId, balanceHistorical>
  */
 export const getTokenBalancesHistorical = async (
   address: string,
-  settings: Record<string, { id: string; timestamp: string }>
+  settings: Record<string, { id: string; level: string }>
 ): PayloadPromise => {
   // We use id + historicalPeriod as record key
   // Filter out XTZ as we get balance from different api
@@ -39,7 +39,7 @@ export const getTokenBalancesHistorical = async (
         return await getNativeTokenBalanceHistorical(
           recordId,
           address,
-          settings[recordId].timestamp
+          settings[recordId].level
         );
       })
     ).then((resolvedPromises) => {
@@ -53,9 +53,8 @@ export const getTokenBalancesHistorical = async (
 
   await Promise.all(
     tokenIds.map(async (recordId: string): PayloadPromise => {
-      const level: string = await getBlockLevel(settings[recordId].timestamp);
       const response = await fetch(
-        `https://api.tzkt.io/v1/tokens/historical_balances/${level}?account=${address}&token.id.in=${settings[recordId].id}&select=balance,token.id as id`
+        `https://api.tzkt.io/v1/tokens/historical_balances/${settings[recordId].level}?account=${address}&token.id.in=${settings[recordId].id}&select=balance,token.id as id`
       );
       if (!response.ok) throw new Error(response.statusText);
       const responseData =
@@ -92,15 +91,14 @@ export const getTokenBalancesHistorical = async (
  * Get historical native token balance
  * @param {string} recordId - token id + historicalPeriod
  * @param {string} address - wallet address
- * @param {string} timestamp - ISO timestamp
+ * @param {string} level - block level
  * @returns Record<recordId, balanceHistorical>
  */
 export const getNativeTokenBalanceHistorical = async (
   recordId: string,
   address: string,
-  timestamp: string
+  level: string
 ): PayloadPromise => {
-  const level: string = await getBlockLevel(timestamp);
   const response = await fetch(
     `https://api.tzkt.io/v1/accounts/${address}/balance_history/${level}`
   );
@@ -108,19 +106,4 @@ export const getNativeTokenBalanceHistorical = async (
   const responseData = (await response.json()) as string;
 
   return { [recordId]: { balanceHistorical: responseData ?? defaultBalance } };
-};
-
-/**
- * Get block level from timestamp
- * @param {string} timestamp - ISO timestamp
- * @returns level
- */
-export const getBlockLevel = async (timestamp: string): Promise<string> => {
-  const response = await fetch(
-    `https://api.tzkt.io/v1/blocks/${timestamp}/level`
-  );
-  if (!response.ok) throw new Error(response.statusText);
-  const responseData = (await response.json()) as string;
-
-  return responseData;
 };
