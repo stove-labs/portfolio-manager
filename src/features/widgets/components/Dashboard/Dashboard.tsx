@@ -18,6 +18,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Select,
   Tag,
   Text,
   Tooltip,
@@ -32,6 +33,11 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import {
+  Currency,
+  CurrencySymbol,
+  getAllCurrencies,
+} from '../../../../config/config/currencies';
 
 // TODO move definition to the appropriate data store
 export interface Block {
@@ -49,9 +55,11 @@ export interface Trigger {
 export interface DashboardProps {
   onSettingsExport: () => void;
   onSettingsImport: () => void;
+  onCurrencyChange: (currency: CurrencySymbol) => void;
   addWidgetAs: (disclosure: UseDisclosureReturn) => ReactNode;
   activeAccountAs: () => ReactNode;
   disableSettings: boolean;
+  currency: Currency;
   block: Block;
   trigger: Trigger;
 }
@@ -60,12 +68,15 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   children,
   onSettingsExport,
   onSettingsImport,
+  onCurrencyChange,
   disableSettings,
+  currency,
   block,
   trigger: { countdown },
   addWidgetAs,
   activeAccountAs,
 }) => {
+  const currencies: Currency[] = getAllCurrencies();
   const disclosure = useDisclosure();
   // how old the block is in seconds
   const blockOldness = useMemo(() => {
@@ -183,6 +194,23 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
               </Flex>
             </Flex>
             <Flex alignItems={'center'} gap={'3'}>
+              <Select
+                onChange={(e) =>
+                  onCurrencyChange(e.target.value as CurrencySymbol)
+                }
+              >
+                {currencies.map((currencyOption: Currency) => {
+                  return (
+                    <option
+                      key={currencyOption.symbol}
+                      selected={currency === currencyOption}
+                      value={currencyOption.symbol}
+                    >
+                      {currencyOption.symbol}
+                    </option>
+                  );
+                })}
+              </Select>
               <Flex color={useColorModeValue('gray.700', 'gray.400')} gap={'0'}>
                 <Button
                   borderBottomRightRadius={'0'}

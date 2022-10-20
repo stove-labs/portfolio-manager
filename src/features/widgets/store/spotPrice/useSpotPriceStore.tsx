@@ -2,6 +2,11 @@ import { Reducer, useReducer } from 'react';
 import produce from 'immer';
 import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import { Block } from '../chain/useChainStore';
+import {
+  currencies,
+  Currency,
+  CurrencySymbol,
+} from '../../../../config/config/currencies';
 
 export type Status = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
 
@@ -25,10 +30,11 @@ export interface spotPriceHistorical {
 export interface SpotPriceState {
   spotPrices?: Record<string, spotPrice>;
   spotPricesHistorical?: Record<string, spotPriceHistorical>;
-  currency: string;
+  currency: Currency;
 }
 
 export type SpotPriceAction =
+  | { type: 'SET_CURRENCY'; payload: CurrencySymbol }
   | { type: 'LOAD_SPOT_PRICE'; payload: { ids: string[]; currency: string } }
   | {
       type: 'LOAD_SPOT_PRICE_SUCCESS';
@@ -60,7 +66,10 @@ export type SpotPriceAction =
     };
 
 export const initialSpotPriceState: SpotPriceState = {
-  currency: 'USD',
+  currency: {
+    symbol: 'USD',
+    position: 'left',
+  },
 };
 
 export const nativeToken = 'XTZ';
@@ -71,18 +80,22 @@ export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
   action
 ) => {
   switch (action.type) {
+    case 'SET_CURRENCY':
+      return produce(state, (draft) => {
+        draft.currency = currencies[action.payload];
+      });
     case 'LOAD_SPOT_PRICE':
       return produce(state, (draft) => {
         draft.spotPrices = state.spotPrices ?? {};
 
         action.payload.ids.forEach((token) => {
           if (draft.spotPrices === undefined) return;
+          const currency: CurrencySymbol | 'XTZ' =
+            token === '0' ? state.currency.symbol : nativeToken;
 
-          draft.spotPrices[
-            token + (token === '0' ? state.currency : nativeToken)
-          ] = {
+          draft.spotPrices[token + currency] = {
             token,
-            currency: state.currency,
+            currency,
             status: 'LOADING',
           };
         });
@@ -117,9 +130,12 @@ export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
         draft.spotPricesHistorical = state.spotPricesHistorical ?? {};
         Object.entries(action.payload).forEach(([id, data]) => {
           if (draft.spotPricesHistorical === undefined) return;
+          const currency: CurrencySymbol | 'XTZ' =
+            data.tokenId === '0' ? state.currency.symbol : nativeToken;
 
           draft.spotPricesHistorical[id] = {
             ...data,
+            currency,
             status: 'LOADING',
           };
         });

@@ -14,12 +14,15 @@ import { WidgetStore } from '../WidgetStore/WidgetStore';
 import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
+import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
+import { CurrencySymbol } from '../../../../config/config/currencies';
 
 export const Dashboard: React.FC = () => {
   // TODO add selectors
   const [state, dispatch] = useStoreContext();
   const settings = useMemo(() => state.settings, [state]);
   const address = useMemo(() => state.wallet.activeAccount?.address, [state]);
+  const currency = useSelectCurrency();
   const block = useSelectCurrentBlock();
   const [timer, setTimer] = useState(30 * 1000);
   useEffect(() => {
@@ -77,12 +80,26 @@ export const Dashboard: React.FC = () => {
     settingsFileInput.current?.click();
   }, [settingsFileInput]);
 
+  const handleCurrencyChange = (setCurrency: CurrencySymbol): void => {
+    dispatch({
+      type: 'SET_CURRENCY',
+      payload: setCurrency,
+    });
+  };
+
   useEffect(() => {
     if (!(timer === 30 * 1000)) return;
     dispatch({
       type: 'LOAD_LATEST_BLOCK',
     });
   }, [timer]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'LOAD_SPOT_PRICE',
+      payload: { ids: ['0'], currency: currency.symbol },
+    });
+  }, [block?.level, currency.symbol]);
 
   return (
     <>
@@ -106,10 +123,12 @@ export const Dashboard: React.FC = () => {
           // green
           timestamp: new Date(block?.timestamp ?? '').getTime(),
         }}
+        currency={currency}
         disableSettings={!address}
         trigger={{
           countdown: timer,
         }}
+        onCurrencyChange={handleCurrencyChange}
         onSettingsExport={handleSettingsExport}
         onSettingsImport={handleSettingsImport}
       >

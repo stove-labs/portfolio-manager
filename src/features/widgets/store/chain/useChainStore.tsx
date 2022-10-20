@@ -22,7 +22,6 @@ export interface BlockHistorical {
 // new blocks are always appended to the end of the array
 export interface ChainState {
   currentBlock?: Block;
-  blocks?: Block[];
   // Id is currentBlock level + historical period
   blocksHistorical?: Record<string, BlockHistorical>;
 }
@@ -60,6 +59,7 @@ export const chainReducer: Reducer<ChainState, ChainAction> = (
     case 'LOAD_LATEST_BLOCK':
       return produce(state, (draft) => {
         draft.currentBlock = {
+          ...state.currentBlock,
           status: 'LOADING',
         };
       });
@@ -71,7 +71,6 @@ export const chainReducer: Reducer<ChainState, ChainAction> = (
           status: 'SUCCESS',
         };
         draft.currentBlock = block;
-        draft.blocks = [...(state.blocks ?? []), block];
       });
     case 'LOAD_LATEST_BLOCK_FAILURE':
       return produce(state, (draft) => {
@@ -80,7 +79,6 @@ export const chainReducer: Reducer<ChainState, ChainAction> = (
           status: 'ERROR',
         };
         draft.currentBlock = block;
-        draft.blocks = [...(state.blocks ?? []), block];
       });
 
     case 'LOAD_BLOCK':

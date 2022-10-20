@@ -40,7 +40,7 @@ export const TokenBalanceWidget: React.FC<
 }) => {
   const [, dispatch] = useStoreContext();
   const token = useSelectToken(settings.token);
-  const currency = useSelectCurrency();
+  const currency = useSelectCurrency().symbol;
   const block = useSelectCurrentBlock();
   const historicalBlock = useSelectBlockHistorical(
     settings.historicalPeriod,

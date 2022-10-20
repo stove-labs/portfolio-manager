@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
 import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
-import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
-import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
 import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
 import {
   WidgetName,
@@ -12,8 +10,6 @@ import {
 export const WidgetsLayout: React.FC = () => {
   const [state, dispatch] = useStoreContext();
   const { flushDispatchQueue } = useDispatchUniqueContext();
-  const currency = useSelectCurrency();
-  const block = useSelectCurrentBlock();
 
   useEffect(() => {
     flushDispatchQueue();
@@ -29,13 +25,6 @@ export const WidgetsLayout: React.FC = () => {
         return TokenBalanceWidget;
     }
   }, []);
-
-  useEffect(() => {
-    dispatch({
-      type: 'LOAD_SPOT_PRICE',
-      payload: { ids: ['0'], currency },
-    });
-  }, [block?.level, currency]);
 
   return (
     <>
