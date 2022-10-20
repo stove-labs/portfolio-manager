@@ -35,7 +35,7 @@ import React, {
 } from 'react';
 import {
   Currency,
-  CurrencySymbol,
+  CurrencyTicker,
   getAllCurrencies,
 } from '../../../../config/config/currencies';
 
@@ -55,7 +55,7 @@ export interface Trigger {
 export interface DashboardProps {
   onSettingsExport: () => void;
   onSettingsImport: () => void;
-  onCurrencyChange: (currency: CurrencySymbol) => void;
+  onCurrencyChange: (currency: CurrencyTicker) => void;
   addWidgetAs: (disclosure: UseDisclosureReturn) => ReactNode;
   activeAccountAs: () => ReactNode;
   disableSettings: boolean;
@@ -196,17 +196,17 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
             <Flex alignItems={'center'} gap={'3'}>
               <Select
                 onChange={(e) =>
-                  onCurrencyChange(e.target.value as CurrencySymbol)
+                  onCurrencyChange(e.target.value as CurrencyTicker)
                 }
               >
                 {currencies.map((currencyOption: Currency) => {
                   return (
                     <option
-                      key={currencyOption.symbol}
+                      key={currencyOption.ticker}
                       selected={currency === currencyOption}
-                      value={currencyOption.symbol}
+                      value={currencyOption.ticker}
                     >
-                      {currencyOption.symbol}
+                      {currencyOption.ticker}
                     </option>
                   );
                 })}

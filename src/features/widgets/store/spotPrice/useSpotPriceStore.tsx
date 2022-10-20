@@ -5,7 +5,7 @@ import { Block } from '../chain/useChainStore';
 import {
   currencies,
   Currency,
-  CurrencySymbol,
+  CurrencyTicker,
 } from '../../../../config/config/currencies';
 
 export type Status = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
@@ -34,7 +34,7 @@ export interface SpotPriceState {
 }
 
 export type SpotPriceAction =
-  | { type: 'SET_CURRENCY'; payload: CurrencySymbol }
+  | { type: 'SET_CURRENCY'; payload: CurrencyTicker }
   | { type: 'LOAD_SPOT_PRICE'; payload: { ids: string[]; currency: string } }
   | {
       type: 'LOAD_SPOT_PRICE_SUCCESS';
@@ -66,10 +66,7 @@ export type SpotPriceAction =
     };
 
 export const initialSpotPriceState: SpotPriceState = {
-  currency: {
-    symbol: 'USD',
-    position: 'left',
-  },
+  currency: currencies.USD,
 };
 
 export const nativeToken = 'XTZ';
@@ -90,8 +87,8 @@ export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
 
         action.payload.ids.forEach((token) => {
           if (draft.spotPrices === undefined) return;
-          const currency: CurrencySymbol | 'XTZ' =
-            token === '0' ? state.currency.symbol : nativeToken;
+          const currency: CurrencyTicker | 'XTZ' =
+            token === '0' ? state.currency.ticker : nativeToken;
 
           draft.spotPrices[token + currency] = {
             token,
@@ -130,8 +127,8 @@ export const spotPriceReducer: Reducer<SpotPriceState, SpotPriceAction> = (
         draft.spotPricesHistorical = state.spotPricesHistorical ?? {};
         Object.entries(action.payload).forEach(([id, data]) => {
           if (draft.spotPricesHistorical === undefined) return;
-          const currency: CurrencySymbol | 'XTZ' =
-            data.tokenId === '0' ? state.currency.symbol : nativeToken;
+          const currency: CurrencyTicker | 'XTZ' =
+            data.tokenId === '0' ? state.currency.ticker : nativeToken;
 
           draft.spotPricesHistorical[id] = {
             ...data,

@@ -3,10 +3,7 @@ import { useMemo } from 'react';
 import { Currency } from '../../../../../config/config/currencies';
 import { useStoreContext } from '../../../../../store/useStore';
 import { HistoricalPeriod } from '../../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
-import {
-  nativeToken,
-  nativeTokenId,
-} from '../../spotPrice/useSpotPriceStore';
+import { nativeToken, nativeTokenId } from '../../spotPrice/useSpotPriceStore';
 
 /**
  * Get loading status for token price
@@ -16,7 +13,7 @@ import {
 export const useSelectIsPriceLoading = (id: string): boolean => {
   const [state] = useStoreContext();
   const tokenB =
-    id === nativeTokenId ? state.prices.currency.symbol : nativeToken;
+    id === nativeTokenId ? state.prices.currency.ticker : nativeToken;
 
   return useMemo((): boolean => {
     const priceStatus = state.prices.spotPrices?.[id + tokenB]?.status;
@@ -41,7 +38,7 @@ export const useSelectIsPriceHistoricalLoading = (
 ): boolean => {
   const [state] = useStoreContext();
   const tokenB =
-    id === nativeTokenId ? state.prices.currency.symbol : nativeToken;
+    id === nativeTokenId ? state.prices.currency.ticker : nativeToken;
 
   return useMemo((): boolean => {
     const priceHistoricalStatus =

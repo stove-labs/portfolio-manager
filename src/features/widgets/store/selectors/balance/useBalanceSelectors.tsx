@@ -77,7 +77,7 @@ export const useSelectBalance = (token?: Token): Balance => {
   const [state] = useStoreContext();
   const isLoading = useSelectIsBalanceLoading(token?.id ?? '');
   const price: string | undefined = useSelectTokenSpotPrice(
-    state.prices.currency.symbol,
+    state.prices.currency.ticker,
     token?.id ?? ''
   );
 
@@ -126,7 +126,7 @@ export const useSelectBalanceHistorical = (
   );
   const price: string | undefined = useSelectTokenSpotPriceHistorical(
     historicalPeriod,
-    state.prices.currency.symbol,
+    state.prices.currency.ticker,
     token?.id ?? ''
   );
 

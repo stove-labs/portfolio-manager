@@ -15,7 +15,7 @@ import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
 import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
-import { CurrencySymbol } from '../../../../config/config/currencies';
+import { CurrencyTicker } from '../../../../config/config/currencies';
 
 export const Dashboard: React.FC = () => {
   // TODO add selectors
@@ -80,7 +80,7 @@ export const Dashboard: React.FC = () => {
     settingsFileInput.current?.click();
   }, [settingsFileInput]);
 
-  const handleCurrencyChange = (setCurrency: CurrencySymbol): void => {
+  const handleCurrencyChange = (setCurrency: CurrencyTicker): void => {
     dispatch({
       type: 'SET_CURRENCY',
       payload: setCurrency,
@@ -97,9 +97,9 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     dispatch({
       type: 'LOAD_SPOT_PRICE',
-      payload: { ids: ['0'], currency: currency.symbol },
+      payload: { ids: ['0'], currency: currency.ticker },
     });
-  }, [block?.level, currency.symbol]);
+  }, [block?.level, currency.ticker]);
 
   return (
     <>

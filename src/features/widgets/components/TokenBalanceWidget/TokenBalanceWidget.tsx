@@ -14,6 +14,8 @@ import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
 import { Token } from '../../../../config/config/tokens';
 import { isNativeToken } from '../../../../config/lib/helpers';
+import { FiatAmount } from '../../../shared/components/FiatAmount/FiatAmount';
+import { CurrencyTicker } from '../../../../config/config/currencies';
 import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
@@ -46,6 +48,7 @@ export interface TokenBalanceWidgetProps {
   historicalBalance?: Balance;
   spotPriceToken?: string;
   spotPriceNativeToken?: string;
+  currency: CurrencyTicker;
   isLoading: boolean;
 }
 
@@ -66,6 +69,7 @@ export const TokenBalanceWidget: React.FC<
   historicalBalance,
   spotPriceToken,
   spotPriceNativeToken,
+  currency,
   isLoading,
   onWidgetRemove,
   onSettingsChange,
@@ -182,17 +186,19 @@ export const TokenBalanceWidget: React.FC<
                   fontSize={'xs'}
                   fontWeight={'normal'}
                 >
-                  $
-                  {balance?.fiatBalance.amount
-                    ? Number(balance?.fiatBalance.amount) > 1
-                      ? abbreviateNumber(
-                          Number(
-                            Number(balance?.fiatBalance.amount).toFixed(2)
-                          ),
-                          2
-                        )
-                      : Number(balance?.fiatBalance.amount).toFixed(2)
-                    : emDash}
+                  <FiatAmount
+                    amount={
+                      Number(balance?.fiatBalance.amount) > 1
+                        ? abbreviateNumber(
+                            Number(
+                              Number(balance?.fiatBalance.amount).toFixed(2)
+                            ),
+                            2
+                          )
+                        : Number(balance?.fiatBalance.amount).toFixed(2)
+                    }
+                    currencyTicker={currency}
+                  />
                 </Text>
                 <ChangeIndicator
                   change={tokenAmountPercentageChange}
@@ -220,7 +226,8 @@ export const TokenBalanceWidget: React.FC<
               textAlign={'left'}
             >
               1 {token?.symbol} = {priceToNativeToken ?? emDash} XTZ, 1{' '}
-              {token?.symbol} = ${spotPriceToken ?? emDash}
+              {token?.symbol} ={' '}
+              <FiatAmount amount={spotPriceToken} currencyTicker={currency} />
             </Text>
           </Skeleton>
         </Flex>

@@ -1,17 +1,19 @@
-export type CurrencySymbol = 'USD' | 'EUR';
+export type CurrencyTicker = 'USD' | 'EUR';
 export interface Currency {
-  symbol: CurrencySymbol;
+  symbol: string;
   position: 'left' | 'right';
-  ticker: 
+  ticker: CurrencyTicker;
 }
-export const currencies: Record<CurrencySymbol, Currency> = {
+export const currencies: Record<CurrencyTicker, Currency> = {
   USD: {
-    symbol: 'USD',
+    ticker: 'USD',
     position: 'left',
+    symbol: '$',
   },
   EUR: {
-    symbol: 'EUR',
+    ticker: 'EUR',
     position: 'right',
+    symbol: '€',
   },
 };
 
