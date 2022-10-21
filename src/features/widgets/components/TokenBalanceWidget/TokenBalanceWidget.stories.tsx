@@ -1,66 +1,55 @@
 import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Flex } from '@chakra-ui/react';
-import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { TokenBalanceWidget } from './TokenBalanceWidget';
 
-const token = {
-  id: '0',
-  fullName: 'Kolibri USD',
-  ticker: 'kUSD',
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+export default {
+  component: TokenBalanceWidget,
+} as ComponentMeta<typeof TokenBalanceWidget>;
+
+const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => {
+  return (
+    <Flex width={'1280px'}>
+      <TokenBalanceWidget {...args} />
+    </Flex>
+  );
 };
 
-const args = {
+export const Default = Template.bind({});
+Default.args = {
+  token: {
+    id: '42290944933889',
+    name: 'Kolibri USD',
+    symbol: 'kUSD',
+    contract: {
+      address: 'KT1K9gCRgaLRFKTErYt1wVxA3Frb9FjasjTV',
+    },
+    metadata: {
+      decimals: '18',
+    },
+    pool: {
+      address: 'KT1K4EwTpbvYN9agJdjpyJm4ZZdhpUNKB3F6',
+    },
+  },
   balance: {
-    token,
     amount: '0.005',
     fiatBalance: {
       amount: '100000',
     },
   },
   historicalBalance: {
-    token,
     amount: '50000',
     fiatBalance: {
       amount: '50000',
     },
   },
-  settings: {
-    token: 'kUSD',
-    historicalPeriod: '7d',
-  },
   isLoading: false,
+  currency: 'USD',
+  spotPriceToken: '0.768',
+  spotPriceNativeToken: '1.354',
+  settings: {
+    token: '42290944933889',
+    historicalPeriod: '30d',
+  },
 };
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-export default {
-  component: TokenBalanceWidget,
-  args,
-} as ComponentMeta<typeof TokenBalanceWidget>;
-
-const Template: ComponentStory<typeof TokenBalanceWidget> = (args) => (
-  <Flex width={'1280px'}>
-    <WidgetsLayout
-      layout={[
-        {
-          x: 0,
-          y: 0,
-          w: 3,
-          h: 4,
-          i: '0',
-        },
-      ]}
-      widgets={[
-        {
-          id: '0',
-          name: 'TokenBalanceWidget',
-        },
-      ]}
-      onLayoutChange={console.log}
-      onSettingsChange={console.log}
-      onWidgetRemove={console.log}
-    />
-  </Flex>
-);
-
-export const Default = Template.bind({});
