@@ -105,6 +105,16 @@ export const TokenBalanceWidget: React.FC<
 
   const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];
 
+  const formattedBalance: string = useMemo((): string => {
+    if (balance?.amount === undefined) return emDash;
+    if (Number(balance?.amount) === 0) return '0';
+    if (Number(balance?.amount) === 0.000001) return '>0.000001';
+    if (Number(balance.amount) > 1)
+      return abbreviateNumber(Number(Number(balance.amount).toFixed(6)), 2);
+
+    return Number(balance.amount).toFixed(6);
+  }, [balance?.amount]);
+
   return (
     <WidgetWrapper
       settingsDisabled={settingsDisabled}
@@ -156,14 +166,7 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'extrabold'}
                   lineHeight={'26px'}
                 >
-                  {balance?.amount
-                    ? Number(balance.amount) > 1
-                      ? abbreviateNumber(
-                          Number(Number(balance.amount).toFixed(6)),
-                          2
-                        )
-                      : Number(balance.amount).toFixed(6)
-                    : emDash}
+                  {formattedBalance}
                 </Text>
                 {/* ticker */}
                 <Text
@@ -187,16 +190,7 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'normal'}
                 >
                   <FiatAmount
-                    amount={
-                      Number(balance?.fiatBalance.amount) > 1
-                        ? abbreviateNumber(
-                            Number(
-                              Number(balance?.fiatBalance.amount).toFixed(2)
-                            ),
-                            2
-                          )
-                        : Number(balance?.fiatBalance.amount).toFixed(2)
-                    }
+                    amount={balance?.fiatBalance.amount}
                     currencyTicker={currency}
                   />
                 </Text>

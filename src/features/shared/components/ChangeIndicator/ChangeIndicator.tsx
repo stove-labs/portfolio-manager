@@ -13,6 +13,15 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
   size,
   change,
 }) => {
+  const changeAmount: string = useMemo((): string => {
+    const sign: string = change > 0 ? '+' : '-';
+    console.log(change);
+    if (change === 0) return '0';
+    if (Math.abs(change) > 1000) return `>${sign}1000`;
+    if (Math.abs(change) < 0.01) return `<${sign}0.01`;
+
+    return change.toFixed(2);
+  }, [change]);
   const sizing = useMemo<{
     iconSize: SizeProp;
     fontSize: TextProps['fontSize'];
@@ -75,7 +84,7 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
           }}
         />
       </Flex>
-      <Text fontSize={sizing.fontSize}>({change.toFixed(2)}%)</Text>
+      <Text fontSize={sizing.fontSize}>({changeAmount}%)</Text>
     </Flex>
   );
 };
