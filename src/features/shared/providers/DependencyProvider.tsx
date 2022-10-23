@@ -1,7 +1,7 @@
 import constate from 'constate';
 import { DAppClient } from '@airgap/beacon-sdk';
 import { useState } from 'react';
-import { useDappClient } from '../features/wallet/hooks/useDappClient';
+import { useDappClient } from '../../wallet/hooks/useDappClient';
 
 export interface Dependencies {
   dAppClient: DAppClient;

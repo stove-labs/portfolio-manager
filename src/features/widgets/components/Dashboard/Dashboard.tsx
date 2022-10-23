@@ -195,6 +195,11 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
             </Flex>
             <Flex alignItems={'center'} gap={'3'}>
               <Select
+                // width={'80px'}
+                disabled={disableSettings}
+                size={'sm'}
+                variant={'outline'}
+                width={'fit-content'}
                 onChange={(e) =>
                   onCurrencyChange(e.target.value as CurrencyTicker)
                 }
