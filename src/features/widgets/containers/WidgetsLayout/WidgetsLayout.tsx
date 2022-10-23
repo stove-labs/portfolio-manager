@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
 import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
-import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
-import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
-import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
+// import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
 import {
   WidgetName,
   WidgetsLayout as WidgetsLayoutComponent,
@@ -12,8 +10,6 @@ import {
 export const WidgetsLayout: React.FC = () => {
   const [state, dispatch] = useStoreContext();
   const { flushDispatchQueue } = useDispatchUniqueContext();
-  const currency = useSelectCurrency();
-  const block = useSelectCurrentBlock();
 
   useEffect(() => {
     flushDispatchQueue();
@@ -26,16 +22,10 @@ export const WidgetsLayout: React.FC = () => {
   const widgetAs = useCallback((name: WidgetName) => {
     switch (name) {
       case 'TokenBalanceWidget':
-        return TokenBalanceWidget;
+        return <></>;
+      // return TokenBalanceWidget;
     }
   }, []);
-
-  useEffect(() => {
-    dispatch({
-      type: 'LOAD_SPOT_PRICE',
-      payload: { ids: ['0'], currency },
-    });
-  }, [block?.level, currency]);
 
   return (
     <>
