@@ -1,9 +1,7 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React from 'react';
 // import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { Input, UseDisclosureReturn } from '@chakra-ui/react';
 import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dashboard';
-import { useStoreContext } from '../../../../store/useStore';
-import { WidgetsLayoutState } from '../WidgetsLayout/store/useWidgetsLayoutStore';
 import { WidgetStore } from '../WidgetStore/WidgetStore';
 // import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
@@ -11,12 +9,17 @@ import { ActiveAccount } from '../../../wallet/containers/ActiveAccount';
 // import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
 // import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
 import { CurrencyTicker } from '../../../../config/config/currencies';
+import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
+import { useSettings } from './hooks/useSettings';
 
 export const Dashboard: React.FC = () => {
-  // TODO add selectors
-  const [state, dispatch] = useStoreContext();
-  const settings = useMemo(() => state.settings, [state]);
-  const address = useMemo(() => state.wallet.activeAccount?.address, [state]);
+  const address = useSelectActiveAccountAddress();
+  const {
+    importSettings,
+    settingsFileInputRef,
+    handleSettingsExport,
+    handleSettingsImport,
+  } = useSettings();
   // const currency = useSelectCurrency();
   // const block = useSelectCurrentBlock();
   // const [timer, setTimer] = useState(30 * 1000);
@@ -30,50 +33,6 @@ export const Dashboard: React.FC = () => {
   //     clearInterval(interval);
   //   };
   // }, [block?.level, timer]);
-
-  // ref to the hidden file input element
-  const settingsFileInput = useRef<HTMLInputElement>(null);
-
-  // saves a file with the current widget settings including widget layout
-  const handleSettingsExport = useCallback((): void => {
-    if (!address) return;
-    const a = document.createElement('a');
-    const file = new Blob([JSON.stringify(settings)], {
-      type: 'text/plain',
-    });
-    a.href = URL.createObjectURL(file);
-    a.download = `${address}-portfolio-dashboard-settings.json`;
-    a.click();
-  }, [settings, address]);
-
-  // imports layout/widget settings from a JSON file uploaded by the user
-  const importSettings = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>): void => {
-      if (e.target.files?.[0]) {
-        const fileReader = new FileReader();
-        fileReader.readAsText(e.target.files[0], 'UTF-8');
-        fileReader.onload = (e) => {
-          const data = JSON.parse(
-            e.target?.result?.toString() ?? ''
-          ) as WidgetsLayoutState;
-          if (!('widgets' in data && 'layout' in data)) return;
-
-          if (data) {
-            dispatch({
-              type: 'SET_LAYOUT',
-              payload: { layout: data.layout, widgets: data.widgets },
-            });
-          }
-        };
-      }
-    },
-    []
-  );
-
-  // trigger file input on a hidden settings file input
-  const handleSettingsImport = useCallback(() => {
-    settingsFileInput.current?.click();
-  }, [settingsFileInput]);
 
   const handleCurrencyChange = (setCurrency: CurrencyTicker): void => {
     console.log('change currency', setCurrency);
@@ -100,7 +59,7 @@ export const Dashboard: React.FC = () => {
   return (
     <>
       <Input
-        ref={settingsFileInput}
+        ref={settingsFileInputRef}
         display={'none'}
         type={'file'}
         onChange={(e) => importSettings(e)}
@@ -131,7 +90,8 @@ export const Dashboard: React.FC = () => {
         }}
         disableSettings={!address}
         trigger={{
-          countdown: timer,
+          // countdown: timer,
+          countdown: 0,
         }}
         onCurrencyChange={handleCurrencyChange}
         onSettingsExport={handleSettingsExport}

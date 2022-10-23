@@ -35,6 +35,7 @@ export type AppReducer = Reducer<State, Action>;
 
 const [reducer, initialState] = combineReducers<AppReducer>({
   wallet: [walletReducer, initialWalletState],
+  // TODO: rename either layout -> settings, or settings -> layout
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
   blocks: [blocksReducer, initialBlocksState],
 });

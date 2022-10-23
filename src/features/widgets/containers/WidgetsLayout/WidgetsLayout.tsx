@@ -22,7 +22,7 @@ export const WidgetsLayout: React.FC = () => {
   const widgetAs = useCallback((name: WidgetName) => {
     switch (name) {
       case 'TokenBalanceWidget':
-        return <></>;
+        return React.Fragment;
       // return TokenBalanceWidget;
     }
   }, []);
