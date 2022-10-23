@@ -38,14 +38,7 @@ import {
   CurrencyTicker,
   getAllCurrencies,
 } from '../../../../config/config/currencies';
-
-// TODO move definition to the appropriate data store
-export interface Block {
-  // level/height of the chain
-  level: string;
-  // when was this block created / retrieved
-  timestamp: number;
-}
+import { Block } from '../../../chain/blocks/lib/blocks';
 
 export interface Trigger {
   // miliseconds
@@ -60,7 +53,7 @@ export interface DashboardProps {
   activeAccountAs: () => ReactNode;
   disableSettings: boolean;
   currency: Currency;
-  block: Block;
+  block?: Block;
   trigger: Trigger;
 }
 
@@ -79,13 +72,16 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   const currencies: Currency[] = getAllCurrencies();
   const disclosure = useDisclosure();
   // how old the block is in seconds
-  const blockOldness = useMemo(() => {
+  const blockOldness = useMemo<number | undefined>(() => {
+    if (!block) return;
     const now = Date.now();
-    const timestamp = block.timestamp;
+    console.log('block', block.timestamp);
+    const timestamp = Number(block.timestamp);
     return (now - timestamp) / 1000;
-  }, [block.timestamp]);
+  }, [block?.timestamp]);
 
-  const blockLivelinessColor = useMemo(() => {
+  const blockLivelinessColor = useMemo<string | undefined>(() => {
+    if (!blockOldness) return '#A0AEC0';
     // TODO adjust based on API having older blocks due to finalisation
     // green -> yellow -> red (400)
     // younger than 60 seconds
@@ -161,7 +157,11 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                 <Tooltip
                   size={'md'}
                   // TODO: format the block age in a way that handles edge cases
-                  label={`Current block is ${blockOldness.toFixed(0)}s old`}
+                  label={
+                    blockOldness
+                      ? `Current block is ${blockOldness.toFixed(0)}s old`
+                      : ''
+                  }
                 >
                   <Flex flexDirection={'column'} justifyContent={'left'}>
                     <Flex alignItems={'center'} gap={'1.5'}>
@@ -176,7 +176,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                         fontWeight={'normal'}
                         letterSpacing={'tight'}
                       >
-                        #{block.level}
+                        #{block?.level ?? '-'}
                       </Text>
                     </Flex>
                     <Flex

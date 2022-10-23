@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
 import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
+import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
 // import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
 import {
   WidgetName,
@@ -22,8 +23,7 @@ export const WidgetsLayout: React.FC = () => {
   const widgetAs = useCallback((name: WidgetName) => {
     switch (name) {
       case 'TokenBalanceWidget':
-        return React.Fragment;
-      // return TokenBalanceWidget;
+        return TokenBalanceWidget;
     }
   }, []);
 

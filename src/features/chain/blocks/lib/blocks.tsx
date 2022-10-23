@@ -35,12 +35,11 @@ export const fetchBlockAtIdentifier = async (
   const body =
     await (response.json() as Promise<LoadBlockAtIdentifierResponse>);
 
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
   const block: Block = {
     id: body.level,
     level: body.level,
-    timestamp: body.timestamp,
+    // convert ISO datetime to UNIX timestamp
+    timestamp: new Date(body.timestamp).getTime().toString(),
   };
   return block;
 };

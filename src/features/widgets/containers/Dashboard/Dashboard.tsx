@@ -11,6 +11,7 @@ import { ActiveAccount } from '../../../wallet/containers/ActiveAccount';
 import { CurrencyTicker } from '../../../../config/config/currencies';
 import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
 import { useSettings } from './hooks/useSettings';
+import { useLatestBlock } from './hooks/useLatestBlock';
 
 export const Dashboard: React.FC = () => {
   const address = useSelectActiveAccountAddress();
@@ -20,19 +21,8 @@ export const Dashboard: React.FC = () => {
     handleSettingsExport,
     handleSettingsImport,
   } = useSettings();
+  const { latestBlock, countdown } = useLatestBlock();
   // const currency = useSelectCurrency();
-  // const block = useSelectCurrentBlock();
-  // const [timer, setTimer] = useState(30 * 1000);
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (!block?.level) return;
-  //     setTimer(timer <= 0 ? 30 * 1000 : timer - 1000);
-  //   }, 1000);
-
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [block?.level, timer]);
 
   const handleCurrencyChange = (setCurrency: CurrencyTicker): void => {
     console.log('change currency', setCurrency);
@@ -41,13 +31,6 @@ export const Dashboard: React.FC = () => {
     //   payload: setCurrency,
     // });
   };
-
-  // useEffect(() => {
-  //   if (!(timer === 30 * 1000)) return;
-  //   dispatch({
-  //     type: 'LOAD_LATEST_BLOCK',
-  //   });
-  // }, [timer]);
 
   // useEffect(() => {
   //   dispatch({
@@ -69,19 +52,7 @@ export const Dashboard: React.FC = () => {
         addWidgetAs={(disclosure: UseDisclosureReturn) => (
           <WidgetStore {...disclosure} />
         )}
-        // block={{
-        //   level: block?.level ?? '-',
-        //   // red
-        //   // timestamp: Date.now() - 120000,
-        //   // yellow
-        //   // timestamp: Date.now() - 80000,
-        //   // green
-        //   timestamp: new Date(block?.timestamp ?? '').getTime(),
-        // }}
-        block={{
-          level: '1',
-          timestamp: Date.now(),
-        }}
+        block={latestBlock?.data}
         // currency={currency}
         currency={{
           position: 'left',
@@ -89,9 +60,9 @@ export const Dashboard: React.FC = () => {
           ticker: 'USD',
         }}
         disableSettings={!address}
+        // TODO: move countdown to a separate Navbar to avoid unnecessary re-renders with every countdown tick
         trigger={{
-          // countdown: timer,
-          countdown: 0,
+          countdown,
         }}
         onCurrencyChange={handleCurrencyChange}
         onSettingsExport={handleSettingsExport}

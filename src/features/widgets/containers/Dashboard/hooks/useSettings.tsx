@@ -12,6 +12,7 @@ export interface UseSettingsReturn {
 }
 
 export const useSettings = (): UseSettingsReturn => {
+  // TODO: add currency persisting as part of settings
   const [, dispatch] = useStoreContext();
   const settings = useSelectWidgetsLayout();
   const address = useSelectActiveAccountAddress();
