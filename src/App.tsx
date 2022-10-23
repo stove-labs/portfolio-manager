@@ -8,7 +8,9 @@ import { DispatchUniqueProvider } from './features/widgets/providers/DispatchUni
 
 import '../node_modules/react-grid-layout/css/styles.css';
 import '../node_modules/react-resizable/css/styles.css';
-import { Dashboard } from './features/widgets/containers/Dashboard/Dashboard';
+// import { Dashboard } from './features/widgets/containers/Dashboard/Dashboard';
+import { Playground } from './Playground';
+import { StoreEvictProvider } from './store/providers/StoreEvictProvider';
 
 log.setDefaultLevel('DEBUG');
 
@@ -16,12 +18,15 @@ export const App: React.FC = () => {
   return (
     <DependencyProvider>
       <StoreProvider>
-        <CSSReset />
-        <ChakraProvider theme={theme}>
-          <DispatchUniqueProvider>
-            <Dashboard />
-          </DispatchUniqueProvider>
-        </ChakraProvider>
+        <StoreEvictProvider>
+          <CSSReset />
+          <ChakraProvider theme={theme}>
+            <DispatchUniqueProvider>
+              {/* <Dashboard /> */}
+              <Playground />
+            </DispatchUniqueProvider>
+          </ChakraProvider>
+        </StoreEvictProvider>
       </StoreProvider>
     </DependencyProvider>
   );

@@ -2,15 +2,6 @@ import constate from 'constate';
 import React, { Reducer, useCallback, useReducer } from 'react';
 import combineReducers from 'react-combine-reducers';
 import logger from 'use-reducer-logger';
-import { useCounterEffects } from '../features/Counter/store/useCounterEffects';
-import { useBalanceEffects } from '../features/widgets/store/balance/useBalanceEffects';
-import { useSpotPriceEffects } from '../features/widgets/store/spotPrice/useSpotPriceEffects';
-import {
-  CounterAction,
-  counterReducer,
-  CounterState,
-  initialCounterState,
-} from '../features/Counter/store/useCounterStore';
 import {
   WidgetsLayoutAction,
   widgetsLayoutReducer,
@@ -25,51 +16,27 @@ import {
   WalletState,
 } from '../features/Wallet/store/useWalletStore';
 import {
-  ChainAction,
-  chainReducer,
-  ChainState,
-  initialChainState,
-} from '../features/widgets/store/chain/useChainStore';
-import {
-  BalanceAction,
-  balanceReducer,
-  BalanceState,
-  initialBalanceState,
-} from '../features/widgets/store/balance/useBalanceStore';
-import {
-  initialSpotPriceState,
-  SpotPriceAction,
-  spotPriceReducer,
-  SpotPriceState,
-} from '../features/widgets/store/spotPrice/useSpotPriceStore';
-import { useChainEffects } from '../features/widgets/store/chain/useChainEffects';
+  BlocksAction,
+  blocksReducer,
+  BlocksState,
+  initialBlocksState,
+} from '../features/chain/blocks/store/useBlocksStore';
+import { useBlocksEffects } from '../features/chain/blocks/store/useBlocksEffects';
 
 export interface State {
-  counter: CounterState;
   wallet: WalletState;
   settings: WidgetsLayoutState;
-  chain: ChainState;
-  balances: BalanceState;
-  prices: SpotPriceState;
+  blocks: BlocksState;
 }
 
-export type Action =
-  | CounterAction
-  | WalletAction
-  | WidgetsLayoutAction
-  | ChainAction
-  | BalanceAction
-  | SpotPriceAction;
+export type Action = WalletAction | WidgetsLayoutAction | BlocksAction;
 
 export type AppReducer = Reducer<State, Action>;
 
 const [reducer, initialState] = combineReducers<AppReducer>({
-  counter: [counterReducer, initialCounterState],
   wallet: [walletReducer, initialWalletState],
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
-  chain: [chainReducer, initialChainState],
-  balances: [balanceReducer, initialBalanceState],
-  prices: [spotPriceReducer, initialSpotPriceState],
+  blocks: [blocksReducer, initialBlocksState],
 });
 
 export type Effect = (
@@ -97,13 +64,7 @@ export const useCombineEffects = (effects: EffectHook[]): RunEffects => {
 
 export const useStore = (): [State, React.Dispatch<Action>] => {
   const [state, dispatch] = useReducer(logger(reducer), initialState);
-  const runEffects = useCombineEffects([
-    useCounterEffects,
-    useWalletEffects,
-    useBalanceEffects,
-    useSpotPriceEffects,
-    useChainEffects,
-  ]);
+  const runEffects = useCombineEffects([useWalletEffects, useBlocksEffects]);
   const dispatchWithEffects: React.Dispatch<Action> = useCallback(
     (action) => {
       dispatch(action);
