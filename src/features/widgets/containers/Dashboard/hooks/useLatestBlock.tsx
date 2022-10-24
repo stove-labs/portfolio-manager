@@ -15,13 +15,14 @@ export interface UseLatestBlockReturn {
 }
 export const useLatestBlock = (): UseLatestBlockReturn => {
   const { evict } = useStoreEvictContext();
-  const { known: latestBlock } = useLastKnown<Block>(useSelectLatestBlock);
+  const { known: latestBlock } = useLastKnown<Block>(useSelectLatestBlock());
 
   const handleBeforeInterval = useCallback<OnBeforeIntervalCallback>(
     (intervalCount) => {
       // before the 3rd interval starts, evict unused entities
       // this will ensure that the entities from the 3rd interval won't be evicted
       // and the entities from the 1st-2nd intervals will be kept if necessary
+      console.log('handleBeforeInterval', { intervalCount });
       if (intervalCount > 2) evict();
     },
     [evict]

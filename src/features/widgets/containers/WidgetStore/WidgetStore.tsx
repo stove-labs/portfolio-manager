@@ -37,6 +37,8 @@ const availableWidgets: AvailableWidgets = [
           decimals: '6',
         },
       },
+      // TODO: use user's actual selected currency here
+      currency: 'EUR',
       balance: {
         amount: '100000',
         fiatBalance: {

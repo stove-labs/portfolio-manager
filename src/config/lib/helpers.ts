@@ -1,5 +1,7 @@
 import { tokens, Token } from '../config/tokens';
 
+export type KnownToken = keyof typeof tokens;
+
 /**
  * Check if token is native
  * @param {Token} token - token
@@ -14,8 +16,17 @@ export const isNativeToken = (token: Token | undefined): boolean => {
  * @param {string} id - id of token
  * @returns Token
  */
-export const getToken = (id: string): Token | undefined => {
+// TODO: hooks so the value is memoized
+export const getToken = (id: KnownToken): Token => {
   return tokens[id];
+};
+
+/**
+ * Get native token, without specifying it's ID
+ * @returns
+ */
+export const getNativeToken = (): Token => {
+  return getToken('0');
 };
 
 /**
@@ -31,7 +42,7 @@ export const getAllTokens = (): Token[] => {
  * @param {string} id - token id
  * @returns pool address
  */
-export const getPoolId = (id: string): string => {
+export const getPoolId = (id: KnownToken): string => {
   const poolId = tokens[id].pool?.address;
 
   if (!poolId) throw new Error("Price pool doesn't exist for selected token");
@@ -44,7 +55,7 @@ export const getPoolId = (id: string): string => {
  * @param {string} id - token id
  * @returns decimals
  */
-export const getTokenDecimals = (id: string): string => {
+export const getTokenDecimals = (id: KnownToken): string => {
   const decimals = tokens[id].metadata.decimals;
 
   if (!decimals) throw new Error("Decimals doesn't exist for selected token");

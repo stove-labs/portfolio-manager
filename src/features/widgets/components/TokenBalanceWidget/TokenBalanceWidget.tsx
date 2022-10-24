@@ -9,7 +9,6 @@ import {
 } from '@chakra-ui/react';
 
 import { abbreviateNumber } from 'js-abbreviation-number';
-import { BigNumber } from 'bignumber.js';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
 import { Token } from '../../../../config/config/tokens';
@@ -17,17 +16,17 @@ import { isNativeToken } from '../../../../config/lib/helpers';
 import { FiatAmount } from '../../../shared/components/FiatAmount/FiatAmount';
 import { CurrencyTicker } from '../../../../config/config/currencies';
 import {
+  Balance,
+  MAX_DECIMALS,
+  toDecimals,
+} from '../../../chain/balances/lib/balances';
+import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
 } from './TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 
 export interface FiatBalance {
   amount?: string;
-}
-
-export interface Balance {
-  amount?: string;
-  fiatBalance: FiatBalance;
 }
 
 export interface WidgetProps<T> {
@@ -43,9 +42,11 @@ export interface TokenBalanceWidgetSettingsData {
 }
 
 export interface TokenBalanceWidgetProps {
-  token?: Token;
+  token: Token;
   balance?: Balance;
+  fiatBalance?: Balance;
   historicalBalance?: Balance;
+  historicalFiatBalance?: Balance;
   spotPriceToken?: string;
   spotPriceNativeToken?: string;
   currency: CurrencyTicker;
@@ -61,6 +62,7 @@ export const percentageChange = (start: number, end: number): number => {
   return ((end - start) / start) * 100;
 };
 
+export const emDash: string = '—';
 export const TokenBalanceWidget: React.FC<
   TokenBalanceWidgetProps & WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
@@ -75,8 +77,9 @@ export const TokenBalanceWidget: React.FC<
   onSettingsChange,
   settings,
   settingsDisabled,
+  fiatBalance,
+  historicalFiatBalance,
 }) => {
-  const emDash: string = '—';
   const balancePercentageChange = useMemo(() => {
     return percentageChange(
       Number(historicalBalance?.amount),
@@ -86,23 +89,19 @@ export const TokenBalanceWidget: React.FC<
 
   // spot prices are in tokenA-USD
   const priceToNativeToken = useMemo(() => {
-    if (!spotPriceToken || !spotPriceNativeToken) return;
-
-    return BigNumber(spotPriceToken)
-      .dividedBy(BigNumber(spotPriceNativeToken))
-      .toFixed(6);
+    // if (!spotPriceToken || !spotPriceNativeToken) return;
+    // return BigNumber(spotPriceToken)
+    //   .dividedBy(BigNumber(spotPriceNativeToken))
+    //   .toFixed(6);
   }, [spotPriceToken, spotPriceNativeToken]);
 
-  const tokenAmountPercentageChange = useMemo(() => {
-    if (!historicalBalance?.fiatBalance.amount || !balance?.fiatBalance.amount)
-      return 0;
-
+  const fiatBalancePercentageChange = useMemo(() => {
     return percentageChange(
-      Number(historicalBalance?.fiatBalance.amount),
-      Number(balance?.fiatBalance.amount)
+      Number(historicalFiatBalance?.amount),
+      Number(fiatBalance?.amount)
     );
-  }, [balance?.fiatBalance.amount, historicalBalance?.fiatBalance.amount]);
-
+  }, [fiatBalance?.amount, historicalFiatBalance?.amount]);
+  console.log('');
   const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];
 
   return (
@@ -156,13 +155,14 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'extrabold'}
                   lineHeight={'26px'}
                 >
+                  {/* TODO: create <FormattedBalance /> */}
                   {balance?.amount
-                    ? Number(balance.amount) > 1
+                    ? Number(toDecimals(balance, token?.id)) > 1
                       ? abbreviateNumber(
-                          Number(Number(balance.amount).toFixed(6)),
-                          2
+                          Number(toDecimals(balance, token?.id)),
+                          MAX_DECIMALS
                         )
-                      : Number(balance.amount).toFixed(6)
+                      : Number(toDecimals(balance, token?.id))
                     : emDash}
                 </Text>
                 {/* ticker */}
@@ -186,9 +186,9 @@ export const TokenBalanceWidget: React.FC<
                   fontSize={'xs'}
                   fontWeight={'normal'}
                 >
-                  <FiatAmount
+                  {/* <FiatAmount
                     amount={
-                      Number(balance?.fiatBalance.amount) > 1
+                      Number(alanceb?.fiatBalance.amount) > 1
                         ? abbreviateNumber(
                             Number(
                               Number(balance?.fiatBalance.amount).toFixed(2)
@@ -198,10 +198,18 @@ export const TokenBalanceWidget: React.FC<
                         : Number(balance?.fiatBalance.amount).toFixed(2)
                     }
                     currencyTicker={currency}
+                  /> */}
+                  {/* temporary placeholder */}
+                  <FiatAmount
+                    amount={abbreviateNumber(
+                      Number(Number(1000).toFixed(2)),
+                      2
+                    )}
+                    currencyTicker={currency}
                   />
                 </Text>
                 <ChangeIndicator
-                  change={tokenAmountPercentageChange}
+                  change={fiatBalancePercentageChange}
                   size={'sm'}
                 />
               </Flex>

@@ -13,18 +13,23 @@ import { WithStatus } from '../../chain/blocks/store/useBlocksStore';
  * it will persist at most 2 records - known and currently selected.
  *
  * If the currently selected entity isn't done loading, return the last known entity.
- * @param useSelect
+ * @param selected
  * @returns
  */
 export const useLastKnown = <T extends EntityWithID>(
-  useSelect: () => WithStatus<T> | undefined
+  selected: WithStatus<T> | undefined,
+  resetKnown?: any
 ): {
   known: WithStatus<T> | undefined;
   selected: WithStatus<T> | undefined;
 } => {
   const { keep } = useStoreEvictContext();
   const [known, setKnown] = useState<WithStatus<T> | undefined>();
-  const selected = useSelect();
+
+  // each time 'resetKnown' changes, reset known
+  useEffect(() => {
+    setKnown(undefined);
+  }, [resetKnown]);
 
   useEffect(() => {
     if (!known) return setKnown(selected);

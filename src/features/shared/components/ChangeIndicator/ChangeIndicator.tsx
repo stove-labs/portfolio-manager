@@ -8,11 +8,17 @@ export interface ChangeIndicatorProps {
   size: 'sm' | 'lg';
   change: number;
 }
-
+// TODO: add a neutral trend instead of just up/down green/red
 export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
   size,
   change,
 }) => {
+  const cappedChange = useMemo(() => {
+    if (change === 0) return '0';
+    if (change > 1000) return '> 1000';
+    if (change < 0.01) return '< 0.01';
+    return change.toFixed(2);
+  }, [change]);
   const sizing = useMemo<{
     iconSize: SizeProp;
     fontSize: TextProps['fontSize'];
@@ -75,7 +81,7 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
           }}
         />
       </Flex>
-      <Text fontSize={sizing.fontSize}>({change.toFixed(2)}%)</Text>
+      <Text fontSize={sizing.fontSize}>({cappedChange}%)</Text>
     </Flex>
   );
 };

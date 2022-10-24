@@ -16,20 +16,32 @@ import {
   WalletState,
 } from '../features/wallet/store/useWalletStore';
 import {
-  BlocksAction,
   blocksReducer,
   BlocksState,
   initialBlocksState,
 } from '../features/chain/blocks/store/useBlocksStore';
 import { useBlocksEffects } from '../features/chain/blocks/store/useBlocksEffects';
+import {
+  balancesReducer,
+  BalancesState,
+  initialBalancesState,
+} from '../features/chain/balances/store/useBalancesStore';
+import { useBalancesEffects } from '../features/chain/balances/store/useBalancesEffects';
+import { BlocksAction } from '../features/chain/blocks/store/useBlocksActions';
+import { BalancesAction } from '../features/chain/balances/store/useBalancesActions';
 
 export interface State {
   wallet: WalletState;
   settings: WidgetsLayoutState;
   blocks: BlocksState;
+  balances: BalancesState;
 }
 
-export type Action = WalletAction | WidgetsLayoutAction | BlocksAction;
+export type Action =
+  | WalletAction
+  | WidgetsLayoutAction
+  | BlocksAction
+  | BalancesAction;
 
 export type AppReducer = Reducer<State, Action>;
 
@@ -38,6 +50,7 @@ const [reducer, initialState] = combineReducers<AppReducer>({
   // TODO: rename either layout -> settings, or settings -> layout
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
   blocks: [blocksReducer, initialBlocksState],
+  balances: [balancesReducer, initialBalancesState],
 });
 
 export type Effect = (
@@ -65,7 +78,11 @@ export const useCombineEffects = (effects: EffectHook[]): RunEffects => {
 
 export const useStore = (): [State, React.Dispatch<Action>] => {
   const [state, dispatch] = useReducer(logger(reducer), initialState);
-  const runEffects = useCombineEffects([useWalletEffects, useBlocksEffects]);
+  const runEffects = useCombineEffects([
+    useWalletEffects,
+    useBlocksEffects,
+    useBalancesEffects,
+  ]);
   const dispatchWithEffects: React.Dispatch<Action> = useCallback(
     (action) => {
       dispatch(action);

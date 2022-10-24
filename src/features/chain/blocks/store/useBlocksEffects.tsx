@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { Effect } from '../../../../store/useStore';
 import { Block, fetchLatestBlock } from '../lib/blocks';
+import {
+  loadLatestBlockError,
+  loadLatestBlockSuccess,
+} from './useBlocksActions';
 
 export const useBlocksEffects = (): Effect => {
   return useCallback<Effect>(async (state, action, dispatch) => {
@@ -13,24 +17,15 @@ export const useBlocksEffects = (): Effect => {
           block = await fetchLatestBlock();
         } catch (e) {
           // if there is an error with the lib, dispatch an error action
-          dispatch({
-            type: 'LOAD_LATEST_BLOCK_ERROR',
-          });
+          dispatch(loadLatestBlockError());
 
           throw e;
         }
 
         // if the block was found, dispatch a success action
-        block &&
-          dispatch({
-            type: 'LOAD_LATEST_BLOCK_SUCCESS',
-            payload: {
-              block,
-            },
-          });
+        block && dispatch(loadLatestBlockSuccess(block));
         break;
       }
     }
-    return state;
   }, []);
 };

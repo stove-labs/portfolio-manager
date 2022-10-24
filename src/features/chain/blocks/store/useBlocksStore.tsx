@@ -7,6 +7,7 @@ import {
   EntityWithID,
   evictEntities,
 } from '../../../../store/providers/StoreEvictProvider';
+import { BlocksAction } from './useBlocksActions';
 
 export type Status = 'STANDBY' | 'LOADING' | 'SUCCESS' | 'ERROR';
 export interface WithStatus<T extends EntityWithID> {
@@ -22,24 +23,6 @@ export interface BlocksState {
   latestBlockId?: ID;
   blocks: Record<ID, WithStatus<BlockWithTimestamps>>;
 }
-
-export interface EvictAction {
-  type: 'EVICT';
-  payload: { keepIDs: ID[] };
-}
-
-export type BlocksAction =
-  | {
-      type: 'LOAD_LATEST_BLOCK';
-    }
-  | {
-      type: 'LOAD_LATEST_BLOCK_SUCCESS';
-      payload: { block: Block };
-    }
-  | {
-      type: 'LOAD_LATEST_BLOCK_ERROR';
-    }
-  | EvictAction;
 
 export const initialBlocksState: BlocksState = {
   blocks: {},
@@ -105,6 +88,7 @@ export const blocksReducer: Reducer<BlocksState, BlocksAction> = (
       });
     }
 
+    // TODO: implement keep across all selectors before keeping eviciton enabled permanently
     case 'EVICT': {
       return produce(state, (draft) => {
         const entities = draft.blocks;

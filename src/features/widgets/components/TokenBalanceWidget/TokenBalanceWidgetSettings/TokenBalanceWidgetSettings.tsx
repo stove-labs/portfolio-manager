@@ -14,6 +14,19 @@ export interface TokenBalanceWidgetSettingsProps {
   historicalPeriods: HistoricalPeriod[];
 }
 
+export const historicalPeriodToHours = (
+  historicalPeriod: HistoricalPeriod
+): string => {
+  switch (historicalPeriod) {
+    case '24h':
+      return '24';
+    case '30d':
+      return `${30 * 24}`;
+    case '7d':
+      return `${7 * 24}`;
+  }
+};
+
 export const TokenBalanceWidgetSettings: React.FC<
   TokenBalanceWidgetSettingsProps
 > = ({ historicalPeriods }) => {

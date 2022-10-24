@@ -39,6 +39,7 @@ import {
   getAllCurrencies,
 } from '../../../../config/config/currencies';
 import { Block } from '../../../chain/blocks/lib/blocks';
+import { emDash } from '../TokenBalanceWidget/TokenBalanceWidget';
 
 export interface Trigger {
   // miliseconds
@@ -176,7 +177,8 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                         fontWeight={'normal'}
                         letterSpacing={'tight'}
                       >
-                        #{block?.level ?? '-'}
+                        {/* TODO: loading status for block */}#
+                        {block?.level ?? emDash}
                       </Text>
                     </Flex>
                     <Flex

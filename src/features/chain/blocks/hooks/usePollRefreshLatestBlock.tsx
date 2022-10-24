@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
+import { loadLatestBlock as loadLatestBlockAction } from '../store/useBlocksActions';
 
 export interface UsePollRefreshLatestBlockReturn {
   countdown: number;
@@ -15,9 +16,7 @@ export const usePollRefreshLatestBlock = (
   const [intervalCount, setIntervalCount] = useState<number>(0);
   const [countdown, setCountdown] = useState<number>(REFRESH_INTERVAL);
   const loadLatestBlock = useCallback(() => {
-    dispatch({
-      type: 'LOAD_LATEST_BLOCK',
-    });
+    dispatch(loadLatestBlockAction());
   }, []);
 
   useEffect(() => {
@@ -31,6 +30,7 @@ export const usePollRefreshLatestBlock = (
     loadLatestBlock();
     // keep track of interval count for callback purposes
     setIntervalCount((intervalCount) => intervalCount + 1);
+    console.log('interval count', { intervalCount });
     // reset countdown
     setCountdown(REFRESH_INTERVAL);
   }, [onBeforeInterval, intervalCount]);
@@ -51,7 +51,7 @@ export const usePollRefreshLatestBlock = (
       clearInterval(intervalId);
       clearInterval(countdownId);
     };
-  }, []);
+  }, [handleInterval]);
 
   return { countdown };
 };

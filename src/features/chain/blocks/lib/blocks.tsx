@@ -11,7 +11,7 @@ export interface Block {
   timestamp: Timestamp;
 }
 
-export const LOAD_BLOCKS_URL = `${config.API_URL}/v1/blocks`;
+export const GET_BLOCKS_URL = `${config.API_URL}/v1/blocks`;
 
 export interface LoadBlockAtIdentifierResponse {
   level: string;
@@ -30,7 +30,7 @@ export type BlockIdentifier = Timestamp | Level;
 export const fetchBlockAtIdentifier = async (
   identifier: BlockIdentifier
 ): Promise<Block> => {
-  const response = await fetch(LOAD_BLOCKS_URL + `/${identifier}`);
+  const response = await fetch(GET_BLOCKS_URL + `/${identifier}`);
   if (!response.ok) throw new Error(await response.text());
   const body =
     await (response.json() as Promise<LoadBlockAtIdentifierResponse>);
@@ -44,7 +44,7 @@ export const fetchBlockAtIdentifier = async (
   return block;
 };
 
-export const LOAD_LATEST_BLOCK_COUNT_URL = LOAD_BLOCKS_URL + `/count`;
+export const GET_LATEST_BLOCK_COUNT_URL = GET_BLOCKS_URL + `/count`;
 
 /**
  * Fetches the current block count (NOT LEVEL, level is count - 1)
@@ -52,7 +52,7 @@ export const LOAD_LATEST_BLOCK_COUNT_URL = LOAD_BLOCKS_URL + `/count`;
  */
 export const fetchBlockCount = async (): Promise<string> => {
   // load the block count
-  const response = await fetch(LOAD_LATEST_BLOCK_COUNT_URL);
+  const response = await fetch(GET_LATEST_BLOCK_COUNT_URL);
   if (!response.ok) throw new Error(await response.text());
   const body = await response.text();
   const count = body.toString();
