@@ -12,16 +12,24 @@ export const useSelectBalances = (): BalancesState => {
   return useMemo(() => state.balances, [state]);
 };
 
+export const useSelectBalanceAtLevel = (
+  tokenId: KnownToken,
+  address?: string,
+  level?: Level
+): WithStatus<Balance> | undefined => {
+  const balances = useSelectBalances();
+
+  return useMemo(() => {
+    if (!level || !address) return;
+    const id = getBalanceId(level, address, tokenId);
+    return balances.balances[id];
+  }, [address, level, tokenId, balances]);
+};
+
 export const useSelectActiveAccountBalanceAtLevel = (
   tokenId: KnownToken,
   level?: Level
 ): WithStatus<Balance> | undefined => {
-  const balances = useSelectBalances();
   const address = useSelectActiveAccountAddress();
-
-  return useMemo(() => {
-    if (!address || !level) return;
-    const id = getBalanceId(level, address, tokenId);
-    return balances.balances[id];
-  }, [address, level, tokenId, balances]);
+  return useSelectBalanceAtLevel(tokenId, address, level);
 };

@@ -1,14 +1,9 @@
-import { useEffect } from 'react';
 import { KnownToken } from '../../../../config/lib/helpers';
-import { useStoreContext } from '../../../../store/useStore';
-import { useLastKnown } from '../../../shared/hooks/useLastKnown';
 import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
 import { Level } from '../../blocks/lib/blocks';
-import {} from '../../blocks/store/useBlocksSelectors';
 import { WithStatus } from '../../blocks/store/useBlocksStore';
 import { Balance } from '../lib/balances';
-import { loadBalances } from '../store/useBalancesActions';
-import { useSelectActiveAccountBalanceAtLevel } from '../store/useBalancesSelectors';
+import { useBalanceAtLevel } from './useBalanceAtLevel';
 
 export interface UseActiveAccountBalanceAtLevelReturn {
   loading: boolean;
@@ -21,22 +16,6 @@ export const useActiveAccountBalanceAtLevel = ({
   tokenId: KnownToken;
   level?: Level;
 }): UseActiveAccountBalanceAtLevelReturn => {
-  const [, dispatch] = useStoreContext();
   const address = useSelectActiveAccountAddress();
-  const { known: balance } = useLastKnown(
-    useSelectActiveAccountBalanceAtLevel(tokenId, level),
-    tokenId
-  );
-
-  useEffect(() => {
-    const skip = !address || !level;
-    if (skip) return;
-
-    dispatch(loadBalances([level], address, [tokenId]));
-  }, [tokenId, address, level]);
-
-  return {
-    loading: !balance?.status || balance?.status === 'LOADING',
-    balance,
-  };
+  return useBalanceAtLevel({ address, tokenId, level });
 };
