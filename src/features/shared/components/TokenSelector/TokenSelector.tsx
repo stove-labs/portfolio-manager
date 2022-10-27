@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { defaultValues, Token } from '../../../widgets/store/chainData/useChainDataStore';
+import { Token } from '../../../../config/config/tokens';
 import { Option, AutoComplete } from '../AutoComplete/AutoComplete';
 
 export interface TokenSelectorProps {
@@ -22,7 +22,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ tokens }) => {
 
   // transform token name to id
   const transformValueOut = useCallback((value: string) => {
-    const transformedValue = defaultValues.tokens.find(
+    const transformedValue = tokens.find(
       (token) => tokenToLabel(token) === value
     )?.id;
     if (!transformedValue) throw new Error('Token not found');
@@ -31,7 +31,7 @@ export const TokenSelector: React.FC<TokenSelectorProps> = ({ tokens }) => {
 
   // transform token name to id
   const transformValueIn = useCallback((value: string) => {
-    const token = defaultValues.tokens.find((token) => token.id === value);
+    const token = tokens.find((token) => token.id === value);
     const transformedValue = token && tokenToLabel(token);
 
     if (!transformedValue) throw new Error('Token not found');

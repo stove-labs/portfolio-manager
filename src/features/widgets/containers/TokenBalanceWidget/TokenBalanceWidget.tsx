@@ -1,19 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
-import moment from 'moment';
-import { useStoreContext } from '../../../../store/useStore';
-import {
-  useSelectIsBalanceLoading,
-  useSelectIsBalanceHistoricalLoading,
-  useSelectToken,
-  useSelectBalance,
-  useSelectBalanceHistorical,
-} from '../../store/selectors/chainData/useChainDataSelectors';
-import { HistoricalPeriod } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
-import {
-  useSelectTokenSpotPrice,
-  useSelectNativeTokenSpotPrice,
-  useSelectCurrency,
-} from '../../store/selectors/spotPrice/useSpotPriceSelectors';
+import React, { useMemo } from 'react';
+import { getToken } from '../../../../config/lib/helpers';
+import { useActiveAccountBalanceHistorical } from '../../../chain/balances/hooks/useActiveAccountBalanceHistorical';
+import { useActiveAccountBalanceLatest } from '../../../chain/balances/hooks/useActiveAccountBalanceLatest';
+import { useSpotPriceFromTokenHistorical } from '../../../chain/balances/hooks/useSpotPriceFromTokenHistorical';
+import { useSpotPriceFromTokenLatest } from '../../../chain/balances/hooks/useSpotPriceFromTokenLatest';
+import { useFiatSpotPrice } from '../../../fiat/hooks/useFiatSpotPrice';
+import { historicalPeriodToHours } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
   TokenBalanceWidgetSettingsData,
@@ -24,121 +16,61 @@ export const TokenBalanceWidget: React.FC<
   WidgetProps<TokenBalanceWidgetSettingsData>
 > = ({
   settings = {
+    // TODO: rename token -> tokenId
     token: '42290944933889',
     historicalPeriod: '7d',
   },
   onWidgetRemove,
   onSettingsChange,
 }) => {
-  const [, dispatch] = useStoreContext();
-  const token = useSelectToken(settings.token);
-  const currency = useSelectCurrency();
-  const isBalanceLoading = useSelectIsBalanceLoading(settings.token);
-  const isBalanceHistoricalLoading = useSelectIsBalanceHistoricalLoading(
-    settings.token,
-    settings.historicalPeriod
+  const token = getToken(settings.token);
+  const balance = useActiveAccountBalanceLatest({
+    tokenId: useMemo(() => token.id, [token]),
+  });
+
+  const hoursAgo = useMemo(
+    () => historicalPeriodToHours(settings.historicalPeriod),
+    [settings.historicalPeriod]
   );
+  const historicalBalance = useActiveAccountBalanceHistorical({
+    tokenId: useMemo(() => token.id, [token]),
+    hoursAgo,
+  });
+
+  const fiatSpotPrice = useFiatSpotPrice();
+  const spotPriceToken = useSpotPriceFromTokenLatest(token);
+  const spotPriceTokenHistorical = useSpotPriceFromTokenHistorical(
+    token,
+    hoursAgo
+  );
+
   const isLoading = useMemo(() => {
-    return isBalanceLoading || isBalanceHistoricalLoading;
-  }, [isBalanceLoading, isBalanceHistoricalLoading]);
-  const historicalTimestamp = useMemo(() => {
-    const offset: Record<HistoricalPeriod, number> = {
-      '24h': 24,
-      '7d': 24 * 7,
-      '30d': 24 * 30,
-    };
-
-    return moment(Date.now())
-      .subtract(offset[settings.historicalPeriod], 'h')
-      .toISOString();
-  }, [settings.historicalPeriod]);
-
-  useEffect(() => {
-    dispatch({
-      type: 'LOAD_TOKENS_BALANCE',
-      payload: { ids: [settings.token] },
-    });
-  }, [settings.token]);
-
-  useEffect(() => {
-    dispatch({
-      type: 'LOAD_TOKENS_BALANCE_HISTORICAL',
-      payload: {
-        [settings.token + settings.historicalPeriod]: {
-          id: settings.token,
-          historicalPeriod: settings.historicalPeriod,
-          timestamp: historicalTimestamp,
-        },
-      },
-    });
-  }, [settings.token, settings.historicalPeriod]);
-
-  useEffect(() => {
-    dispatch({
-      type: 'LOAD_SPOT_PRICE',
-      payload: { ids: ['0'], currency },
-    });
-  }, [currency]);
-
-  useEffect(() => {
-    // Native token XTZ has id=0
-    dispatch({
-      type: 'LOAD_SPOT_PRICE_HISTORICAL',
-      payload: {
-        ['0' + currency + settings.historicalPeriod]: {
-          tokenId: '0',
-          currency,
-          historicalPeriod: settings.historicalPeriod,
-          timestamp: historicalTimestamp,
-        },
-      },
-    });
-  }, [currency, settings.historicalPeriod]);
-
-  useEffect(() => {
-    // prevent double fetching of native token
-    if (settings.token === '0') return;
-
-    dispatch({
-      type: 'LOAD_SPOT_PRICE',
-      payload: { ids: [settings.token], currency },
-    });
-  }, [currency, settings.token]);
-
-  useEffect(() => {
-    // prevent double fetching of native token
-    if (settings.token === '0') return;
-
-    dispatch({
-      type: 'LOAD_SPOT_PRICE_HISTORICAL',
-      payload: {
-        [settings.token + currency + settings.historicalPeriod]: {
-          tokenId: settings.token,
-          currency,
-          historicalPeriod: settings.historicalPeriod,
-          timestamp: historicalTimestamp,
-        },
-      },
-    });
-  }, [currency, settings.token, settings.historicalPeriod]);
-
-  const balance = useSelectBalance(token);
-  const historicalBalance = useSelectBalanceHistorical(
-    settings.historicalPeriod,
-    token
-  );
-
-  const spotPriceNativeToken = useSelectNativeTokenSpotPrice(currency);
-  const spotPriceToken = useSelectTokenSpotPrice(currency, settings.token);
+    return (
+      balance.loading ||
+      historicalBalance.loading ||
+      fiatSpotPrice.loading ||
+      spotPriceToken.loading ||
+      spotPriceTokenHistorical.loading
+    );
+  }, [
+    balance,
+    historicalBalance,
+    fiatSpotPrice,
+    spotPriceToken,
+    spotPriceTokenHistorical,
+  ]);
 
   return (
     <TokenBalanceWidgetComponent
-      balance={balance}
-      historicalBalance={historicalBalance}
+      balance={balance.balance?.data}
+      currency={fiatSpotPrice.spotPrice?.data?.currency}
+      historicalBalance={historicalBalance.balance?.data}
       isLoading={isLoading}
       settings={settings}
-      spotPriceNativeToken={spotPriceNativeToken}
-      spotPriceToken={spotPriceToken}
+      spotPriceNativeToken={fiatSpotPrice.spotPrice?.data}
+      spotPriceNativeTokenHistorical={fiatSpotPrice.spotPrice?.data}
+      spotPriceToken={spotPriceToken.spotPrice}
+      spotPriceTokenHistorical={spotPriceTokenHistorical.spotPrice}
       token={token}
       onSettingsChange={onSettingsChange}
       onWidgetRemove={onWidgetRemove}

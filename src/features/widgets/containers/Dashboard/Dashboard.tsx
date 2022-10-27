@@ -1,67 +1,50 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React from 'react';
 // import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { Input, UseDisclosureReturn } from '@chakra-ui/react';
 import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dashboard';
-import { useStoreContext } from '../../../../store/useStore';
-import { WidgetsLayoutState } from '../WidgetsLayout/store/useWidgetsLayoutStore';
 import { WidgetStore } from '../WidgetStore/WidgetStore';
-import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
+// import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
+import { ActiveAccount } from '../../../wallet/containers/ActiveAccount';
+// import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
+// import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
+import {
+  CurrencyTicker,
+  currencies,
+} from '../../../../config/config/currencies';
+import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
+import { useStoreContext } from '../../../../store/useStore';
+import { setCurrency } from '../../../fiat/store/useFiatActions';
+import { useSelectCurrency } from '../../../fiat/store/useFiatSelectors';
+import { useLatestBlock } from './hooks/useLatestBlock';
+import { useSettings } from './hooks/useSettings';
 
 export const Dashboard: React.FC = () => {
-  // TODO add selectors
-  const [state, dispatch] = useStoreContext();
-  const settings = useMemo(() => state.settings, [state]);
-  const address = useMemo(() => state.wallet.activeAccount?.address, [state]);
+  const address = useSelectActiveAccountAddress();
+  const currency = useSelectCurrency();
+  const {
+    importSettings,
+    settingsFileInputRef,
+    handleSettingsExport,
+    handleSettingsImport,
+  } = useSettings();
+  const { latestBlock, countdown } = useLatestBlock();
+  const [, dispatch] = useStoreContext();
+  const handleCurrencyChange = (currency: CurrencyTicker): void => {
+    dispatch(setCurrency(currency));
+  };
 
-  // ref to the hidden file input element
-  const settingsFileInput = useRef<HTMLInputElement>(null);
-
-  // saves a file with the current widget settings including widget layout
-  const handleSettingsExport = useCallback((): void => {
-    if (!address) return;
-    const a = document.createElement('a');
-    const file = new Blob([JSON.stringify(settings)], {
-      type: 'text/plain',
-    });
-    a.href = URL.createObjectURL(file);
-    a.download = `${address}-portfolio-dashboard-settings.json`;
-    a.click();
-  }, [settings, address]);
-
-  // imports layout/widget settings from a JSON file uploaded by the user
-  const importSettings = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>): void => {
-      if (e.target.files?.[0]) {
-        const fileReader = new FileReader();
-        fileReader.readAsText(e.target.files[0], 'UTF-8');
-        fileReader.onload = (e) => {
-          const data = JSON.parse(
-            e.target?.result?.toString() ?? ''
-          ) as WidgetsLayoutState;
-          if (!('widgets' in data && 'layout' in data)) return;
-
-          if (data) {
-            dispatch({
-              type: 'SET_LAYOUT',
-              payload: { layout: data.layout, widgets: data.widgets },
-            });
-          }
-        };
-      }
-    },
-    []
-  );
-
-  // trigger file input on a hidden settings file input
-  const handleSettingsImport = useCallback(() => {
-    settingsFileInput.current?.click();
-  }, [settingsFileInput]);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'LOAD_SPOT_PRICE',
+  //     payload: { ids: ['0'], currency: currency.ticker },
+  //   });
+  // }, [block?.level, currency.ticker]);
 
   return (
     <>
       <Input
-        ref={settingsFileInput}
+        ref={settingsFileInputRef}
         display={'none'}
         type={'file'}
         onChange={(e) => importSettings(e)}
@@ -71,19 +54,15 @@ export const Dashboard: React.FC = () => {
         addWidgetAs={(disclosure: UseDisclosureReturn) => (
           <WidgetStore {...disclosure} />
         )}
-        block={{
-          level: '1234567',
-          // red
-          // timestamp: Date.now() - 120000,
-          // yellow
-          // timestamp: Date.now() - 80000,
-          // green
-          timestamp: Date.now() - 30000,
-        }}
+        block={latestBlock?.data}
+        // TODO: improve currency selector to return full currency, not just the ticker
+        currency={currencies[currency]}
         disableSettings={!address}
+        // TODO: move countdown to a separate Navbar to avoid unnecessary re-renders with every countdown tick
         trigger={{
-          countdown: 30000,
+          countdown,
         }}
+        onCurrencyChange={handleCurrencyChange}
         onSettingsExport={handleSettingsExport}
         onSettingsImport={handleSettingsImport}
       >

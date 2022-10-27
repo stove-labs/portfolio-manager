@@ -6,7 +6,6 @@ import { WidgetSettings } from '../WidgetSettings/WidgetSettings';
 export interface WidgetWrapperProps {
   title: string;
   settingsContent: ReactNode;
-  onTitleSubmit: (title: string) => void;
   onWidgetRemove: () => void;
 }
 

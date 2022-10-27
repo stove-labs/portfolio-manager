@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useDependencyContext } from '../../../providers/DependencyProvider';
+import { useDependencyContext } from '../../shared/providers/DependencyProvider';
 import { Effect } from '../../../store/useStore';
 import { ActiveAccount } from './useWalletStore';
 

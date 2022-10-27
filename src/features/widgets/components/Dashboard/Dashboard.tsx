@@ -18,6 +18,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Select,
   Tag,
   Text,
   Tooltip,
@@ -32,14 +33,13 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-
-// TODO move definition to the appropriate data store
-export interface Block {
-  // level/height of the chain
-  level: string;
-  // when was this block created / retrieved
-  timestamp: number;
-}
+import {
+  Currency,
+  CurrencyTicker,
+  getAllCurrencies,
+} from '../../../../config/config/currencies';
+import { Block } from '../../../chain/blocks/lib/blocks';
+import { emDash } from '../TokenBalanceWidget/TokenBalanceWidget';
 
 export interface Trigger {
   // miliseconds
@@ -49,10 +49,12 @@ export interface Trigger {
 export interface DashboardProps {
   onSettingsExport: () => void;
   onSettingsImport: () => void;
+  onCurrencyChange: (currency: CurrencyTicker) => void;
   addWidgetAs: (disclosure: UseDisclosureReturn) => ReactNode;
   activeAccountAs: () => ReactNode;
   disableSettings: boolean;
-  block: Block;
+  currency: Currency;
+  block?: Block;
   trigger: Trigger;
 }
 
@@ -60,21 +62,26 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   children,
   onSettingsExport,
   onSettingsImport,
+  onCurrencyChange,
   disableSettings,
+  currency,
   block,
   trigger: { countdown },
   addWidgetAs,
   activeAccountAs,
 }) => {
+  const currencies: Currency[] = getAllCurrencies();
   const disclosure = useDisclosure();
   // how old the block is in seconds
-  const blockOldness = useMemo(() => {
+  const blockOldness = useMemo<number | undefined>(() => {
+    if (!block) return;
     const now = Date.now();
-    const timestamp = block.timestamp;
+    const timestamp = Number(block.timestamp);
     return (now - timestamp) / 1000;
-  }, [block.timestamp]);
+  }, [block?.timestamp]);
 
-  const blockLivelinessColor = useMemo(() => {
+  const blockLivelinessColor = useMemo<string | undefined>(() => {
+    if (!blockOldness) return '#A0AEC0';
     // TODO adjust based on API having older blocks due to finalisation
     // green -> yellow -> red (400)
     // younger than 60 seconds
@@ -150,7 +157,11 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                 <Tooltip
                   size={'md'}
                   // TODO: format the block age in a way that handles edge cases
-                  label={`Current block is ${blockOldness.toFixed(0)}s old`}
+                  label={
+                    blockOldness
+                      ? `Current block is ${blockOldness.toFixed(0)}s old`
+                      : ''
+                  }
                 >
                   <Flex flexDirection={'column'} justifyContent={'left'}>
                     <Flex alignItems={'center'} gap={'1.5'}>
@@ -165,7 +176,8 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                         fontWeight={'normal'}
                         letterSpacing={'tight'}
                       >
-                        #{block.level}
+                        {/* TODO: loading status for block */}#
+                        {block?.level ?? emDash}
                       </Text>
                     </Flex>
                     <Flex
@@ -183,6 +195,28 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
               </Flex>
             </Flex>
             <Flex alignItems={'center'} gap={'3'}>
+              <Select
+                // width={'80px'}
+                disabled={disableSettings}
+                size={'sm'}
+                variant={'outline'}
+                width={'fit-content'}
+                onChange={(e) =>
+                  onCurrencyChange(e.target.value as CurrencyTicker)
+                }
+              >
+                {currencies.map((currencyOption: Currency) => {
+                  return (
+                    <option
+                      key={currencyOption.ticker}
+                      selected={currency === currencyOption}
+                      value={currencyOption.ticker}
+                    >
+                      {currencyOption.ticker}
+                    </option>
+                  );
+                })}
+              </Select>
               <Flex color={useColorModeValue('gray.700', 'gray.400')} gap={'0'}>
                 <Button
                   borderBottomRightRadius={'0'}
