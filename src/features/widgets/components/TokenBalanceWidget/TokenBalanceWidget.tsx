@@ -8,7 +8,6 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import { abbreviateNumber } from 'js-abbreviation-number';
 import BigNumber from 'bignumber.js';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
@@ -18,10 +17,10 @@ import { FiatAmount } from '../../../shared/components/FiatAmount/FiatAmount';
 import { CurrencyTicker } from '../../../../config/config/currencies';
 import {
   Balance,
-  MAX_DECIMALS,
   toDecimals,
 } from '../../../chain/balances/lib/balances';
 import { SpotPrice } from '../../../fiat/lib/fiat';
+import { FormattedBalance } from '../../../shared/components/FormattedBalance/FormattedBalance';
 import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
@@ -191,15 +190,7 @@ export const TokenBalanceWidget: React.FC<
                   fontWeight={'extrabold'}
                   lineHeight={'26px'}
                 >
-                  {/* TODO: create <FormattedBalance /> */}
-                  {balance?.amount
-                    ? Number(toDecimals(balance, token?.id)) > 1
-                      ? abbreviateNumber(
-                          Number(toDecimals(balance, token?.id)),
-                          MAX_DECIMALS
-                        )
-                      : Number(toDecimals(balance, token?.id))
-                    : emDash}
+                  <FormattedBalance balance={balance} token={token} />
                 </Text>
                 {/* ticker */}
                 <Text

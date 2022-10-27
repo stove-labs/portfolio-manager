@@ -13,10 +13,13 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
   size,
   change,
 }) => {
-  const cappedChange = useMemo(() => {
+  const cappedChange: string = useMemo((): string => {
+    const sign: string = change > 0 ? '+' : '-';
+    console.log(change);
     if (change === 0) return '0';
-    if (change > 1000) return '> 1000';
-    if (change < 0.01) return '< 0.01';
+    if (Math.abs(change) > 1000) return `>${sign}1000`;
+    if (Math.abs(change) < 0.01) return `<${sign}0.01`;
+
     return change.toFixed(2);
   }, [change]);
   const sizing = useMemo<{
