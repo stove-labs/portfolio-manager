@@ -8,13 +8,13 @@ import {
   WidgetsLayoutState,
   initialWidgetsLayoutState,
 } from '../features/widgets/containers/WidgetsLayout/store/useWidgetsLayoutStore';
-import { useWalletEffects } from '../features/wallet/store/useWalletEffects';
+import { useWalletEffects } from '../features/Wallet/store/useWalletEffects';
 import {
   initialWalletState,
   WalletAction,
   walletReducer,
   WalletState,
-} from '../features/wallet/store/useWalletStore';
+} from '../features/Wallet/store/useWalletStore';
 import {
   blocksReducer,
   BlocksState,

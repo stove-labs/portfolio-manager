@@ -3,7 +3,7 @@ import { CurrencyTicker } from '../../../../../config/config/currencies';
 import { useStoreContext } from '../../../../../store/useStore';
 import { setCurrency } from '../../../../fiat/store/useFiatActions';
 import { useSelectCurrency } from '../../../../fiat/store/useFiatSelectors';
-import { useSelectActiveAccountAddress } from '../../../../wallet/store/useWalletSelectors';
+import { useSelectActiveAccountAddress } from '../../../../Wallet/store/useWalletSelectors';
 import { useSelectWidgetsLayout } from '../../WidgetsLayout/store/useWidgetsLayoutSelectors';
 import { WidgetsLayoutState } from '../../WidgetsLayout/store/useWidgetsLayoutStore';
 

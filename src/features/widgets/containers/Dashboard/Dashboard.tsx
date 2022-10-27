@@ -12,7 +12,7 @@ import {
   CurrencyTicker,
   currencies,
 } from '../../../../config/config/currencies';
-import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
+import { useSelectActiveAccountAddress } from '../../../Wallet/store/useWalletSelectors';
 import { useStoreContext } from '../../../../store/useStore';
 import { setCurrency } from '../../../fiat/store/useFiatActions';
 import { useSelectCurrency } from '../../../fiat/store/useFiatSelectors';
