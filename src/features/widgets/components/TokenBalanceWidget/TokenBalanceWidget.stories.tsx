@@ -33,23 +33,41 @@ Default.args = {
     },
   },
   balance: {
-    amount: '0.005',
-    fiatBalance: {
-      amount: '100000',
-    },
+    id: '2811282-tz1PWtaLXKiHXhXGvpuS8w4sVveNRKedTRSe-42290944933889',
+    amount: '8301499866970042441',
   },
   historicalBalance: {
-    amount: '50000',
-    fiatBalance: {
-      amount: '50000',
-    },
+    id: '2831431-tz1PWtaLXKiHXhXGvpuS8w4sVveNRKedTRSe-0',
+    amount: '7772556086664946654',
   },
   isLoading: false,
   currency: 'USD',
-  spotPriceToken: '0.768',
-  spotPriceNativeToken: '1.354',
+  spotPriceToken: {
+    id: '42290944933889-USD-2831442',
+    level: '2831442',
+    currency: 'USD',
+    price: '0.719517',
+  },
+  spotPriceTokenHistorical: {
+    id: '42290944933889-USD-2811282',
+    level: '2811282',
+    currency: 'USD',
+    price: '0.709517',
+  },
+  spotPriceNativeToken: {
+    id: '0-USD-2831442',
+    level: '2831442',
+    currency: 'USD',
+    price: '1.433',
+  },
+  spotPriceNativeTokenHistorical: {
+    id: '0-USD-2831442',
+    level: '2831442',
+    currency: 'USD',
+    price: '1.233',
+  },
   settings: {
     token: '42290944933889',
-    historicalPeriod: '30d',
+    historicalPeriod: '7d',
   },
 };
