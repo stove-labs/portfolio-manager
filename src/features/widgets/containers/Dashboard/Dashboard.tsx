@@ -5,7 +5,7 @@ import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dash
 import { WidgetStore } from '../WidgetStore/WidgetStore';
 // import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
-import { ActiveAccount } from '../../../wallet/containers/ActiveAccount';
+import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 // import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
 // import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
 import {
