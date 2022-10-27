@@ -38,18 +38,40 @@ const availableWidgets: AvailableWidgets = [
         },
       },
       // TODO: use user's actual selected currency here
-      currency: 'EUR',
+      currency: 'USD',
+      spotPriceToken: {
+        id: '0',
+        level: '1',
+        currency: 'USD',
+        price: '1',
+      },
+      spotPriceTokenHistorical: {
+        id: '0',
+        level: '1',
+        currency: 'USD',
+        price: '1',
+      },
+      spotPriceNativeToken: {
+        id: '0',
+        level: '1',
+        currency: 'USD',
+        price: '1',
+      },
+
+      spotPriceNativeTokenHistorical: {
+        id: '0',
+        level: '1',
+        currency: 'USD',
+        price: '1',
+      },
+
       balance: {
+        id: '0',
         amount: '100000',
-        fiatBalance: {
-          amount: '1000',
-        },
       },
       historicalBalance: {
+        id: '0',
         amount: '80000',
-        fiatBalance: {
-          amount: '910',
-        },
       },
       isLoading: false,
       settingsDisabled: true,

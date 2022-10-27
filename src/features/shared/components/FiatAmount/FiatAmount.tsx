@@ -1,4 +1,7 @@
+import BigNumber from 'bignumber.js';
 import React, { useMemo } from 'react';
+import { abbreviateNumber } from 'js-abbreviation-number';
+
 import {
   currencies,
   CurrencyTicker,
@@ -6,7 +9,7 @@ import {
 
 export interface FiatAmountProps {
   amount?: string;
-  currencyTicker: CurrencyTicker;
+  currencyTicker?: CurrencyTicker;
 }
 
 export const FiatAmount: React.FC<FiatAmountProps> = ({
@@ -14,13 +17,17 @@ export const FiatAmount: React.FC<FiatAmountProps> = ({
   amount,
 }) => {
   const emDash: string = '—';
-  const currency = useMemo(() => currencies[currencyTicker], [currencyTicker]);
+  const currency = useMemo(
+    () => currencyTicker && currencies[currencyTicker],
+    [currencyTicker]
+  );
 
   return (
     <>
-      {currency.position === 'left' && currency.symbol}
-      {amount ?? emDash}
-      {currency.position === 'right' && currency.symbol}
+      {currency?.position === 'left' && currency?.symbol}
+      {(amount && abbreviateNumber(Number(new BigNumber(amount).toFixed(2)))) ??
+        emDash}
+      {currency?.position === 'right' && currency?.symbol}
     </>
   );
 };

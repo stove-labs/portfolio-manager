@@ -76,7 +76,6 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
   const blockOldness = useMemo<number | undefined>(() => {
     if (!block) return;
     const now = Date.now();
-    console.log('block', block.timestamp);
     const timestamp = Number(block.timestamp);
     return (now - timestamp) / 1000;
   }, [block?.timestamp]);

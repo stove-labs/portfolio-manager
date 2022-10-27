@@ -76,7 +76,6 @@ export const fetchNonNativeBalancesAtBlockLevel = async (
   const response = await fetch(url);
   if (!response.ok) throw new Error(await response.text());
   let body = await (response.json() as Promise<FetchNonNativeBalanceResponse>);
-  console.log('body', body);
 
   // if there are no balances returned ([]), then pretend we received a zero balance resposne array
   if (!body.length) {

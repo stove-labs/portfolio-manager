@@ -6,6 +6,7 @@ import {
   WidgetSettings,
   WidgetSettingsData,
 } from '../../../components/WidgetsLayout/WidgetsLayout';
+import { PersistableSettings } from '../../Dashboard/hooks/useSettings';
 
 export interface WidgetsLayoutState {
   layout: Layout[];
@@ -31,9 +32,13 @@ export type WidgetsLayoutAction =
       payload: { id: string; settings: WidgetSettingsData };
     };
 
-const data = JSON.parse(
+export const persistedSettings = JSON.parse(
   window.localStorage.getItem('STATE_LAYOUT') ?? '{}'
-) as WidgetsLayoutState;
+) as PersistableSettings;
+
+const persistedInitialState: WidgetsLayoutState = {
+  ...persistedSettings.widgetLayout,
+};
 
 export const defaultValues: WidgetsLayoutState = {
   layout: [
@@ -57,8 +62,11 @@ export const defaultValues: WidgetsLayoutState = {
   ],
 };
 
-export const initialWidgetsLayoutState: WidgetsLayoutState =
-  data && !isEmpty(data) ? data : defaultValues;
+export const initialWidgetsLayoutState: WidgetsLayoutState = !isEmpty(
+  persistedInitialState
+)
+  ? persistedInitialState
+  : defaultValues;
 
 export const widgetsLayoutReducer: Reducer<
   WidgetsLayoutState,

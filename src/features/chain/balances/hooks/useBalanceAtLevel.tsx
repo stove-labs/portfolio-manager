@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { KnownToken } from '../../../../config/lib/helpers';
-import { useStoreContext } from '../../../../store/useStore';
 import { useLastKnown } from '../../../shared/hooks/useLastKnown';
+import { useDispatchUniqueContext } from '../../../widgets/providers/DispatchUniqueProvider';
 import { Level } from '../../blocks/lib/blocks';
 import { WithStatus } from '../../blocks/store/useBlocksStore';
 import { Balance } from '../lib/balances';
@@ -21,9 +21,12 @@ export const useBalanceAtLevel = ({
   tokenId: KnownToken;
   level?: Level;
 }): UseBalanceAtLevelReturn => {
-  const [, dispatch] = useStoreContext();
+  const { addToDispatchQueue: dispatch } = useDispatchUniqueContext();
   const { known: balance } = useLastKnown(
-    useSelectBalanceAtLevel(tokenId, address, level)
+    useSelectBalanceAtLevel(tokenId, address, level),
+    // TODO: make refetching on `level` change optional to avoid loading states
+    // when the latest block is updated
+    [tokenId, level]
   );
 
   useEffect(() => {

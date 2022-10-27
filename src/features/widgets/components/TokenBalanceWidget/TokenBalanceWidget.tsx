@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 
 import { abbreviateNumber } from 'js-abbreviation-number';
+import BigNumber from 'bignumber.js';
 import { WidgetWrapper } from '../WidgetWrapper/WidgetWrapper';
 import { ChangeIndicator } from '../../../shared/components/ChangeIndicator/ChangeIndicator';
 import { Token } from '../../../../config/config/tokens';
@@ -20,6 +21,7 @@ import {
   MAX_DECIMALS,
   toDecimals,
 } from '../../../chain/balances/lib/balances';
+import { SpotPrice } from '../../../fiat/lib/fiat';
 import {
   HistoricalPeriod,
   TokenBalanceWidgetSettings,
@@ -44,12 +46,12 @@ export interface TokenBalanceWidgetSettingsData {
 export interface TokenBalanceWidgetProps {
   token: Token;
   balance?: Balance;
-  fiatBalance?: Balance;
   historicalBalance?: Balance;
-  historicalFiatBalance?: Balance;
-  spotPriceToken?: string;
-  spotPriceNativeToken?: string;
-  currency: CurrencyTicker;
+  spotPriceToken?: SpotPrice;
+  spotPriceTokenHistorical?: SpotPrice;
+  spotPriceNativeToken?: SpotPrice;
+  spotPriceNativeTokenHistorical?: SpotPrice;
+  currency?: CurrencyTicker;
   isLoading: boolean;
 }
 
@@ -70,30 +72,53 @@ export const TokenBalanceWidget: React.FC<
   balance,
   historicalBalance,
   spotPriceToken,
+  spotPriceTokenHistorical,
   spotPriceNativeToken,
+  spotPriceNativeTokenHistorical,
   currency,
   isLoading,
   onWidgetRemove,
   onSettingsChange,
   settings,
   settingsDisabled,
-  fiatBalance,
-  historicalFiatBalance,
 }) => {
-  const balancePercentageChange = useMemo(() => {
-    return percentageChange(
-      Number(historicalBalance?.amount),
-      Number(balance?.amount)
-    );
-  }, [balance?.amount, historicalBalance?.amount]);
-
-  // spot prices are in tokenA-USD
-  const priceToNativeToken = useMemo(() => {
-    // if (!spotPriceToken || !spotPriceNativeToken) return;
-    // return BigNumber(spotPriceToken)
-    //   .dividedBy(BigNumber(spotPriceNativeToken))
-    //   .toFixed(6);
+  // TODO: extract priceToFiat/Historical and fiatBalance/Historical to hooks
+  // it should not be the responsibility of a presentational component to calculate
+  // all of the data below
+  const priceToFiat = useMemo(() => {
+    if (!spotPriceToken || !spotPriceNativeToken) return;
+    return BigNumber(spotPriceToken.price)
+      .multipliedBy(BigNumber(spotPriceNativeToken.price))
+      .toFixed(6);
   }, [spotPriceToken, spotPriceNativeToken]);
+
+  const priceToFiatHistorical = useMemo(() => {
+    if (!spotPriceTokenHistorical || !spotPriceNativeTokenHistorical) return;
+    return BigNumber(spotPriceTokenHistorical.price)
+      .multipliedBy(BigNumber(spotPriceNativeTokenHistorical.price))
+      .toFixed(6);
+  }, [spotPriceTokenHistorical, spotPriceNativeTokenHistorical]);
+
+  const historicalFiatBalance = useMemo<
+    Pick<Balance, 'amount'> | undefined
+  >(() => {
+    if (!historicalBalance?.amount || !priceToFiatHistorical) return;
+
+    const amount = new BigNumber(toDecimals(historicalBalance, token.id))
+      .multipliedBy(priceToFiatHistorical)
+      .toFixed(2);
+    return { amount };
+  }, [historicalBalance?.amount, token, priceToFiatHistorical]);
+
+  // TODO: fix NaN for XTZ
+  const fiatBalance = useMemo<Pick<Balance, 'amount'> | undefined>(() => {
+    if (!balance?.amount || !priceToFiat) return;
+    console.log('fiatBalance', { token, balance, priceToFiat });
+    const amount = new BigNumber(toDecimals(balance, token.id))
+      .multipliedBy(priceToFiat)
+      .toFixed(2);
+    return { amount };
+  }, [balance?.amount, token, priceToFiat]);
 
   const fiatBalancePercentageChange = useMemo(() => {
     return percentageChange(
@@ -101,7 +126,14 @@ export const TokenBalanceWidget: React.FC<
       Number(fiatBalance?.amount)
     );
   }, [fiatBalance?.amount, historicalFiatBalance?.amount]);
-  console.log('');
+
+  const balancePercentageChange = useMemo(() => {
+    return percentageChange(
+      Number(historicalBalance?.amount),
+      Number(balance?.amount)
+    );
+  }, [balance?.amount, historicalBalance?.amount]);
+
   const historicalPeriods: HistoricalPeriod[] = ['24h', '7d', '30d'];
 
   return (
@@ -129,7 +161,11 @@ export const TokenBalanceWidget: React.FC<
             pl={'0'}
             pr={'3'}
           >
-            <SkeletonCircle isLoaded={!isLoading} size={'55px'}>
+            <SkeletonCircle
+              fadeDuration={0}
+              isLoaded={!isLoading}
+              size={'55px'}
+            >
               <img
                 src={
                   isNativeToken(token)
@@ -147,7 +183,7 @@ export const TokenBalanceWidget: React.FC<
           {/* balances */}
           <Flex flex={'1'} flexDirection={'column'} justifyContent={'center'}>
             {/* token balance */}
-            <Skeleton isLoaded={!isLoading}>
+            <Skeleton fadeDuration={0} isLoaded={!isLoading}>
               <Flex>
                 <Text
                   color={'gray.700'}
@@ -179,32 +215,15 @@ export const TokenBalanceWidget: React.FC<
             </Skeleton>
 
             {/* fiat balance */}
-            <Skeleton isLoaded={!isLoading} mt={isLoading ? '1' : '0'}>
+            <Skeleton isLoaded={!isLoading}>
               <Flex>
                 <Text
                   color={useColorModeValue('gray.500', 'gray.400')}
                   fontSize={'xs'}
                   fontWeight={'normal'}
                 >
-                  {/* <FiatAmount
-                    amount={
-                      Number(alanceb?.fiatBalance.amount) > 1
-                        ? abbreviateNumber(
-                            Number(
-                              Number(balance?.fiatBalance.amount).toFixed(2)
-                            ),
-                            2
-                          )
-                        : Number(balance?.fiatBalance.amount).toFixed(2)
-                    }
-                    currencyTicker={currency}
-                  /> */}
-                  {/* temporary placeholder */}
                   <FiatAmount
-                    amount={abbreviateNumber(
-                      Number(Number(1000).toFixed(2)),
-                      2
-                    )}
+                    amount={fiatBalance?.amount}
                     currencyTicker={currency}
                   />
                 </Text>
@@ -219,6 +238,7 @@ export const TokenBalanceWidget: React.FC<
         {/* footer */}
         <Flex flexDirection={'column'} justifyContent={'end'}>
           <Skeleton
+            fadeDuration={0}
             isLoaded={!isLoading}
             position={'relative'}
             top={isLoading ? '-8px' : '0'}
@@ -233,9 +253,15 @@ export const TokenBalanceWidget: React.FC<
               pt={'1.5'}
               textAlign={'left'}
             >
-              1 {token?.symbol} = {priceToNativeToken ?? emDash} XTZ, 1{' '}
-              {token?.symbol} ={' '}
-              <FiatAmount amount={spotPriceToken} currencyTicker={currency} />
+              {!isNativeToken(token) ? (
+                <>
+                  1 {token?.symbol} = {spotPriceToken?.price ?? emDash} XTZ,
+                </>
+              ) : (
+                <></>
+              )}
+              1 {token?.symbol} ={' '}
+              <FiatAmount amount={priceToFiat} currencyTicker={currency} />
             </Text>
           </Skeleton>
         </Flex>

@@ -2,6 +2,9 @@ import React, { useMemo } from 'react';
 import { getToken } from '../../../../config/lib/helpers';
 import { useActiveAccountBalanceHistorical } from '../../../chain/balances/hooks/useActiveAccountBalanceHistorical';
 import { useActiveAccountBalanceLatest } from '../../../chain/balances/hooks/useActiveAccountBalanceLatest';
+import { useSpotPriceFromTokenHistorical } from '../../../chain/balances/hooks/useSpotPriceFromTokenHistorical';
+import { useSpotPriceFromTokenLatest } from '../../../chain/balances/hooks/useSpotPriceFromTokenLatest';
+import { useFiatSpotPrice } from '../../../fiat/hooks/useFiatSpotPrice';
 import { historicalPeriodToHours } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
 import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
@@ -21,7 +24,6 @@ export const TokenBalanceWidget: React.FC<
   onSettingsChange,
 }) => {
   const token = getToken(settings.token);
-  const currency = 'USD';
   const balance = useActiveAccountBalanceLatest({
     tokenId: useMemo(() => token.id, [token]),
   });
@@ -35,24 +37,40 @@ export const TokenBalanceWidget: React.FC<
     hoursAgo,
   });
 
-  const spotPriceNativeToken = '1';
-  const spotPriceToken = '1';
+  const fiatSpotPrice = useFiatSpotPrice();
+  const spotPriceToken = useSpotPriceFromTokenLatest(token);
+  const spotPriceTokenHistorical = useSpotPriceFromTokenHistorical(
+    token,
+    hoursAgo
+  );
 
   const isLoading = useMemo(() => {
-    return balance.loading || historicalBalance.loading;
-  }, [balance, historicalBalance]);
+    return (
+      balance.loading ||
+      historicalBalance.loading ||
+      fiatSpotPrice.loading ||
+      spotPriceToken.loading ||
+      spotPriceTokenHistorical.loading
+    );
+  }, [
+    balance,
+    historicalBalance,
+    fiatSpotPrice,
+    spotPriceToken,
+    spotPriceTokenHistorical,
+  ]);
 
   return (
     <TokenBalanceWidgetComponent
       balance={balance.balance?.data}
-      currency={currency}
-      fiatBalance={balance.balance?.data}
+      currency={fiatSpotPrice.spotPrice?.data?.currency}
       historicalBalance={historicalBalance.balance?.data}
-      historicalFiatBalance={historicalBalance.balance?.data}
       isLoading={isLoading}
       settings={settings}
-      spotPriceNativeToken={spotPriceNativeToken}
-      spotPriceToken={spotPriceToken}
+      spotPriceNativeToken={fiatSpotPrice.spotPrice?.data}
+      spotPriceNativeTokenHistorical={fiatSpotPrice.spotPrice?.data}
+      spotPriceToken={spotPriceToken.spotPrice}
+      spotPriceTokenHistorical={spotPriceTokenHistorical.spotPrice}
       token={token}
       onSettingsChange={onSettingsChange}
       onWidgetRemove={onWidgetRemove}

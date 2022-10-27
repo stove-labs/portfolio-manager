@@ -29,19 +29,28 @@ import {
 import { useBalancesEffects } from '../features/chain/balances/store/useBalancesEffects';
 import { BlocksAction } from '../features/chain/blocks/store/useBlocksActions';
 import { BalancesAction } from '../features/chain/balances/store/useBalancesActions';
+import {
+  fiatReducer,
+  FiatState,
+  initialFiatState,
+} from '../features/fiat/store/useFiatStore';
+import { FiatAction } from '../features/fiat/store/useFiatActions';
+import { useFiatEffects } from '../features/fiat/store/useFiatEffects';
 
 export interface State {
   wallet: WalletState;
   settings: WidgetsLayoutState;
   blocks: BlocksState;
   balances: BalancesState;
+  fiat: FiatState;
 }
 
 export type Action =
   | WalletAction
   | WidgetsLayoutAction
   | BlocksAction
-  | BalancesAction;
+  | BalancesAction
+  | FiatAction;
 
 export type AppReducer = Reducer<State, Action>;
 
@@ -51,6 +60,7 @@ const [reducer, initialState] = combineReducers<AppReducer>({
   settings: [widgetsLayoutReducer, initialWidgetsLayoutState],
   blocks: [blocksReducer, initialBlocksState],
   balances: [balancesReducer, initialBalancesState],
+  fiat: [fiatReducer, initialFiatState],
 });
 
 export type Effect = (
@@ -82,6 +92,7 @@ export const useStore = (): [State, React.Dispatch<Action>] => {
     useWalletEffects,
     useBlocksEffects,
     useBalancesEffects,
+    useFiatEffects,
   ]);
   const dispatchWithEffects: React.Dispatch<Action> = useCallback(
     (action) => {

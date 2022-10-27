@@ -8,13 +8,20 @@ import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { ActiveAccount } from '../../../wallet/containers/ActiveAccount';
 // import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
 // import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
-import { CurrencyTicker } from '../../../../config/config/currencies';
+import {
+  CurrencyTicker,
+  currencies,
+} from '../../../../config/config/currencies';
 import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
-import { useSettings } from './hooks/useSettings';
+import { useStoreContext } from '../../../../store/useStore';
+import { setCurrency } from '../../../fiat/store/useFiatActions';
+import { useSelectCurrency } from '../../../fiat/store/useFiatSelectors';
 import { useLatestBlock } from './hooks/useLatestBlock';
+import { useSettings } from './hooks/useSettings';
 
 export const Dashboard: React.FC = () => {
   const address = useSelectActiveAccountAddress();
+  const currency = useSelectCurrency();
   const {
     importSettings,
     settingsFileInputRef,
@@ -22,14 +29,9 @@ export const Dashboard: React.FC = () => {
     handleSettingsImport,
   } = useSettings();
   const { latestBlock, countdown } = useLatestBlock();
-  // const currency = useSelectCurrency();
-
-  const handleCurrencyChange = (setCurrency: CurrencyTicker): void => {
-    console.log('change currency', setCurrency);
-    // dispatch({
-    //   type: 'SET_CURRENCY',
-    //   payload: setCurrency,
-    // });
+  const [, dispatch] = useStoreContext();
+  const handleCurrencyChange = (currency: CurrencyTicker): void => {
+    dispatch(setCurrency(currency));
   };
 
   // useEffect(() => {
@@ -53,12 +55,8 @@ export const Dashboard: React.FC = () => {
           <WidgetStore {...disclosure} />
         )}
         block={latestBlock?.data}
-        // currency={currency}
-        currency={{
-          position: 'left',
-          symbol: '$',
-          ticker: 'USD',
-        }}
+        // TODO: improve currency selector to return full currency, not just the ticker
+        currency={currencies[currency]}
         disableSettings={!address}
         // TODO: move countdown to a separate Navbar to avoid unnecessary re-renders with every countdown tick
         trigger={{

@@ -1,3 +1,4 @@
+import { isArray } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import {
   EntityWithID,
@@ -27,9 +28,12 @@ export const useLastKnown = <T extends EntityWithID>(
   const [known, setKnown] = useState<WithStatus<T> | undefined>();
 
   // each time 'resetKnown' changes, reset known
-  useEffect(() => {
-    setKnown(undefined);
-  }, [resetKnown]);
+  useEffect(
+    () => {
+      setKnown(undefined);
+    },
+    isArray(resetKnown) ? resetKnown : [resetKnown]
+  );
 
   useEffect(() => {
     if (!known) return setKnown(selected);

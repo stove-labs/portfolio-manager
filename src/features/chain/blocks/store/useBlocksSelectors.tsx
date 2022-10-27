@@ -1,6 +1,8 @@
 import BigNumber from 'bignumber.js';
+import moment from 'moment';
 import { useMemo } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
+import { useLastKnown } from '../../../shared/hooks/useLastKnown';
 import { Block, Level } from '../lib/blocks';
 import { BlocksState, WithStatus } from './useBlocksStore';
 
@@ -22,7 +24,7 @@ export const useSelectLatestBlock = (): WithStatus<Block> | undefined => {
 };
 
 export const useSelectLatestBlockLevel = (): Level | undefined => {
-  const latestBlock = useSelectLatestBlock();
+  const { known: latestBlock } = useLastKnown(useSelectLatestBlock());
   return useMemo(() => latestBlock?.data?.level, [latestBlock]);
 };
 
@@ -32,6 +34,23 @@ export const BLOCK_TIME = 30 * 1000;
 export const BLOCKS_PER_HOUR = (60 * 60 * 1000) / BLOCK_TIME;
 export const hoursToBlocksCount = (hours: string): string => {
   return new BigNumber(hours).multipliedBy(BLOCKS_PER_HOUR).toFixed(0);
+};
+
+export const blockCountToHours = (blockCount: string): string => {
+  return new BigNumber(blockCount).dividedBy(BLOCKS_PER_HOUR).toFixed(0);
+};
+
+export const levelToDateString = (latestBlock: Block, level: Level): string => {
+  const levelDiff = new BigNumber(latestBlock.level).minus(level).toFixed(0);
+  const hoursDiff = blockCountToHours(levelDiff);
+
+  // date from block timestamp in seconds
+  const dateAtLevel = moment
+    .unix(Number(latestBlock.timestamp) / 1000)
+    .subtract(hoursDiff, 'hours')
+    .format('YYYY-MM-DD');
+
+  return dateAtLevel.toString();
 };
 
 export const useSelectRelativeHistoricalLevelHoursAgo = (

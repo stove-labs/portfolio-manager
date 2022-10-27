@@ -10,6 +10,8 @@ import {
   Flex,
   Heading,
 } from '@chakra-ui/react';
+import space from 'to-space-case';
+
 import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
 import {
   WidgetName,
@@ -37,6 +39,10 @@ export type AvailableWidgets = Array<
     maxWidth: string;
   }
 >;
+
+export const formatWidgetName = (name: string): string => {
+  return space(name).replace('widget', '');
+};
 
 export type WidgetStoreProps = {
   onAddWidget: (
@@ -79,8 +85,8 @@ export const WidgetStore: React.FC<WidgetStoreProps> = ({
                     pb={'3'}
                   >
                     {/* TODO: key to human readable widget name */}
-                    <Heading pb={'3'} size={'sm'}>
-                      {availableWidget.name}
+                    <Heading pb={'3'} size={'sm'} textTransform={'capitalize'}>
+                      {formatWidgetName(availableWidget.name)}
                     </Heading>
                     <div
                       onClick={() =>
