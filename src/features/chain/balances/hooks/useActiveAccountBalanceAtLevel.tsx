@@ -1,5 +1,5 @@
 import { KnownToken } from '../../../../config/lib/helpers';
-import { useSelectActiveAccountAddress } from '../../../Wallet/store/useWalletSelectors';
+import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
 import { Level } from '../../blocks/lib/blocks';
 import { WithStatus } from '../../blocks/store/useBlocksStore';
 import { Balance } from '../lib/balances';

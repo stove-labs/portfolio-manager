@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { KnownToken } from '../../../../config/lib/helpers';
 import { useStoreContext } from '../../../../store/useStore';
-import { useSelectActiveAccountAddress } from '../../../Wallet/store/useWalletSelectors';
+import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
 import { Level } from '../../blocks/lib/blocks';
 import { WithStatus } from '../../blocks/store/useBlocksStore';
 import { Balance, getBalanceId } from '../lib/balances';
