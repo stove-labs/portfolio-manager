@@ -309,8 +309,8 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                   </b>
                 </Text>
                 <Text>
-                  Made possible thanks to the Tezos Foundation, TzKt.io APIs and
-                  Font Awesome
+                  Made possible thanks to the Tezos Foundation, TzKt.io APIs,
+                  Coinbase APIs and Font Awesome
                 </Text>
               </Flex>
               <Flex maxWidth={'400px'} pt={'2'}>
