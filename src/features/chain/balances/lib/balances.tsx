@@ -10,6 +10,7 @@ import config from './../../../../config/config/environment';
 export interface Balance {
   // ID = blockLevel-address-tokenId
   id: ID;
+  level: string;
   amount: string;
 }
 
@@ -39,6 +40,7 @@ export const fetchNativeBalanceAtBlockLevel = async (
   const id = getBalanceId(level, address, tokenId);
   const balance: Balance = {
     id,
+    level,
     amount: body,
   };
 
@@ -91,6 +93,7 @@ export const fetchNonNativeBalancesAtBlockLevel = async (
     const id = getBalanceId(level, address, balanceResponseItem['token.id']);
     return {
       id,
+      level,
       amount: balanceResponseItem.balance,
     };
   });
@@ -148,9 +151,9 @@ export const fetchBalancesAtBlockLevels = async (
 
   const resolvedBalances = (await Promise.all(balances)).reduce(
     (balances, balancesAtLevel) => {
-      balances.concat(balancesAtLevel);
-      return balances;
-    }
+      return balances.concat(balancesAtLevel);
+    },
+    []
   );
 
   return resolvedBalances;

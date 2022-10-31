@@ -46,3 +46,41 @@ export const useLastKnown = <T extends EntityWithID>(
     return { known: keep(known), selected: keep(selected) };
   }, [known, selected]);
 };
+
+export const useLastKnownArray = <T extends EntityWithID>(
+  selected: Array<WithStatus<T>> | undefined,
+  resetKnown?: any
+): {
+  known: Array<WithStatus<T>> | undefined;
+  selected: Array<WithStatus<T>> | undefined;
+} => {
+  const { keep } = useStoreEvictContext();
+  const [known, setKnown] = useState<Array<WithStatus<T>> | undefined>();
+
+  // each time 'resetKnown' changes, reset known
+  useEffect(
+    () => {
+      setKnown(undefined);
+    },
+    isArray(resetKnown) ? resetKnown : [resetKnown]
+  );
+
+  useEffect(() => {
+    if (!known) return setKnown(selected);
+    const finished = selected?.filter(
+      (item) => item?.status === 'SUCCESS' || item?.status === 'ERROR'
+    );
+    // all selected items finished loading
+    if (selected?.length === finished?.length) {
+      setKnown(selected);
+    }
+  }, [selected, known]);
+
+  // keep all known/selected entitites
+  return useMemo(() => {
+    return {
+      known: known?.map((item) => keep(item) as WithStatus<T>),
+      selected: selected?.map((item) => keep(item) as WithStatus<T>),
+    };
+  }, [known, selected]);
+};

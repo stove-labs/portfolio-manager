@@ -16,7 +16,7 @@ export interface Token {
 export const tokens: Record<string, Token> = {
   '0': {
     id: '0',
-    name: 'Tezos',
+    name: 'Tez',
     symbol: 'XTZ',
     contract: {
       address: '0',

@@ -34,9 +34,11 @@ export const WidgetWrapper: React.FC<
       cursor={'grab'}
       flex={'1'}
       flexDirection={'column'}
+      height={'100%'}
       p={'3'}
       pb={'3'}
       shadow={'sm'}
+      width={'100%'}
       // mr={'3'}
       sx={{
         ':hover': {

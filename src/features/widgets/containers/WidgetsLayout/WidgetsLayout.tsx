@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useStoreContext } from '../../../../store/useStore';
 import { useDispatchUniqueContext } from '../../providers/DispatchUniqueProvider';
+import { TokenBalanceChartWidget } from '../TokenBalanceChartWidget/TokenBalanceChartWidget';
 import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
 // import { TokenBalanceWidget } from '../TokenBalanceWidget/TokenBalanceWidget';
 import {
@@ -25,6 +26,8 @@ export const WidgetsLayout: React.FC = () => {
     switch (name) {
       case 'TokenBalanceWidget':
         return TokenBalanceWidget;
+      case 'TokenBalanceChartWidget':
+        return TokenBalanceChartWidget;
     }
   }, []);
 

@@ -19,6 +19,7 @@ import {
   WidgetSettingsData,
   WidgetsProps,
 } from '../WidgetsLayout/WidgetsLayout';
+import { TokenBalanceChartWidget } from '../../containers/TokenBalanceChartWidget/TokenBalanceChartWidget';
 
 // size of the widget on the layout grid
 export interface WidgetSize {
@@ -31,8 +32,9 @@ export type AvailableWidgets = Array<
   Omit<
     WidgetSettings & {
       props: WidgetsProps;
-      component: typeof TokenBalanceWidget;
+      component: typeof TokenBalanceWidget | typeof TokenBalanceChartWidget;
       size: WidgetSize;
+      displayName: string;
     },
     'id'
   > & {
@@ -86,7 +88,7 @@ export const WidgetStore: React.FC<WidgetStoreProps> = ({
                   >
                     {/* TODO: key to human readable widget name */}
                     <Heading pb={'3'} size={'sm'} textTransform={'capitalize'}>
-                      {formatWidgetName(availableWidget.name)}
+                      {availableWidget.displayName}
                     </Heading>
                     <div
                       onClick={() =>

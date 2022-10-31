@@ -78,7 +78,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
     const now = Date.now();
     const timestamp = Number(block.timestamp);
     return (now - timestamp) / 1000;
-  }, [block?.timestamp]);
+  }, [block?.timestamp, Date.now()]);
 
   const blockLivelinessColor = useMemo<string | undefined>(() => {
     if (!blockOldness) return '#A0AEC0';
@@ -293,6 +293,39 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
                 <Flex mt={'8'}>{activeAccountAs()}</Flex>
               </Flex>
             )}
+
+            <Divider borderColor={'gray.400'} pt={children ? '12' : '24'} />
+
+            <Flex
+              color={'gray.400'}
+              justifyContent={'space-between'}
+              margin={'0 auto'}
+              pt={'6'}
+            >
+              <Flex flexDirection={'column'} maxWidth={'400px'}>
+                <Text pb={'2'}>
+                  <b>
+                    Built by <a href="https://stove-labs.com/">Stove Labs</a>
+                  </b>
+                </Text>
+                <Text>
+                  Made possible thanks to the Tezos Foundation, TzKt.io APIs,
+                  Coinbase APIs and Font Awesome
+                </Text>
+              </Flex>
+              <Flex maxWidth={'400px'} pt={'2'}>
+                <Text>
+                  If you are experiencing any issues, or you would like to see
+                  additional features, please{' '}
+                  <b>
+                    <a href="https://github.com/stove-labs/portfolio-manager">
+                      open an issue in our github repository
+                    </a>
+                  </b>
+                  .
+                </Text>
+              </Flex>
+            </Flex>
           </Container>
         </Flex>
       </Flex>

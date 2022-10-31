@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { getToken } from '../../../../config/lib/helpers';
 import { useActiveAccountBalanceHistorical } from '../../../chain/balances/hooks/useActiveAccountBalanceHistorical';
 import { useActiveAccountBalanceLatest } from '../../../chain/balances/hooks/useActiveAccountBalanceLatest';
-import { useSpotPriceFromTokenHistorical } from '../../../chain/balances/hooks/useSpotPriceFromTokenHistorical';
 import { useSpotPriceFromTokenLatest } from '../../../chain/balances/hooks/useSpotPriceFromTokenLatest';
 import { useFiatSpotPrice } from '../../../fiat/hooks/useFiatSpotPrice';
 import { historicalPeriodToHours } from '../../components/TokenBalanceWidget/TokenBalanceWidgetSettings/TokenBalanceWidgetSettings';
@@ -39,26 +38,15 @@ export const TokenBalanceWidget: React.FC<
 
   const fiatSpotPrice = useFiatSpotPrice();
   const spotPriceToken = useSpotPriceFromTokenLatest(token);
-  const spotPriceTokenHistorical = useSpotPriceFromTokenHistorical(
-    token,
-    hoursAgo
-  );
 
   const isLoading = useMemo(() => {
     return (
       balance.loading ||
       historicalBalance.loading ||
       fiatSpotPrice.loading ||
-      spotPriceToken.loading ||
-      spotPriceTokenHistorical.loading
+      spotPriceToken.loading
     );
-  }, [
-    balance,
-    historicalBalance,
-    fiatSpotPrice,
-    spotPriceToken,
-    spotPriceTokenHistorical,
-  ]);
+  }, [balance, historicalBalance, fiatSpotPrice, spotPriceToken]);
 
   return (
     <TokenBalanceWidgetComponent
@@ -68,9 +56,7 @@ export const TokenBalanceWidget: React.FC<
       isLoading={isLoading}
       settings={settings}
       spotPriceNativeToken={fiatSpotPrice.spotPrice?.data}
-      spotPriceNativeTokenHistorical={fiatSpotPrice.spotPrice?.data}
       spotPriceToken={spotPriceToken.spotPrice}
-      spotPriceTokenHistorical={spotPriceTokenHistorical.spotPrice}
       token={token}
       onSettingsChange={onSettingsChange}
       onWidgetRemove={onWidgetRemove}
