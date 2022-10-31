@@ -9,7 +9,7 @@ import { Token } from '../../../../config/config/tokens';
 
 export interface FormattedBalanceProps {
   balance?: Balance;
-  token?: Token;
+  token: Token;
 }
 
 export const FormattedBalance: React.FC<FormattedBalanceProps> = ({
@@ -18,14 +18,13 @@ export const FormattedBalance: React.FC<FormattedBalanceProps> = ({
 }) => {
   const emDash: string = '—';
   const formattedBalance: string = useMemo((): string => {
-    if (balance?.amount === undefined || token?.id === undefined) return emDash;
-    if (Number(balance?.amount) === 0) return '0';
-    if (Number(balance?.amount) === 0.000001) return '>0.000001';
-    if (Number(balance.amount) > 1)
-      return abbreviateNumber(
-        Number(toDecimals(balance, token?.id)),
-        MAX_DECIMALS
-      );
+    if (!balance?.amount) return emDash;
+    const amount = toDecimals(balance, token.id);
+
+    if (Number(amount) === 0) return '0';
+    if (Number(amount) === 0.000001) return '>0.000001';
+    if (Number(amount) > 1)
+      return abbreviateNumber(Number(amount), MAX_DECIMALS);
 
     return toDecimals(balance, token?.id);
   }, [balance?.amount]);

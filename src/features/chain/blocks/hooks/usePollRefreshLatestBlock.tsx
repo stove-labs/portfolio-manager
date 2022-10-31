@@ -7,7 +7,7 @@ export interface UsePollRefreshLatestBlockReturn {
 }
 export type OnBeforeIntervalCallback = (intervalCount: number) => void;
 // refresh interval in ms
-export const REFRESH_INTERVAL = 30 * 1000;
+export const REFRESH_INTERVAL = 30 * 1000 * 9999;
 export const COUNTDOWN_INTERVAL = 1000;
 export const usePollRefreshLatestBlock = (
   onBeforeInterval?: OnBeforeIntervalCallback

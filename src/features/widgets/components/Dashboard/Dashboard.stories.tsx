@@ -2,7 +2,7 @@ import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { UseDisclosureReturn } from '@chakra-ui/react';
 import { currencies } from '../../../../config/config/currencies';
-import { ActiveAccount } from '../../../Wallet/components/ActiveAccount/ActiveAccount';
+import { ActiveAccount } from '../../../wallet/components/ActiveAccount/ActiveAccount';
 import { WidgetStore } from '../WidgetStore/WidgetStore';
 import { Dashboard } from './Dashboard';
 

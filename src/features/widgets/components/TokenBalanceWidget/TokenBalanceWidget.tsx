@@ -15,10 +15,7 @@ import { Token } from '../../../../config/config/tokens';
 import { isNativeToken } from '../../../../config/lib/helpers';
 import { FiatAmount } from '../../../shared/components/FiatAmount/FiatAmount';
 import { CurrencyTicker } from '../../../../config/config/currencies';
-import {
-  Balance,
-  toDecimals,
-} from '../../../chain/balances/lib/balances';
+import { Balance, toDecimals } from '../../../chain/balances/lib/balances';
 import { SpotPrice } from '../../../fiat/lib/fiat';
 import { FormattedBalance } from '../../../shared/components/FormattedBalance/FormattedBalance';
 import {
@@ -91,28 +88,20 @@ export const TokenBalanceWidget: React.FC<
       .toFixed(6);
   }, [spotPriceToken, spotPriceNativeToken]);
 
-  const priceToFiatHistorical = useMemo(() => {
-    if (!spotPriceTokenHistorical || !spotPriceNativeTokenHistorical) return;
-    return BigNumber(spotPriceTokenHistorical.price)
-      .multipliedBy(BigNumber(spotPriceNativeTokenHistorical.price))
-      .toFixed(6);
-  }, [spotPriceTokenHistorical, spotPriceNativeTokenHistorical]);
-
   const historicalFiatBalance = useMemo<
     Pick<Balance, 'amount'> | undefined
   >(() => {
-    if (!historicalBalance?.amount || !priceToFiatHistorical) return;
+    if (!historicalBalance?.amount || !priceToFiat) return;
 
     const amount = new BigNumber(toDecimals(historicalBalance, token.id))
-      .multipliedBy(priceToFiatHistorical)
+      .multipliedBy(priceToFiat)
       .toFixed(2);
     return { amount };
-  }, [historicalBalance?.amount, token, priceToFiatHistorical]);
+  }, [historicalBalance?.amount, token, priceToFiat]);
 
   // TODO: fix NaN for XTZ
   const fiatBalance = useMemo<Pick<Balance, 'amount'> | undefined>(() => {
     if (!balance?.amount || !priceToFiat) return;
-    console.log('fiatBalance', { token, balance, priceToFiat });
     const amount = new BigNumber(toDecimals(balance, token.id))
       .multipliedBy(priceToFiat)
       .toFixed(2);

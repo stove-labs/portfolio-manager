@@ -5,14 +5,14 @@ import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dash
 import { WidgetStore } from '../WidgetStore/WidgetStore';
 // import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
-import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
+import { ActiveAccount } from '../../../wallet/containers/ActiveAccount';
 // import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
 // import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
 import {
   CurrencyTicker,
   currencies,
 } from '../../../../config/config/currencies';
-import { useSelectActiveAccountAddress } from '../../../Wallet/store/useWalletSelectors';
+import { useSelectActiveAccountAddress } from '../../../wallet/store/useWalletSelectors';
 import { useStoreContext } from '../../../../store/useStore';
 import { setCurrency } from '../../../fiat/store/useFiatActions';
 import { useSelectCurrency } from '../../../fiat/store/useFiatSelectors';

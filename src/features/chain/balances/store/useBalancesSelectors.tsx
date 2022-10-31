@@ -26,6 +26,22 @@ export const useSelectBalanceAtLevel = (
   }, [address, level, tokenId, balances]);
 };
 
+export const useSelectBalancesAtLevels = (
+  tokenId: KnownToken,
+  address?: string,
+  levels?: Level[]
+): Array<WithStatus<Balance>> | undefined => {
+  const balances = useSelectBalances();
+
+  return useMemo(() => {
+    if (!levels || !address) return;
+    return levels.map((level) => {
+      const id = getBalanceId(level, address, tokenId);
+      return balances.balances[id];
+    });
+  }, [address, levels, tokenId, balances]);
+};
+
 export const useSelectActiveAccountBalanceAtLevel = (
   tokenId: KnownToken,
   level?: Level

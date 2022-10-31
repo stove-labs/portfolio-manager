@@ -15,7 +15,6 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
 }) => {
   const cappedChange: string = useMemo((): string => {
     const sign: string = change > 0 ? '+' : '-';
-    console.log(change);
     if (change === 0) return '0';
     if (Math.abs(change) > 1000) return `>${sign}1000`;
     if (Math.abs(change) < 0.01) return `<${sign}0.01`;
@@ -40,7 +39,7 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
         };
     }
   }, [size]);
-  const trend = change > 0 ? 'upwards' : 'downwards';
+  const trend = change > 1 ? 'upwards' : change < 0 ? 'downwards' : 'neutral';
   const upwardsTrendColor = useColorModeValue('green.500', 'green.500');
   const downwardsTrendColor = useColorModeValue('red.500', 'red.500');
   const trendColor = useMemo(() => {
@@ -49,6 +48,8 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
         return upwardsTrendColor;
       case 'downwards':
         return downwardsTrendColor;
+      case 'neutral':
+        return upwardsTrendColor;
     }
   }, [trend, upwardsTrendColor, downwardsTrendColor]);
   const trendIcon = useMemo(() => {
@@ -57,6 +58,8 @@ export const ChangeIndicator: React.FC<ChangeIndicatorProps> = ({
         return faCaretUp;
       case 'downwards':
         return faCaretDown;
+      case 'neutral':
+        return faCaretUp;
     }
   }, [trend]);
   const trendIconOffset = useMemo(() => {

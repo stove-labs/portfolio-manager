@@ -5,14 +5,17 @@ import {
   TokenBalanceWidget as TokenBalanceWidgetComponent,
   WidgetProps,
 } from '../../components/TokenBalanceWidget/TokenBalanceWidget';
+import { TokenBalanceChartWidget } from '../TokenBalanceChartWidget/TokenBalanceChartWidget';
 
 import { TokenBalanceWidgetSettingsData } from '../TokenBalanceWidget/TokenBalanceWidget';
 
 const ReactGridLayout = WidthProvider(RGL);
 
 export type WidgetSettingsData = TokenBalanceWidgetSettingsData;
-export type WidgetsProps = Parameters<typeof TokenBalanceWidgetComponent>[0];
-export type WidgetName = 'TokenBalanceWidget';
+export type WidgetsProps =
+  | Parameters<typeof TokenBalanceWidgetComponent>[0]
+  | Parameters<typeof TokenBalanceChartWidget>[0];
+export type WidgetName = 'TokenBalanceWidget' | 'TokenBalanceChartWidget';
 
 export interface WidgetSettings {
   id: string;
@@ -61,7 +64,7 @@ export const WidgetsLayout: React.FC<WidgetsLayoutProps> = ({
           isResizable={false}
           layout={layout}
           // margin={[10, 10]}
-          margin={[10, 5]}
+          margin={[10, 10]}
           rowHeight={50}
           useCSSTransforms={true}
           width={100}
