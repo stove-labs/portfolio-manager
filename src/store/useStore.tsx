@@ -1,7 +1,6 @@
 import constate from 'constate';
 import React, { Reducer, useCallback, useReducer } from 'react';
 import combineReducers from 'react-combine-reducers';
-import logger from 'use-reducer-logger';
 import {
   WidgetsLayoutAction,
   widgetsLayoutReducer,
@@ -87,7 +86,7 @@ export const useCombineEffects = (effects: EffectHook[]): RunEffects => {
 };
 
 export const useStore = (): [State, React.Dispatch<Action>] => {
-  const [state, dispatch] = useReducer(logger(reducer), initialState);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const runEffects = useCombineEffects([
     useWalletEffects,
     useBlocksEffects,
