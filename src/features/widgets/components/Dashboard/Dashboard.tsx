@@ -78,7 +78,7 @@ export const Dashboard: React.FC<PropsWithChildren<DashboardProps>> = ({
     const now = Date.now();
     const timestamp = Number(block.timestamp);
     return (now - timestamp) / 1000;
-  }, [block?.timestamp]);
+  }, [block?.timestamp, Date.now()]);
 
   const blockLivelinessColor = useMemo<string | undefined>(() => {
     if (!blockOldness) return '#A0AEC0';
