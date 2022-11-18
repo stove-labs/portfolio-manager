@@ -3,11 +3,8 @@ import React from 'react';
 import { Input, UseDisclosureReturn } from '@chakra-ui/react';
 import { Dashboard as DashboardComponent } from '../../components/Dashboard/Dashboard';
 import { WidgetStore } from '../WidgetStore/WidgetStore';
-// import { ActiveAccount } from '../../../Wallet/containers/ActiveAccount';
 import { WidgetsLayout } from '../WidgetsLayout/WidgetsLayout';
 import { ActiveAccount } from '../../../wallet/containers/ActiveAccount';
-// import { useSelectCurrentBlock } from '../../store/selectors/chain/useChainSelectors';
-// import { useSelectCurrency } from '../../store/selectors/spotPrice/useSpotPriceSelectors';
 import {
   CurrencyTicker,
   currencies,
