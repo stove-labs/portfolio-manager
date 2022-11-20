@@ -1,8 +1,13 @@
 # Portfolio Manager by Stove Labs
 
-The Portfolio Manager by Stove Labs is all-in-one Tezos dashboard with configurable widgets.
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5753e153-c971-49b3-b6d0-678f9b6b46bf/deploy-status)](https://app.netlify.com/sites/portfolio-manager-stove-labs/deploys)
 
+The Portfolio Manager by Stove Labs is all-in-one Tezos dashboard with configurable widgets.
 ![Portfolio manager preview](./img/portfolio-manager-preview.png)
+
+<center style="margin-top: -15px">
+  <a href="portfolio-manager-stove-labs.netlify.app">🚨 Mainnet development preview 🚨</a>
+</center>
 
 ## 🚀 Getting started
 
