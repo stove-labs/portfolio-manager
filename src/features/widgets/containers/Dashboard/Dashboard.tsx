@@ -31,13 +31,6 @@ export const Dashboard: React.FC = () => {
     dispatch(setCurrency(currency));
   };
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: 'LOAD_SPOT_PRICE',
-  //     payload: { ids: ['0'], currency: currency.ticker },
-  //   });
-  // }, [block?.level, currency.ticker]);
-
   return (
     <>
       <Input

@@ -1,5 +1,6 @@
 import { CurrencyTicker } from '../../../config/config/currencies';
 import { Token } from '../../../config/config/tokens';
+import config from '../../../config/config/environment';
 import { getNativeToken } from '../../../config/lib/helpers';
 import { Block, ID, Level } from '../../chain/blocks/lib/blocks';
 import { levelToDateString } from '../../chain/blocks/store/useBlocksSelectors';
@@ -12,7 +13,7 @@ export interface SpotPrice {
   price: string;
 }
 
-export const COINBASE_PRICES_URL = 'https://api.coinbase.com/v2/prices';
+export const COINBASE_PRICES_URL = `${config.COINBASE_API_URL}/v2/prices`;
 export const getSpotPriceURL = (
   symbol: string,
   currency: string,
