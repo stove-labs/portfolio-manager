@@ -81,6 +81,7 @@ Currently supported entities, with the respective APIs for working with them are
     - Action for fetching both the current and historical balances is unified as `LOAD_BALANCES`. Since both can be represented as _balance at level_, while keeping in mind that the app is aware of the percieved _latest block level_ at all times.
   - [State](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/balances/store/useBalancesStore.tsx#L9)
     - Balance `id` is `blockLevel-address-tokenId`, this allows us to store balances uniquely for any given address, tokenId and level combination. This is useful, since we also need to fetch balances of e.g. pools on Quipuswap to determine spot prices.
+    - When it comes to historical data, the relative historial block at a given timestamp is estimated like [this](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/blocks/store/useBlocksSelectors.tsx#L56).
   - [Effects](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/balances/store/useBalancesEffects.tsx#L6)
 - **Fiat** (Keeps track of the user's preffered FIAT currency and available spot prices between XTZ/FIAT)
   - [Actions](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/fiat/store/useFiatActions.tsx#L6)
