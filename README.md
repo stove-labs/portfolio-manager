@@ -76,6 +76,9 @@ Currently supported entities, with the respective APIs for working with them are
   - [State](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/blocks/store/useBlocksStore.tsx#L22)
     - Block `id` is either a `uuidv4` or `block.level`, depending on if the request has finished fetching or not (since block.level is unknown before the request finishes).
   - [Effects](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/blocks/store/useBlocksEffects.tsx#L12)
+  - [Library](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/blocks/lib/blocks.tsx)
+    - Fetching of block(s) data using the TzKT.io API
+      - [`/v1/blocks/:level`](https://api.tzkt.io/#operation/Blocks_GetByLevel)
 - **Balances** (Keeps track of balances for a given address/level/tokenId)
   - [Actions](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/balances/store/useBalancesActions.tsx#L6)
     - Action for fetching both the current and historical balances is unified as `LOAD_BALANCES`. Since both can be represented as _balance at level_, while keeping in mind that the app is aware of the percieved _latest block level_ at all times.
@@ -83,10 +86,17 @@ Currently supported entities, with the respective APIs for working with them are
     - Balance `id` is `blockLevel-address-tokenId`, this allows us to store balances uniquely for any given address, tokenId and level combination. This is useful, since we also need to fetch balances of e.g. pools on Quipuswap to determine spot prices.
     - When it comes to historical data, the relative historial block at a given timestamp is estimated like [this](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/blocks/store/useBlocksSelectors.tsx#L56).
   - [Effects](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/balances/store/useBalancesEffects.tsx#L6)
+  - [Library](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/chain/balances/lib/balances.tsx)
+    - Fetching of native & tokens balances for both current and historical blocks
+      - [`/v1/accounts/{address}/balance_history/{level}`](https://api.tzkt.io/#operation/Accounts_GetBalanceAtLevel)
+      - [`/v1/tokens/historical_balance?...`](https://api.tzkt.io/#operation/Tokens_GetTokenBalances2)
 - **Fiat** (Keeps track of the user's preffered FIAT currency and available spot prices between XTZ/FIAT)
   - [Actions](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/fiat/store/useFiatActions.tsx#L6)
   - [State](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/fiat/store/useFiatStore.tsx#L10)
   - [Effects](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/fiat/store/useFiatEffects.tsx#L6)
+  - [Library](https://github.com/stove-labs/portfolio-manager/blob/develop/src/features/fiat/lib/fiat.tsx)
+    - Fetching of spot prices for XTZ/FIAT (where FIAT = USD | EUR as per earlier configuration)
+      - [`/v2/prices/XTZ-{fiat}`](https://docs.cloud.coinbase.com/sign-in-with-coinbase/docs/price-data)
 
 #### State selectors / computed state
 
